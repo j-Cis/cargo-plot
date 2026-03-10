@@ -2,6 +2,9 @@
 
 **cargo-plot** (v0.1.1) to biblioteka napisana w języku Rust (edycja 2024), której autorem jest Gepiden (Jan Roman Cisowski).
 
+🔗 **Crates.io (Paczka)**: [crates.io/crates/cargo-plot](https://crates.io/crates/cargo-plot)
+🔗 **GitHub (Kod źródłowy)**: [github.com/j-Cis/cargo-plot](https://github.com/j-Cis/cargo-plot)
+
 Biblioteka `cargo-plot` oferuje bogate API, które pozwala na:
 
 * **Przeszukiwanie plików** w systemie z wykorzystaniem elastycznych reguł uwzględniających i wykluczających.
@@ -60,7 +63,7 @@ Poniżej znajduje się zestawienie najczęściej używanych komend do budowania,
 
 Aby móc używać narzędzia z dowolnego miejsca w systemie za pomocą komendy `cargo plot`:
 
-* `cargo install --path .` – Instalacja narzędzia lokalnie na Twoim komputerze.
+* `cargo install cargo-plot` – Pobiera i instaluje najnowszą wersję bezpośrednio z oficjalnego rejestru crates.io (Zalecane).
 * `cargo --list` – Sprawdzenie, czy `plot` widnieje na liście zainstalowanych rozszerzeń Cargo.
 * `cargo plot --help` – Wyświetlenie pomocy zainstalowanego narzędzia.
 * `cargo uninstall cargo-plot` – Całkowite usunięcie narzędzia z systemu.
@@ -72,13 +75,19 @@ Instalacja przenosi skompilowaną binarkę do folderu `~/.cargo/bin/`. Dzięki t
 1. Możesz wywoływać `cargo plot` z dowolnego folderu w systemie (nie musisz być wewnątrz katalogu projektu).
 2. Nie musisz używać `cargo run --`, co skraca komendy używane w codziennej pracy.
 
-#### 1. Instalacja bezpośrednio z GitHub
+#### 1. Instalacja z Crates.io (Rekomendowane)
 
-Jeśli nie chcesz ręcznie klonować repozytorium, Cargo może pobrać i zainstalować binarkę jednym poleceniem:
+Ponieważ projekt jest oficjalnie opublikowany w ekosystemie Rusta, jest to najszybsza metoda:
+
+* `cargo install cargo-plot` – Pobiera najnowszą wersję z gałęzi głównej i instaluje ją w systemie.
+
+#### 2. Instalacja bezpośrednio z GitHub
+
+Jeśli chcesz zainstalować najnowszą wersję deweloperską z pominięciem crates.io:
 
 * `cargo install --git https://github.com/j-Cis/cargo-plot` – Pobiera najnowszą wersję z gałęzi głównej i instaluje ją w systemie.
 
-#### 2. Klonowanie i instalacja lokalna
+#### 3. Klonowanie i instalacja lokalna
 
 Jeśli chcesz mieć dostęp do kodu źródłowego lub skryptów pomocniczych:
 
@@ -86,7 +95,7 @@ Jeśli chcesz mieć dostęp do kodu źródłowego lub skryptów pomocniczych:
 * `cd cargo-plot` – Wejście do katalogu projektu.
 * `cargo install --path .` – Instalacja narzędzia z lokalnych plików źródłowych.
 
-#### 3. Zarządzanie zainstalowanym narzędziem
+#### 4. Zarządzanie zainstalowanym narzędziem
 
 Po instalacji `cargo-plot` staje się integralną częścią Twojego środowiska Rust:
 

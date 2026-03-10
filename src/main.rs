@@ -1,8 +1,8 @@
 use clap::Parser;
-// USUNIĘTO: use std::path::PathBuf; (nieużywane jawnie w main)
 
 mod cli;
 use cli::{CargoCli, Commands, OutputType, SharedTaskArgs};
+mod tui;
 
 use lib::fn_copy_dist::{DistConfig, copy_dist};
 use lib::fn_datestamp::{NaiveDate, NaiveTime, datestamp, datestamp_now};
@@ -20,7 +20,9 @@ fn main() {
         Some(Commands::Doc(args)) => handle_doc(args),
         Some(Commands::Stamp(args)) => handle_stamp(args),
         Some(Commands::DistCopy(args)) => handle_dist_copy(args),
-        None => println!("[*] Uruchamianie TUI... (Wkrótce)"),
+        None => {
+            tui::run_tui();
+        },
     }
 }
 

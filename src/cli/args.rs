@@ -116,6 +116,22 @@ pub struct TreeArgs {
     /// Sposób sortowania węzłów drzewa
     #[arg(short, long, value_enum, default_value_t = SortMethod::Alpha)]
     pub sort: SortMethod,
+
+    /// Zapisuje wynikowe drzewo do pliku Markdown (np. drzewo.md)
+    #[arg(long = "out-file")]
+    pub out_file: Option<String>,
+
+    /// Wymusza wydruk drzewa w konsoli, nawet jeśli podano --out-file (zapisz i wyświetl)
+    #[arg(long = "print-console")]
+    pub print_console: bool,
+
+    /// Pozycja znaku wodnego z informacją o cargo-plot (tylko w zapisanym pliku)
+    #[arg(long, value_enum, default_value_t = WatermarkPosition::Last)]
+    pub watermark: WatermarkPosition,
+
+    /// Wyświetla użytą komendę CLI na początku pliku
+    #[arg(long = "print-command")]
+    pub print_command: bool,
 }
 
 #[derive(ValueEnum, Clone, Debug, PartialEq)]
@@ -129,6 +145,13 @@ pub enum IdStyle {
 pub enum InsertTreeMethod {
     DirsFirst,
     FilesFirst,
+    None,
+}
+
+#[derive(ValueEnum, Clone, Debug, PartialEq)]
+pub enum WatermarkPosition {
+    First,
+    Last,
     None,
 }
 
@@ -156,6 +179,14 @@ pub struct DocArgs {
     /// Sposób rzutowania drzewa struktury na początku raportu
     #[arg(short = 'T', long, value_enum, default_value_t = InsertTreeMethod::FilesFirst)]
     pub insert_tree: InsertTreeMethod,
+
+    //// Pozycja znaku wodnego z informacją o cargo-plot
+    #[arg(long, value_enum, default_value_t = WatermarkPosition::Last)]
+    pub watermark: WatermarkPosition,
+
+    /// Wyświetla użytą komendę CLI na początku pliku
+    #[arg(long = "print-command")]
+    pub print_command: bool,
 }
 
 #[derive(Args, Debug)]

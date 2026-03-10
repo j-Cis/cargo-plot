@@ -7,9 +7,20 @@ use lib::fn_filespath::filespath;
 
 pub fn handle_doc(args: DocArgs) {
     let tasks = collect_tasks(&args.shared);
-
-    // Pobieramy konfigurację wag dla drzewa osadzanego w dokumencie
     let w_cfg = build_weight_config(&args.shared);
+
+    // Klonujemy wywołanie z konsoli, aby umieścić je w pliku
+    let cmd_str = if args.print_command {
+        Some(std::env::args().collect::<Vec<_>>().join(" "))
+    } else {
+        None
+    };
+
+    let watermark_str = match args.watermark {
+        crate::cli::args::WatermarkPosition::First => "first",
+        crate::cli::args::WatermarkPosition::Last => "last",
+        crate::cli::args::WatermarkPosition::None => "none",
+    };
 
     let doc_task = DocTask {
         output_filename: &args.out,
@@ -24,7 +35,9 @@ pub fn handle_doc(args: DocArgs) {
             _ => "id-tag",
         },
         tasks,
-        weight_config: w_cfg, // !! UWAGA: Do tej modyfikacji musimy przygotować API w Kroku 2b
+        weight_config: w_cfg,
+        watermark: watermark_str,
+        command_str: cmd_str,
     };
 
     if args.dry_run {

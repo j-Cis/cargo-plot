@@ -36,37 +36,40 @@ pub fn ask_for_task_data(idx: usize) -> TaskData {
         .interact()
         .unwrap();
 
-    let mut inc = Vec::new();
-    let mut exc = Vec::new();
-    let mut fil = Vec::new();
+    let inc;
+    let exc;
+    let fil;
 
     if use_defaults {
+        inc = vec![];
         exc = vec![
             ".git/".to_string(), "target/".to_string(), "node_modules/".to_string(),
             ".vs/".to_string(), ".idea/".to_string(), ".vscode/".to_string(),
             ".cargo/".to_string(), ".github/".to_string(),
         ];
+        fil = vec![];
     } else {
-        let inc_raw: String = input("  Whitelist (inc) [oddzielaj przecinkiem]:")
-            .placeholder("np. ./src/, Cargo.toml, ./lib/")
-            .required(false)
-            .interact()
-            .unwrap_or_default();
+        let inc_raw: String = cliclack::input("  Whitelist (inc) [oddzielaj przecinkiem]:")
+        .placeholder("np. ./src/, Cargo.toml, ./lib/")
+        .required(false)
+        .interact()
+        .unwrap_or_default();
 
-        let exc_raw: String = input("  Blacklist (exc) [oddzielaj przecinkiem]:")
-            .placeholder("np. ./target/, .git/, node_modules/, Cargo.lock")
-            .required(false)
-            .interact()
-            .unwrap_or_default();
+    let exc_raw: String = cliclack::input("  Blacklist (exc) [oddzielaj przecinkiem]:")
+        .placeholder("np. ./target/, .git/, node_modules/, Cargo.lock")
+        .required(false)
+        .interact()
+        .unwrap_or_default();
 
-        let fil_raw: String = input("  Filtry plików (fil) [oddzielaj przecinkiem]:")
-            .placeholder("np. *.rs, *.md, build.rs")
-            .required(false)
-            .interact()
-            .unwrap_or_default();
-        inc = process_inc(split_and_trim(&inc_raw));
-        exc = split_and_trim(&exc_raw);
-        fil = split_and_trim(&fil_raw);
+    let fil_raw: String = cliclack::input("  Filtry plików (fil) [oddzielaj przecinkiem]:")
+        .placeholder("np. *.rs, *.md, build.rs")
+        .required(false)
+        .interact()
+        .unwrap_or_default();
+
+    inc = process_inc(split_and_trim(&inc_raw));
+    exc = split_and_trim(&exc_raw);
+    fil = split_and_trim(&fil_raw);
     }
 
     let out_type = select_type();

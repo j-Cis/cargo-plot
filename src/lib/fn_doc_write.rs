@@ -13,11 +13,25 @@ pub fn write_md(
     tree_text: Option<String>,
     _stamp: &str,
     id_style: &str,
+    watermark: &str,
+    command_str: &Option<String>,
 ) -> io::Result<()> {
     let mut content = String::new();
 
     content.push_str(&format!("# RAPORT ({})\n\n", out_path));
     // content.push_str(&format!("# RAPORT {} ({})\n\n", stamp, out_path));
+
+    let watermark_text = "> 🚀 Raport wygenerowany przy użyciu [cargo-plot](https://crates.io/crates/cargo-plot) | Źródło: [GitHub](https://github.com/j-Cis/cargo-plot)\n\n";
+
+    // 1. Znak wodny na początku
+    if watermark == "first" {
+        content.push_str(watermark_text);
+    }
+
+    // 2. Reprodukcja komendy
+    if let Some(cmd) = command_str {
+        content.push_str(&format!("**Wywołana komenda:**\n```bash\n{}\n```\n\n", cmd));
+    }
 
     if let Some(tree) = tree_text {
         content.push_str("```text\n");
@@ -96,6 +110,12 @@ pub fn write_md(
                 display_path
             ));
         }
+    }
+
+    // 3. Znak wodny na końcu (Domyślnie)
+    if watermark == "last" {
+        content.push_str("---\n");
+        content.push_str(watermark_text);
     }
 
     fs::write(out_path, &content)?;

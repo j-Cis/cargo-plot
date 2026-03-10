@@ -43,6 +43,8 @@ pub fn generate_docs(doc_tasks: Vec<DocTask>, output_dir: &str) -> io::Result<()
             tree_text,
             &stamp,
             doc_task.id_style,
+            doc_task.watermark,
+            &doc_task.command_str,
         )?;
 
         // Możemy wydrukować info o POJEDYNCZYM wygenerowanym pliku

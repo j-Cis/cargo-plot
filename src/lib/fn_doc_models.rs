@@ -8,4 +8,6 @@ pub struct DocTask<'a> {
     pub id_style: &'a str,    // "id-tag", "id-num", "id-non"
     pub tasks: Vec<Task<'a>>,
     pub weight_config: WeightConfig, // Nowe pole
+    pub watermark: &'a str, 
+    pub command_str: Option<String>,
 }

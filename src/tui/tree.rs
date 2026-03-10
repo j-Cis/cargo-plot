@@ -31,6 +31,22 @@ pub fn run_tree_flow() {
         .interact()
         .unwrap();
 
+    let save_to_file = confirm("Czy zapisać wynikowe drzewo do pliku .md (zamiast pokazywać w konsoli)?")
+        .initial_value(false)
+        .interact()
+        .unwrap();
+
+    let md_path = if save_to_file {
+        // Wymuszamy typowanie bezpośrednio na zmiennej wejściowej 'path', tak jak to robiliśmy w innych miejscach
+        let path: String = cliclack::input("Podaj nazwę pliku (np. drzewo.md):")
+            .default_input("drzewo.md")
+            .interact()
+            .unwrap();
+        Some(path)
+    } else {
+        None
+    };
+
     let spin = spinner();
     spin.start("Budowanie złożonej struktury...");
 
@@ -44,16 +60,17 @@ pub fn run_tree_flow() {
     spin.stop("Skanowanie zakończone:");
 
     // Generujemy tekst drzewa
-    let tree_output = plotfiles_cli(&nodes, "", None);
-
-    if tree_output.trim().is_empty() {
-        cliclack::outro_cancel(
-            "Brak wyników: Żaden plik nie pasuje do podanych filtrów (sprawdź ścieżki).",
-        )
-        .unwrap();
+    if let Some(path) = md_path {
+        let txt = lib::fn_plotfiles::plotfiles_txt(&nodes, "", None);
+        std::fs::write(&path, format!("```text\n{}\n```\n", txt)).unwrap();
+        cliclack::outro(format!("Sukces! Drzewo zapisano do pliku: {}", path)).unwrap();
     } else {
-        // Dodajemy pustą linię przed i po dla czytelności w TUI
-        println!("\n{}\n", tree_output);
-        cliclack::outro("Drzewo wyrenderowane pomyślnie!").unwrap();
+        let tree_output = plotfiles_cli(&nodes, "", None);
+        if tree_output.trim().is_empty() {
+            cliclack::outro_cancel("Brak wyników: Żaden plik nie pasuje do podanych filtrów.").unwrap();
+        } else {
+            println!("\n{}\n", tree_output);
+            cliclack::outro("Drzewo wyrenderowane pomyślnie!").unwrap();
+        }
     }
 }

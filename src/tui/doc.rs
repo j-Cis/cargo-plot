@@ -39,6 +39,18 @@ pub fn run_doc_flow() {
         };
 
         let mut tasks_for_this_report = Vec::new();
+
+        let wm = cliclack::select("Gdzie umieścić podpis (watermark) cargo-plot?")
+            .item("last", "Na końcu pliku (Domyślnie)", "")
+            .item("first", "Na początku pliku", "")
+            .item("none", "Nie dodawaj podpisu", "")
+            .interact().unwrap();
+
+        let print_cmd = confirm("Czy wygenerować na górze raportu komendę odtwarzającą to zadanie?")
+            .initial_value(true)
+            .interact().unwrap();
+
+
         loop {
             // Teraz funkcja jest zaimportowana, więc zadziała bezpośrednio
             tasks_for_this_report.push(ask_for_task_data(tasks_for_this_report.len() + 1));
@@ -52,7 +64,7 @@ pub fn run_doc_flow() {
             }
         }
 
-        reports_configs.push((name, id_s, tree_s, tasks_for_this_report, w_cfg));
+        reports_configs.push((name, id_s, tree_s, tasks_for_this_report, w_cfg, wm, print_cmd));
 
         if !confirm("Czy chcesz zdefiniować KOLEJNY, osobny raport (DocTask)?")
             .initial_value(false)
@@ -76,12 +88,25 @@ pub fn run_doc_flow() {
     for r in &reports_configs {
         let api_tasks: Vec<Task> = r.3.iter().map(|t: &TaskData| t.to_api_task()).collect();
 
+        // TUI generuje "zastępczą" komendę CLI, którą można skopiować!
+        let cmd_str = if r.6 {
+            let mut mock_cmd = format!("cargo plot doc --out-dir \"{}\" --out \"{}\" -I {} -T {}", output_dir, r.0, r.1, r.2);
+            for t in &r.3 {
+                mock_cmd.push_str(&format!(" --task \"loc={},out={}\"", t.loc, t.out_type));
+            }
+            Some(mock_cmd)
+        } else {
+            None
+        };
+
         final_doc_tasks.push(DocTask {
             output_filename: &r.0,
             insert_tree: r.2,
             id_style: r.1,
             tasks: api_tasks,
-            weight_config: r.4.clone(), // -- ZMIANA: Przypisujemy konfigurację TUI --
+            weight_config: r.4.clone(),
+            watermark: r.5,
+            command_str: cmd_str,
         });
     }
 

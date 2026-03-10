@@ -1,0 +1,26 @@
+[package]
+name = "cargo-plot"
+version = "0.1.1"
+readme = "README.md"
+repository = "https://github.com/j-Cis/cargo-plot"
+authors = ["Jan Roman Cisowski „j-Cis”"]
+edition = "2024"
+rust-version = "1.93.1"
+resolver = "3"
+
+[package.metadata.cargo]
+edition = "2024"
+
+
+[dependencies]
+inquire = "0.9.4"
+chrono = "0.4.44"
+walkdir = "2.5.0"
+regex = "1.12.3"
+colored = "3.1.1"
+atty = "0.2"
+clap = { version = "4.5.60", features = ["derive"] }
+
+[lib]
+name = "lib"
+path = "src/lib/mod.rs"

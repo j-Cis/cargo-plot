@@ -180,7 +180,7 @@ pub struct DocArgs {
     #[arg(short = 'T', long, value_enum, default_value_t = InsertTreeMethod::FilesFirst)]
     pub insert_tree: InsertTreeMethod,
 
-    //// Pozycja znaku wodnego z informacją o cargo-plot
+    /// Pozycja znaku wodnego z informacją o cargo-plot
     #[arg(long, value_enum, default_value_t = WatermarkPosition::Last)]
     pub watermark: WatermarkPosition,
 

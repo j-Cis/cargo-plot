@@ -14,7 +14,12 @@ pub fn collect_tasks(args: &SharedTaskArgs) -> Vec<Task<'_>> {
         let mut excludes: Vec<&str> = args.exclude.iter().map(|s| s.as_str()).collect();
         if !args.no_default_excludes {
             excludes.extend(vec![
-                ".git/", "target/", "node_modules/", ".vs/", ".idea/", ".vscode/",
+                ".git/",
+                "target/",
+                "node_modules/",
+                ".vs/",
+                ".idea/",
+                ".vscode/",
             ]);
         }
 

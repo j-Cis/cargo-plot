@@ -25,7 +25,8 @@ pub fn generate_docs(doc_tasks: Vec<DocTask>, output_dir: &str) -> io::Result<()
         // 2. Generowanie tekstu drzewa
         let tree_text = if doc_task.insert_tree != "with-out" {
             //  używamy konfiguracji wbudowanej w zadanie!
-            let tree_nodes = filestree(paths.clone(), doc_task.insert_tree, &doc_task.weight_config); 
+            let tree_nodes =
+                filestree(paths.clone(), doc_task.insert_tree, &doc_task.weight_config);
             let txt = plotfiles_txt(&tree_nodes, "", None);
             Some(txt)
         } else {
@@ -41,7 +42,6 @@ pub fn generate_docs(doc_tasks: Vec<DocTask>, output_dir: &str) -> io::Result<()
             &paths,
             &id_map,
             tree_text,
-            &stamp,
             doc_task.id_style,
             doc_task.watermark,
             &doc_task.command_str,

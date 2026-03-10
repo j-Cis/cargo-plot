@@ -31,10 +31,12 @@ pub fn ask_for_task_data(idx: usize) -> TaskData {
         .interact()
         .unwrap();
 
-    let use_defaults = cliclack::confirm("Czy użyć domyślnej listy ignorowanych (pomiń .git, target, node_modules itp.)?")
-        .initial_value(true)
-        .interact()
-        .unwrap();
+    let use_defaults = cliclack::confirm(
+        "Czy użyć domyślnej listy ignorowanych (pomiń .git, target, node_modules itp.)?",
+    )
+    .initial_value(true)
+    .interact()
+    .unwrap();
 
     let inc;
     let exc;
@@ -43,38 +45,49 @@ pub fn ask_for_task_data(idx: usize) -> TaskData {
     if use_defaults {
         inc = vec![];
         exc = vec![
-            ".git/".to_string(), "target/".to_string(), "node_modules/".to_string(),
-            ".vs/".to_string(), ".idea/".to_string(), ".vscode/".to_string(),
-            ".cargo/".to_string(), ".github/".to_string(),
+            ".git/".to_string(),
+            "target/".to_string(),
+            "node_modules/".to_string(),
+            ".vs/".to_string(),
+            ".idea/".to_string(),
+            ".vscode/".to_string(),
+            ".cargo/".to_string(),
+            ".github/".to_string(),
         ];
         fil = vec![];
     } else {
         let inc_raw: String = cliclack::input("  Whitelist (inc) [oddzielaj przecinkiem]:")
-        .placeholder("np. ./src/, Cargo.toml, ./lib/")
-        .required(false)
-        .interact()
-        .unwrap_or_default();
+            .placeholder("np. ./src/, Cargo.toml, ./lib/")
+            .required(false)
+            .interact()
+            .unwrap_or_default();
 
-    let exc_raw: String = cliclack::input("  Blacklist (exc) [oddzielaj przecinkiem]:")
-        .placeholder("np. ./target/, .git/, node_modules/, Cargo.lock")
-        .required(false)
-        .interact()
-        .unwrap_or_default();
+        let exc_raw: String = cliclack::input("  Blacklist (exc) [oddzielaj przecinkiem]:")
+            .placeholder("np. ./target/, .git/, node_modules/, Cargo.lock")
+            .required(false)
+            .interact()
+            .unwrap_or_default();
 
-    let fil_raw: String = cliclack::input("  Filtry plików (fil) [oddzielaj przecinkiem]:")
-        .placeholder("np. *.rs, *.md, build.rs")
-        .required(false)
-        .interact()
-        .unwrap_or_default();
+        let fil_raw: String = cliclack::input("  Filtry plików (fil) [oddzielaj przecinkiem]:")
+            .placeholder("np. *.rs, *.md, build.rs")
+            .required(false)
+            .interact()
+            .unwrap_or_default();
 
-    inc = process_inc(split_and_trim(&inc_raw));
-    exc = split_and_trim(&exc_raw);
-    fil = split_and_trim(&fil_raw);
+        inc = process_inc(split_and_trim(&inc_raw));
+        exc = split_and_trim(&exc_raw);
+        fil = split_and_trim(&fil_raw);
     }
 
     let out_type = select_type();
 
-    TaskData { loc, inc, exc, fil, out_type }
+    TaskData {
+        loc,
+        inc,
+        exc,
+        fil,
+        out_type,
+    }
 }
 
 fn process_inc(list: Vec<String>) -> Vec<String> {
@@ -152,7 +165,12 @@ pub fn ask_for_weight_config() -> WeightConfig {
     let system = match system_str {
         "binary" => UnitSystem::Binary,
         "decimal" => UnitSystem::Decimal,
-        _ => return WeightConfig { system: UnitSystem::None, ..Default::default() },
+        _ => {
+            return WeightConfig {
+                system: UnitSystem::None,
+                ..Default::default()
+            };
+        }
     };
 
     // Jeśli wybrano system, zadajemy pytania szczegółowe
@@ -160,7 +178,7 @@ pub fn ask_for_weight_config() -> WeightConfig {
         .default_input("5")
         .interact()
         .unwrap();
-    
+
     let precision = precision_str.parse::<usize>().unwrap_or(5).max(3);
 
     let show_for_files = cliclack::confirm("Czy pokazywać rozmiar przy plikach?")
@@ -176,8 +194,16 @@ pub fn ask_for_weight_config() -> WeightConfig {
     let mut dir_sum_included = true;
     if show_for_dirs {
         let sum_mode = select("Jak liczyć pojemność folderów?")
-            .item("filtered", "Suma widocznych plików", "Tylko pliki ujęte na liście")
-            .item("real", "Rzeczywisty rozmiar", "Bezpośrednio z dysku twardego")
+            .item(
+                "filtered",
+                "Suma widocznych plików",
+                "Tylko pliki ujęte na liście",
+            )
+            .item(
+                "real",
+                "Rzeczywisty rozmiar",
+                "Bezpośrednio z dysku twardego",
+            )
             .interact()
             .unwrap();
         dir_sum_included = sum_mode == "filtered";

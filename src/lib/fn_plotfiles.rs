@@ -64,7 +64,7 @@ fn plot(nodes: &[FileNode], indent: &str, s: &TreeStyle, use_color: bool) -> Str
             String::new()
         } else if use_color {
             // W CLI waga będzie szara, by nie odciągać uwagi od struktury plików
-            node.weight_str.truecolor(120, 120, 120).to_string() 
+            node.weight_str.truecolor(120, 120, 120).to_string()
         } else {
             node.weight_str.clone()
         };
@@ -74,7 +74,7 @@ fn plot(nodes: &[FileNode], indent: &str, s: &TreeStyle, use_color: bool) -> Str
             if node.is_dir {
                 format!(
                     "{}{}{} {}{}/\n",
-                    weight_prefix,      // ZMIANA TUTAJ
+                    weight_prefix, // ZMIANA TUTAJ
                     indent.green(),
                     branch.green(),
                     node.icon,
@@ -83,7 +83,7 @@ fn plot(nodes: &[FileNode], indent: &str, s: &TreeStyle, use_color: bool) -> Str
             } else {
                 format!(
                     "{}{}{} {}{}\n",
-                    weight_prefix,      // ZMIANA TUTAJ
+                    weight_prefix, // ZMIANA TUTAJ
                     indent.green(),
                     branch.green(),
                     node.icon,
@@ -92,7 +92,10 @@ fn plot(nodes: &[FileNode], indent: &str, s: &TreeStyle, use_color: bool) -> Str
             }
         } else {
             // ZMIANA TUTAJ: Doklejenie prefixu dla zwykłego tekstu
-            format!("{}{}{} {} {}\n", weight_prefix, indent, branch, node.icon, node.name) 
+            format!(
+                "{}{}{} {} {}\n",
+                weight_prefix, indent, branch, node.icon, node.name
+            )
         };
 
         result.push_str(&line);

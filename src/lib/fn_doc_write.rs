@@ -11,7 +11,6 @@ pub fn write_md(
     files: &[PathBuf],
     id_map: &HashMap<PathBuf, String>,
     tree_text: Option<String>,
-    _stamp: &str,
     id_style: &str,
     watermark: &str,
     command_str: &Option<String>,
@@ -19,7 +18,6 @@ pub fn write_md(
     let mut content = String::new();
 
     content.push_str(&format!("# RAPORT ({})\n\n", out_path));
-    // content.push_str(&format!("# RAPORT {} ({})\n\n", stamp, out_path));
 
     let watermark_text = "> 🚀 Raport wygenerowany przy użyciu [cargo-plot](https://crates.io/crates/cargo-plot) | Źródło: [GitHub](https://github.com/j-Cis/cargo-plot)\n\n";
 

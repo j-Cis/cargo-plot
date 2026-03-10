@@ -1,5 +1,5 @@
-use std::path::Path;
 use std::fs;
+use std::path::Path;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum UnitSystem {
@@ -12,7 +12,7 @@ pub enum UnitSystem {
 #[derive(Debug, Clone)]
 pub struct WeightConfig {
     pub system: UnitSystem,
-    pub precision: usize,      // Całkowita szerokość pola "xxxxx" (min 3)
+    pub precision: usize, // Całkowita szerokość pola "xxxxx" (min 3)
     pub show_for_files: bool,
     pub show_for_dirs: bool,
     pub dir_sum_included: bool, // true = tylko uwzględnione, false = rzeczywista waga folderu
@@ -42,7 +42,12 @@ pub fn format_weight(bytes: u64, config: &WeightConfig) -> String {
     };
 
     if bytes == 0 {
-        return format!("[{:>2} {:>width$}] ", units[0], "0", width = config.precision);
+        return format!(
+            "[{:>2} {:>width$}] ",
+            units[0],
+            "0",
+            width = config.precision
+        );
     }
 
     let bytes_f = bytes as f64;
@@ -53,7 +58,7 @@ pub fn format_weight(bytes: u64, config: &WeightConfig) -> String {
 
     // Formatowanie liczby do stałej szerokości "xxxxx"
     let formatted_value = format_value_with_precision(value, config.precision);
-    
+
     format!("[{:>3} {}] ", unit, formatted_value)
 }
 
@@ -69,10 +74,14 @@ fn format_value_with_precision(value: f64, width: usize) -> String {
     }
 
     // Obliczamy ile miejsc po przecinku nam zostało (width - int_len - 1 dla kropki)
-    let available_precision = if width > int_len + 1 { width - int_len - 1 } else { 0 };
-    
+    let available_precision = if width > int_len + 1 {
+        width - int_len - 1
+    } else {
+        0
+    };
+
     let formatted = format!("{:.1$}", value, available_precision);
-    
+
     // Na wypadek zaokrągleń (np. 99.99 -> 100.0), przycinamy do width
     if formatted.len() > width {
         formatted[..width].trim_end_matches('.').to_string()
@@ -107,7 +116,11 @@ fn get_dir_size(path: &Path) -> u64 {
                 .filter_map(|e| e.ok())
                 .map(|e| {
                     let p = e.path();
-                    if p.is_dir() { get_dir_size(&p) } else { e.metadata().map(|m| m.len()).unwrap_or(0) }
+                    if p.is_dir() {
+                        get_dir_size(&p)
+                    } else {
+                        e.metadata().map(|m| m.len()).unwrap_or(0)
+                    }
                 })
                 .sum()
         })

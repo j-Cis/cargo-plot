@@ -31,10 +31,11 @@ pub fn run_tree_flow() {
         .interact()
         .unwrap();
 
-    let save_to_file = confirm("Czy zapisać wynikowe drzewo do pliku .md (zamiast pokazywać w konsoli)?")
-        .initial_value(false)
-        .interact()
-        .unwrap();
+    let save_to_file =
+        confirm("Czy zapisać wynikowe drzewo do pliku .md (zamiast pokazywać w konsoli)?")
+            .initial_value(false)
+            .interact()
+            .unwrap();
 
     let md_path = if save_to_file {
         // Wymuszamy typowanie bezpośrednio na zmiennej wejściowej 'path', tak jak to robiliśmy w innych miejscach
@@ -54,7 +55,7 @@ pub fn run_tree_flow() {
         .iter()
         .map(|t: &super::utils::TaskData| t.to_api_task())
         .collect();
-        
+
     let nodes = filestree(filespath(&tasks), sort, &w_cfg);
 
     spin.stop("Skanowanie zakończone:");
@@ -67,7 +68,8 @@ pub fn run_tree_flow() {
     } else {
         let tree_output = plotfiles_cli(&nodes, "", None);
         if tree_output.trim().is_empty() {
-            cliclack::outro_cancel("Brak wyników: Żaden plik nie pasuje do podanych filtrów.").unwrap();
+            cliclack::outro_cancel("Brak wyników: Żaden plik nie pasuje do podanych filtrów.")
+                .unwrap();
         } else {
             println!("\n{}\n", tree_output);
             cliclack::outro("Drzewo wyrenderowane pomyślnie!").unwrap();

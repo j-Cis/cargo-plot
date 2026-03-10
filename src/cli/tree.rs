@@ -19,7 +19,7 @@ pub fn handle_tree(args: TreeArgs) {
     let w_cfg = build_weight_config(&args.shared);
 
     let nodes = filestree(paths, sort_str, &w_cfg);
-    
+
     // ==========================================
     // NOWA LOGIKA WYDRUKU / ZAPISU DO PLIKU
     // ==========================================

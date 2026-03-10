@@ -6,7 +6,7 @@ mod cli;
 mod tui;
 
 fn main() {
-    // [QoL Fix]: Jeśli uruchomiono binarkę bez żadnych argumentów (np. czyste `cargo run` 
+    // [QoL Fix]: Jeśli uruchomiono binarkę bez żadnych argumentów (np. czyste `cargo run`
     // lub podwójne kliknięcie na cargo-plot.exe), pomijamy walidację Clapa i odpalamy TUI.
     if env::args().len() <= 1 {
         tui::run_tui();

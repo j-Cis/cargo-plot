@@ -33,9 +33,10 @@ pub fn run_doc_flow() {
         let w_cfg = if tree_s != "with-out" {
             super::utils::ask_for_weight_config()
         } else {
-            let mut cfg = lib::fn_weight::WeightConfig::default();
-            cfg.system = lib::fn_weight::UnitSystem::None;
-            cfg
+            lib::fn_weight::WeightConfig {
+                system: lib::fn_weight::UnitSystem::None,
+                ..Default::default()
+            }
         };
 
         let mut tasks_for_this_report = Vec::new();
@@ -44,12 +45,14 @@ pub fn run_doc_flow() {
             .item("last", "Na końcu pliku (Domyślnie)", "")
             .item("first", "Na początku pliku", "")
             .item("none", "Nie dodawaj podpisu", "")
-            .interact().unwrap();
+            .interact()
+            .unwrap();
 
-        let print_cmd = confirm("Czy wygenerować na górze raportu komendę odtwarzającą to zadanie?")
-            .initial_value(true)
-            .interact().unwrap();
-
+        let print_cmd =
+            confirm("Czy wygenerować na górze raportu komendę odtwarzającą to zadanie?")
+                .initial_value(true)
+                .interact()
+                .unwrap();
 
         loop {
             // Teraz funkcja jest zaimportowana, więc zadziała bezpośrednio
@@ -64,7 +67,15 @@ pub fn run_doc_flow() {
             }
         }
 
-        reports_configs.push((name, id_s, tree_s, tasks_for_this_report, w_cfg, wm, print_cmd));
+        reports_configs.push((
+            name,
+            id_s,
+            tree_s,
+            tasks_for_this_report,
+            w_cfg,
+            wm,
+            print_cmd,
+        ));
 
         if !confirm("Czy chcesz zdefiniować KOLEJNY, osobny raport (DocTask)?")
             .initial_value(false)
@@ -90,7 +101,10 @@ pub fn run_doc_flow() {
 
         // TUI generuje "zastępczą" komendę CLI, którą można skopiować!
         let cmd_str = if r.6 {
-            let mut mock_cmd = format!("cargo plot doc --out-dir \"{}\" --out \"{}\" -I {} -T {}", output_dir, r.0, r.1, r.2);
+            let mut mock_cmd = format!(
+                "cargo plot doc --out-dir \"{}\" --out \"{}\" -I {} -T {}",
+                output_dir, r.0, r.1, r.2
+            );
             for t in &r.3 {
                 mock_cmd.push_str(&format!(" --task \"loc={},out={}\"", t.loc, t.out_type));
             }

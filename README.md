@@ -1,9 +1,51 @@
 # cargo-plot
 
-**cargo-plot** (v0.1.1) to biblioteka napisana w języku Rust (edycja 2024), której autorem jest Gepiden (Jan Roman Cisowski).
+**cargo-plot** (v0.1.4) to biblioteka napisana w języku Rust (edycja 2024), której autorem jest Jan Roman Cisowski.
 
 🔗 **Crates.io (Paczka)**: [crates.io/crates/cargo-plot](https://crates.io/crates/cargo-plot)
 🔗 **GitHub (Kod źródłowy)**: [github.com/j-Cis/cargo-plot](https://github.com/j-Cis/cargo-plot)
+
+```text
+[KiB 1.689] ├──• ⚙️ Cargo.toml
+            └──┬ 📂 src
+[  B 671.0]    ├──• 🦀 main.rs
+               ├──┬ 📂 cli
+[KiB 7.231]    │  ├──• 🦀 args.rs
+[  B 724.0]    │  ├──• 🦀 dist.rs
+[KiB 1.791]    │  ├──• 🦀 doc.rs
+[  B 408.0]    │  ├──• 🦀 mod.rs
+[  B 577.0]    │  ├──• 🦀 stamp.rs
+[KiB 3.690]    │  ├──• 🦀 tree.rs
+[KiB 2.486]    │  └──• 🦀 utils.rs
+               ├──┬ 📂 lib
+[KiB 6.758]    │  ├──• 🦀 fn_copy_dist.rs
+[KiB 1.702]    │  ├──• 🦀 fn_datestamp.rs
+[KiB 1.913]    │  ├──• 🦀 fn_doc_gen.rs
+[KiB 2.703]    │  ├──• 🦀 fn_doc_id.rs
+[  B 570.0]    │  ├──• 🦀 fn_doc_models.rs
+[KiB 4.593]    │  ├──• 🦀 fn_doc_write.rs
+[KiB 1.964]    │  ├──• 🦀 fn_files_blacklist.rs
+[KiB 8.222]    │  ├──• 🦀 fn_filespath.rs
+[KiB 4.604]    │  ├──• 🦀 fn_filestree.rs
+[  B 724.0]    │  ├──• 🦀 fn_path_utils.rs
+[KiB 1.546]    │  ├──• 🦀 fn_pathtype.rs
+[KiB 4.278]    │  ├──• 🦀 fn_plotfiles.rs
+[KiB 3.602]    │  ├──• 🦀 fn_weight.rs
+[  B 288.0]    │  └──• 🦀 mod.rs
+               └──┬ 📂 tui
+[KiB 1.393]       ├──• 🦀 dist.rs
+[KiB 4.244]       ├──• 🦀 doc.rs
+[KiB 1.487]       ├──• 🦀 mod.rs
+[KiB 1.023]       ├──• 🦀 stamp.rs
+[KiB 2.616]       ├──• 🦀 tree.rs
+[KiB 6.317]       └──• 🦀 utils.rs
+```
+
+Powyższa struktura to wynik komendy:
+
+```bash
+cargo plot tree -s files-first --no-default-excludes -e ./f.md -e ./d.md -e ./target/ -e ./.git/ -e ./test/ -e ./.gitignore -e ./u.md -e ./Cargo.lock -e ./LICENSE-APACHE -e ./LICENSE-MIT -e ./.github/ -e ./.cargo/ -e ./doc/ -e ./README.md -w binary --weight-precision 5 --no-dir-weight 
+```
 
 Biblioteka `cargo-plot` oferuje bogate API, które pozwala na:
 
@@ -255,6 +297,18 @@ Te flagi pozwalają zamienić `cargo-plot` w analizator zajętości przestrzeni 
 * **`--no-file-weight`** – Ukrywa wagi przy plikach. Pokazuje wyłącznie podsumowania zsumowane dla katalogów.
 * **`--real-dir-weight`** – Zmienia tryb obliczania. Domyślnie (bez tej flagi), waga folderu to suma wykazanych i odfiltrowanych plików na Twoim wykresie. Dodanie tej flagi sprawia, że program pokaże rzeczywisty fizyczny rozmiar folderu na dysku, ignorując wzorce pomijania (`--exclude` / `whitelist`).
 
+#### Opcje eksportu i nazewnictwa (Generowanie plików z drzewa)
+
+Drzewo można nie tylko wyświetlić w konsoli, ale i zapisać do gotowego pliku Markdown z dedykowanymi metadanymi.
+
+* **`--out-file <ŚCIEŻKA>`** – Zapisuje wynikowe drzewo do pliku Markdown (np. `struktura.md`) zamiast wyrzucać je do konsoli.
+* **`--print-console`** – Domyślnie użycie `--out-file` wycisza terminal. Ta flaga wymusza jednoczesny wydruk kolorowego drzewa w konsoli oraz zapis do pliku.
+* **`--watermark <POZYCJA>`** – Dodaje informację o narzędziu z linkiem do GitHuba/Crates. Opcje: `first` (góra), `last` (dół - domyślnie), `none` (brak).
+* **`--print-command`** – Rzutuje użytą komendę CLI do bloku kodu `bash` na początku zapisanego pliku.
+* **`--suffix-stamp`** (alias: `--sufix-stamp`) – Dokleja unikalny znacznik czasu do nazwy pliku wyjściowego (np. `drzewo__2026Q1...md`). Jeśli flaga nie zostanie użyta, stempel wyląduje w tytule wewnątrz pliku.
+* **`--title-file <TYTUŁ>`** – Nadpisuje główny nagłówek H1 w wygenerowanym pliku (Domyślnie: `RAPORT`).
+* **`--title-file-with-path`** – Dokleja ścieżkę pliku do głównego nagłówka H1 (np. `# RAPORT (doc/drzewo.md)`).
+
 ---
 
 ### Podkomenda: `tree` -  Przykłady wywołań i niuanse terminali
@@ -311,14 +365,19 @@ Oprócz nich posiada dedykowane opcje sterujące procesem zapisu plików i forma
 #### Opcje formatowania Markdown
 
 * **`-I, --id-style <STYL>`** – Formatowanie zautomatyzowanych nagłówków sekcji (Identyfikatorów):
-* `tag` – (Domyślnie) Pełne tagowanie opisowe (np. `## Plik-RustLibPub_01:`).
-* `num` – Numeracja sekwencyjna (np. `## Plik-001:`).
-* `none` – Minimalizm (samą ścieżkę, np. `## Plik: ./src/main.rs`).
-
+  * `tag` – (Domyślnie) Pełne tagowanie opisowe (np. `## Plik-RustLibPub_01:`).
+  * `num` – Numeracja sekwencyjna (np. `## Plik-001:`).
+  * `none` – Minimalizm (samą ścieżkę, np. `## Plik: ./src/main.rs`).
 * **`-T, --insert-tree <METODA>`** – Decyduje o spisie treści na początku dokumentu:
-* `dirs-first` – Wkleja drzewo z folderami na górze.
-* `files-first` – (Domyślnie) Wkleja drzewo z plikami na górze.
-* `none` – Całkowicie wyłącza rysowanie spisu treści.
+  * `dirs-first` / `files-first` (Domyślnie) / `none`.
+
+#### Opcje metadanych i znaków wodnych
+
+* **`--watermark <POZYCJA>`** – Pozycja stopki reklamowej cargo-plot w raporcie: `first`, `last` (Domyślnie) lub `none`.
+* **`--print-command`** – Rzutuje użytą komendę CLI na samą górę raportu, ułatwiając reprodukcję zadania np. w CI/CD.
+* **`--suffix-stamp`** (alias: `--sufix-stamp`) – Przenosi znacznik czasu z wnętrza pliku (tytułu) bezpośrednio do jego nazwy na dysku.
+* **`--title-file <TYTUŁ>`** – Zmienia główny nagłówek raportu (Domyślnie: `RAPORT`).
+* **`--title-file-with-path`** – Dokleja informację o ścieżce do głównego tytułu raportu.
 
 ---
 
@@ -456,6 +515,12 @@ cargo plot tree -t dirs -w decimal --no-file-weight --real-dir-weight
 
 ```
 
+**6. Raport z pełną analityką, własnym tytułem i komendą na górze (Power-User Move):**
+
+```bash
+cargo plot doc -w binary -I num -T files-first --title-file "Dokumentacja Architektury" --title-file-with-path --print-command --suffix-stamp --task "loc=.,inc=src,out=files"
+```
+
 ---
 ---
 
@@ -577,7 +642,7 @@ Główne narzędzie API do filtrowania i pozyskiwania ścieżek z systemu plikó
 Przetwarza płaską listę ścieżek na hierarchiczną strukturę danych.
 
 * **Struktura `FileNode`** – Węzeł drzewa zawierający pola: `name: String`, `path: PathBuf`, `is_dir: bool`, `icon: String`, `children: Vec<FileNode>`.
-* **`filestree(paths: Vec<PathBuf>, sort_method: &str) -> Vec<FileNode>`** – Buduje wektor węzłów ze ścieżek przypisując do nich automatycznie ikony. Obsługuje trzy sposoby sortowania argumentem `sort_method`:
+* **`filestree(paths: Vec<PathBuf>, sort_method: &str, weight_cfg: &WeightConfig) -> Vec<FileNode>`** – Buduje wektor węzłów ze ścieżek przypisując do nich automatycznie ikony oraz wyliczając wagę na podstawie konfiguracji `WeightConfig`. Obsługuje trzy sposoby sortowania argumentem `sort_method`.
   * `"files-first"` – Pliki wyświetlane są przed folderami.
   * `"dirs-first"` – Foldery wyświetlane są przed plikami.
   * Dowolna inna wartość – Sortuje domyślnie tylko alfabetycznie.
@@ -596,10 +661,10 @@ Zamienia obiekt `FileNode` w wizualne drzewo ASCII.
 Definiuje strukturę wejściową dla orkiestratora raportów.
 
 * **Struktura `DocTask<'a>`** – Posiada publiczne pola konfigurujące raport Markdown:
-  * `output_filename: &'a str` – Pierwszy człon docelowej nazwy pliku.
-  * `insert_tree: &'a str` – Kontroluje rzutowanie drzewa struktury katalogów na początku dokumentu: `"dirs-first"`, `"files-first"` lub `"with-out"` (całkowicie wyłącza rysowanie drzewa).
-  * `id_style: &'a str` – Odpowiada za format nagłówków: `"id-tag"`, `"id-num"`, `"id-non"`.
-  * `tasks: Vec<Task<'a>>` – Tablica zadań przeszukiwania pochodząca z modułu `fn_filespath`.
+  * `output_filename`, `insert_tree`, `id_style`, `tasks` (bez zmian).
+  * `weight_config: WeightConfig` – Konfiguracja wagi i rozmiarów plików na spisie treści.
+  * `watermark: &'a str` / `command_str: Option<String>` – Sterowanie znakiem wodnym i wydrukiem komendy.
+  * `suffix_stamp: bool` / `title_file: &'a str` / `title_file_with_path: bool` – Mechanizmy nadpisywania tytułów i nazw plików.
 
 #### 8. Moduł `fn_doc_id` (Generowanie etykiet identyfikacyjnych)
 
@@ -607,7 +672,7 @@ Definiuje strukturę wejściową dla orkiestratora raportów.
 
 #### 9. Moduł `fn_doc_write` (Fizyczny zapis raportu)
 
-* **`write_md(out_path: &str, files: &[PathBuf], id_map: &HashMap<PathBuf, String>, tree_text: Option<String>, _stamp: &str, id_style: &str) -> io::Result<()>`** – Funkcja, która parsuje całe wejście: otwiera i zczytuje na bieżąco faktyczną treść plików źródłowych i opakowuje je w bloki kodowe Markdown używając języka wskazanego w module typowania. **Posiada wbudowany wyjątek dla plików `.md`** – zamiast w bloki kodowe, ich treść jest rzutowana linijka po linijce jako cytaty (znak `>`), co zapobiega uszkodzeniom struktury raportu przez zagnieżdżone znaczniki kodu włączanego pliku. Ostatecznie funkcja zapisuje cały złączony tekst do fizycznego pliku na dysku, transparentnie przekazując ewentualne błędy systemowe I/O poprzez `Result`.
+* **`write_md(out_path: &str, files: &[PathBuf], id_map: &HashMap<PathBuf, String>, tree_text: Option<String>, id_style: &str, watermark: &str, command_str: &Option<String>, stamp: &str, suffix_stamp: bool, title_file: &str, title_file_with_path: bool) -> io::Result<()>`** – Główny silnik zapisu. Parsuje całe wejście, omijając pliki binarne (zależność od `is_blacklisted_extension`). Buduje strukturę tytułów, wkleja znak wodny oraz komendę, a na końcu opakowuje kody źródłowe w bloki kodu Markdown. Zapisuje gotowy tekst na dysk, obsługując transparentnie błędy I/O.
 
 #### 10. Moduł `fn_doc_gen` (Orkiestracja generowania dokumentacji)
 

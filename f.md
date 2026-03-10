@@ -1,12 +1,12 @@
-# Struktura Projektu 2026Q1D069W11_Tue10Mar_233607162
+# Struktura Projektu 2026Q1D070W11_Wed11Mar_001706338
 
 **Wywołana komenda:**
 ```bash
-target\debug\cargo-plot.exe plot tree -s files-first --no-default-excludes -e ./f.md -e ./d.md -e ./target/ -e ./.git/ -e ./test/ -e ./.gitignore -e ./DEV.md -e ./Cargo.lock -e ./LICENSE-APACHE -e ./LICENSE-MIT -e ./.github/ -e ./.cargo/ -e ./doc/ -e ./README.md -w binary --weight-precision 5 --no-dir-weight --out-file f.md --print-console --watermark last --print-command --title-file Struktura Projektu
+target\debug\cargo-plot.exe plot tree -s files-first --no-default-excludes -e ./f.md -e ./d.md -e ./target/ -e ./.git/ -e ./test/ -e ./.gitignore -e ./u.md -e ./Cargo.lock -e ./LICENSE-APACHE -e ./LICENSE-MIT -e ./.github/ -e ./.cargo/ -e ./doc/ -e ./README.md -w binary --weight-precision 5 --no-dir-weight --out-file f.md --print-console --watermark last --print-command --title-file Struktura Projektu
 ```
 
 ```text
-[  B 878.0] ├──• ⚙️ Cargo.toml
+[KiB 1.689] ├──• ⚙️ Cargo.toml
             └──┬ 📂 src
 [  B 671.0]    ├──• 🦀 main.rs
                ├──┬ 📂 cli
@@ -15,12 +15,12 @@ target\debug\cargo-plot.exe plot tree -s files-first --no-default-excludes -e ./
 [KiB 1.791]    │  ├──• 🦀 doc.rs
 [  B 408.0]    │  ├──• 🦀 mod.rs
 [  B 577.0]    │  ├──• 🦀 stamp.rs
-[KiB 3.722]    │  ├──• 🦀 tree.rs
+[KiB 3.690]    │  ├──• 🦀 tree.rs
 [KiB 2.486]    │  └──• 🦀 utils.rs
                ├──┬ 📂 lib
 [KiB 6.758]    │  ├──• 🦀 fn_copy_dist.rs
 [KiB 1.702]    │  ├──• 🦀 fn_datestamp.rs
-[KiB 1.951]    │  ├──• 🦀 fn_doc_gen.rs
+[KiB 1.913]    │  ├──• 🦀 fn_doc_gen.rs
 [KiB 2.703]    │  ├──• 🦀 fn_doc_id.rs
 [  B 570.0]    │  ├──• 🦀 fn_doc_models.rs
 [KiB 4.593]    │  ├──• 🦀 fn_doc_write.rs

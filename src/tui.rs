@@ -3,7 +3,7 @@
 use cliclack::{confirm, input, intro, outro, outro_cancel, select, spinner};
 use std::process::exit;
 
-// Importujemy funkcje i struktury z lib.rs
+// Importy z Twojej biblioteki
 use lib::fn_copy_dist::{copy_dist, DistConfig};
 use lib::fn_doc_gen::generate_docs;
 use lib::fn_doc_models::DocTask;
@@ -12,140 +12,211 @@ use lib::fn_filestree::filestree;
 use lib::fn_plotfiles::plotfiles_cli;
 
 pub fn run_tui() {
-    intro(" 📦 cargo-plot - Interaktywny Kreator ").unwrap();
+    intro(" 📦 cargo-plot - Panel Sterowania ").unwrap();
 
-    let action = select("Wybierz akcję, którą chcesz wykonać:")
-        .item("tree", "🌲 Rysuj drzewo projektu (Tree)", "Szybki podgląd w konsoli")
-        .item("doc", "📄 Generuj dokumentację (Doc)", "Tworzy raporty Markdown")
-        .item("dist", "📦 Przygotuj dystrybucję (Dist)", "Kopiuje binarki do /dist")
-        .item("quit", "❌ Wyjdź", "")
-        .interact();
+    loop {
+        let action = select("Co chcesz zrobić?")
+            .item("tree", "🌲 Wizualizacja Drzewa (Tree)", "Podgląd struktury z filtrami")
+            .item("doc", "📄 Generator Raportu (Doc)", "Pełna dokumentacja Markdown")
+            .item("dist", "📦 Zarządzanie Wydaniem (Dist)", "Kopiowanie binarek do /dist")
+            .item("quit", "❌ Wyjdź", "")
+            .interact();
 
-    match action {
-        Ok(choice) => match choice {
-            "tree" => {
-                let spin = spinner();
-                spin.start("Skanowanie plików...");
-
-                let tasks = vec![Task {
-                    path_location: ".",
-                    path_exclude: vec![".git/", "target/", "node_modules/", ".vs/", ".idea/", ".vscode/"],
-                    output_type: "dirs_and_files",
-                    ..Default::default()
-                }];
-
-                let paths = filespath(&tasks);
-                let nodes = filestree(paths, "alpha");
-                
-                spin.stop("Zbudowano drzewo projektu:");
-                println!("{}", plotfiles_cli(&nodes, "", None));
-                outro("Koniec pracy. Wpisz `cargo plot --help`, by poznać zaawansowane opcje CLI!").unwrap();
-            }
-
-            "doc" => {
-                // 1. Pytamy o nazwę pliku
-                let out_name: String = input("Podaj bazową nazwę pliku wyjściowego:")
-                    .default_input("code")
-                    .interact()
-                    .unwrap_or_else(|_| "code".to_string());
-
-                // 2. Pytamy o styl spisu treści
-                let insert_tree = select("Jak wstawić wizualizację drzewa do raportu?")
-                    .item("files-first", "Pliki na górze (files-first)", "")
-                    .item("dirs-first", "Katalogi na górze (dirs-first)", "")
-                    .item("with-out", "Całkowicie bez drzewa", "")
-                    .interact()
-                    .unwrap_or("files-first");
-
-                let spin = spinner();
-                spin.start("Skanowanie kodu i generowanie raportu Markdown...");
-
-                let tasks = vec![Task {
-                    path_location: ".",
-                    path_exclude: vec![".git/", "target/", "node_modules/", ".vs/", ".idea/", ".vscode/"],
-                    output_type: "dirs_and_files",
-                    ..Default::default()
-                }];
-
-                let doc_task = DocTask {
-                    output_filename: &out_name,
-                    insert_tree,
-                    id_style: "id-tag", // Używamy domyślnego, czytelnego stylu
-                    tasks,
-                };
-
-                match generate_docs(vec![doc_task], "doc") {
-                    Ok(_) => {
-                        spin.stop("Zapisano dokumentację w katalogu 'doc/'!");
-                        outro("Twój raport jest gotowy do przeglądu!").unwrap();
-                    }
-                    Err(e) => {
-                        spin.error(format!("Błąd zapisu pliku: {}", e));
-                        exit(1);
-                    }
+            match action {
+              Ok("tree") => run_tree_flow(),
+              Ok("doc") => run_doc_flow(),
+              Ok("dist") => run_dist_flow(),
+              Ok("quit") => {
+                  outro("Do zobaczenia!").unwrap();
+                  exit(0);
+              }
+              _ => {
+                  // Jeśli użytkownik naciśnie Esc, wyświetlimy czerwoną informację:
+                  outro_cancel("Operacja anulowana przez użytkownika.").unwrap();
+                  exit(0);
                 }
             }
 
-            "dist" => {
-                // 1. Pytamy o binarne artefakty
-                let bin_input: String = input("Jakie pliki skopiować? (zostaw puste, by skopiować WSZYSTKIE binarki)")
-                    .placeholder("np. cargo-plot, serwer")
-                    .interact()
-                    .unwrap_or_default();
+        let stay = confirm("Czy chcesz wykonać kolejną operację?")
+            .initial_value(true)
+            .interact()
+            .unwrap_or(false);
 
-                // 2. Pytamy czy czyścić katalog (T/n)
-                let clear_dist: bool = confirm("Czy usunąć stare pliki z folderu /dist przed kopiowaniem?")
-                    .initial_value(true)
-                    .interact()
-                    .unwrap_or(true);
-
-                let spin = spinner();
-                spin.start("Szukanie binarek w folderze /target...");
-
-                // Przygotowujemy wektor binarek odrzucając puste spacje
-                let bin_refs: Vec<&str> = if bin_input.trim().is_empty() {
-                    vec![]
-                } else {
-                    bin_input.split(',').map(|s| s.trim()).filter(|s| !s.is_empty()).collect()
-                };
-
-                let config = DistConfig {
-                    target_dir: "./target",
-                    dist_dir: "./dist",
-                    binaries: bin_refs,
-                    clear_dist,
-                    overwrite: true,
-                    dry_run: false,
-                };
-
-                match copy_dist(&config) {
-                    Ok(files) => {
-                        if files.is_empty() {
-                            spin.error("Nie znaleziono żadnych plików! Spróbuj najpierw wpisać `cargo build`.");
-                            exit(1);
-                        } else {
-                            spin.stop(format!("Skopiowano {} plików do struktury dystrybucyjnej!", files.len()));
-                            for (s, d) in files {
-                                println!("   └── {} -> {}", s.file_name().unwrap_or_default().to_string_lossy(), d.display());
-                            }
-                            outro("Katalog ./dist jest gotowy na premierę!").unwrap();
-                        }
-                    }
-                    Err(e) => {
-                        spin.error(format!("Krytyczny błąd kopiowania: {}", e));
-                        exit(1);
-                    }
-                }
-            }
-
-            _ => {
-                outro_cancel("Anulowano przez użytkownika.").unwrap();
-                exit(0);
-            }
-        },
-        Err(_) => {
-            outro_cancel("Wymuszono zamknięcie programu (Ctrl+C).").unwrap();
-            exit(0);
+        if !stay {
+            outro("Do zobaczenia!").unwrap();
+            break;
         }
     }
+}
+
+// --- FLOW: TREE ---
+fn run_tree_flow() {
+    let path: String = input("Ścieżka bazowa (loc):")
+        .default_input(".")
+        .interact()
+        .unwrap();
+
+    let whitelist_raw: String = input("Whitelist: Lokalizacje do UWZGLĘDNIENIA [Enter = wszystko]:")
+        .placeholder("src, lib, Cargo.toml")
+        .required(false)
+        .interact()
+        .unwrap_or_default();
+    let whitelist: Vec<String> = split_and_trim(&whitelist_raw);
+
+    let blacklist_raw: String = input("Blacklist: Lokalizacje do POMINIĘCIA:")
+        .default_input("target, .git, node_modules")
+        .required(false)
+        .interact()
+        .unwrap_or_default();
+    let blacklist: Vec<String> = split_and_trim(&blacklist_raw);
+
+    let filter_raw: String = input("Filtry rozszerzeń (np. *.rs) [Enter = wszystko]:")
+        .placeholder("*.rs, *.md")
+        .required(false)
+        .interact()
+        .unwrap_or_default();
+    let filter: Vec<String> = split_and_trim(&filter_raw);
+
+    let sort = select_sort();
+    let show_type = select_type();
+
+    // Logika rekurencyjna dla whitelisty
+    let processed_whitelist: Vec<String> = if whitelist.is_empty() {
+        vec![]
+    } else {
+        whitelist.iter().map(|s: &String| {
+            if s.ends_with('/') || !s.contains('.') {
+                let base = s.trim_end_matches('/');
+                format!("{}/**/*", base)
+            } else {
+                s.clone()
+            }
+        }).collect()
+    };
+
+    let spin = spinner();
+    spin.start("Analizowanie struktury...");
+
+    let tasks = vec![Task {
+        path_location: &path,
+        path_include_only: processed_whitelist.iter().map(|s| s.as_str()).collect(),
+        path_exclude: blacklist.iter().map(|s| s.as_str()).collect(),
+        filter_files: filter.iter().map(|s| s.as_str()).collect(),
+        output_type: show_type,
+        //..Default::default()
+    }];
+
+    let nodes = filestree(filespath(&tasks), sort);
+    spin.stop("Zbudowano drzewo:");
+    println!("{}", plotfiles_cli(&nodes, "", None));
+}
+
+// --- FLOW: DOC ---
+fn run_doc_flow() {
+    let out_name: String = input("Nazwa raportu (prefix):")
+        .default_input("code")
+        .interact()
+        .unwrap();
+
+    let id_style = select("Styl nagłówków (ID):")
+        .item("id-tag", "Opisowy (tag)", "")
+        .item("id-num", "Numerowany (num)", "")
+        .item("id-non", "Tylko ścieżka (none)", "")
+        .interact().unwrap();
+
+    let tree_style = select("Spis treści (drzewo):")
+        .item("files-first", "Pliki na górze", "")
+        .item("dirs-first", "Foldery na górze", "")
+        .item("with-out", "Brak drzewa", "")
+        .interact().unwrap();
+
+    let is_dry = confirm("Czy uruchomić tryb symulacji (Dry-Run)?")
+        .initial_value(false)
+        .interact().unwrap();
+
+    let spin = spinner();
+    spin.start("Generowanie dokumentacji...");
+
+    let tasks = vec![Task {
+        path_location: ".",
+        path_exclude: vec![".git/", "target/", "node_modules/", ".vs/", ".idea/", ".vscode/"],
+        ..Default::default()
+    }];
+
+    let doc_task = DocTask {
+        output_filename: &out_name,
+        insert_tree: tree_style,
+        id_style,
+        tasks,
+    };
+
+    if is_dry {
+        spin.stop("Symulacja zakończona (nie zapisano plików).");
+    } else {
+        match generate_docs(vec![doc_task], "doc") {
+            Ok(_) => spin.stop("Raport zapisany w folderze /doc"),
+            Err(e) => spin.error(format!("Błąd: {}", e)),
+        }
+    }
+}
+
+// --- FLOW: DIST ---
+// --- FLOW: DIST (Poprawiony błąd E0716) ---
+fn run_dist_flow() {
+    let bins: String = input("Nazwy binarek [Enter = wszystkie]:")
+        .placeholder("np. cargo-plot")
+        .required(false)
+        .interact().unwrap_or_default();
+    
+    let clear = confirm("Czy wyczyścić folder /dist?")
+        .initial_value(true)
+        .interact().unwrap();
+
+    let spin = spinner();
+    spin.start("Przygotowywanie dystrybucji...");
+
+    // ROZWIĄZANIE E0716: Tworzymy stałą zmienną (binding), która będzie żyć 
+    // do końca tej funkcji, dzięki czemu bin_list może bezpiecznie do niej linkować.
+    let owned_bin_list = split_and_trim(&bins);
+    let bin_list: Vec<&str> = owned_bin_list.iter().map(|s| s.as_str()).collect();
+
+    let config = DistConfig {
+        target_dir: "./target",
+        dist_dir: "./dist",
+        binaries: bin_list, // Teraz bin_list wskazuje na bezpieczne dane w owned_bin_list
+        clear_dist: clear,
+        overwrite: true,
+        dry_run: false,
+    };
+
+    match copy_dist(&config) {
+        Ok(f) => spin.stop(format!("Skopiowano {} plików.", f.len())),
+        Err(e) => spin.error(format!("Błąd: {}", e)),
+    }
+}
+
+// --- POMOCNICZE ---
+
+fn split_and_trim(input: &str) -> Vec<String> {
+    if input.trim().is_empty() {
+        vec![]
+    } else {
+        input.split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect()
+    }
+}
+
+fn select_sort() -> &'static str {
+    select("Sortowanie:")
+        .item("alpha", "Alfabetyczne", "")
+        .item("dirs-first", "Katalogi najpierw", "")
+        .item("files-first", "Pliki najpierw", "")
+        .interact().unwrap()
+}
+
+fn select_type() -> &'static str {
+    select("Co wyświetlić?")
+        .item("dirs_and_files", "Wszystko", "")
+        .item("files", "Tylko pliki (z nadrzędnymi)", "")
+        .item("dirs", "Tylko foldery", "")
+        .interact().unwrap()
 }

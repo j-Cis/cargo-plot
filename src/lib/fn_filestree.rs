@@ -100,8 +100,19 @@ pub fn filestree(
 
         // KROK C: Formatowanie wagi do ciągu "[qq xxxxx]"
         let mut weight_str = String::new();
-        if (is_dir && weight_cfg.show_for_dirs) || (!is_dir && weight_cfg.show_for_files) {
-            weight_str = format_weight(weight_bytes, weight_cfg);
+        
+        // Sprawdzamy czy system wag jest w ogóle włączony
+        if weight_cfg.system != crate::fn_weight::UnitSystem::None {
+            let should_show = (is_dir && weight_cfg.show_for_dirs) || (!is_dir && weight_cfg.show_for_files);
+            
+            if should_show {
+                weight_str = format_weight(weight_bytes, weight_cfg);
+            } else {
+                // Jeśli ukrywamy wagę dla tego węzła, wstawiamy puste spacje 
+                // szerokość = 7 (nawiasy, jednostka, spacje) + precyzja
+                let empty_width = 7 + weight_cfg.precision;
+                weight_str = format!("{:width$}", "", width = empty_width);
+            }
         }
 
         FileNode {

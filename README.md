@@ -242,6 +242,19 @@ Zastępują szybkie flagi, pozwalając na budowanie skomplikowanych macierzy ska
 * `files-first` – Pliki wyświetlane są przed folderami.
 * `alpha` – (Domyślnie) Klasyczne sortowanie alfabetyczne.
 
+#### Opcje wagi i rozmiaru plików (Zajętość dysku)
+
+Te flagi pozwalają zamienić `cargo-plot` w analizator zajętości przestrzeni dyskowej, pokazując obok każdego węzła drzewa specjalną ramkę z wyliczonym rozmiarem (np. `[KiB 86.10]`).
+
+* **`-w, --weight <SYSTEM>`** – Włącza system obliczania wagi. Dostępne systemy: 
+  * `binary` – Tradycyjny system programistyczny ($1024^n$: KiB, MiB, GiB).
+  * `decimal` – System metryczny używany na dyskach ($1000^n$: kB, MB, GB).
+  * `none` – (Domyślnie) Całkowicie ukrywa ramkę wagi.
+* **`--weight-precision <LICZBA>`** – Ustala precyzję znakową (szerokość) pola wyświetlającego rozmiar. Gwarantuje pionowe wyrównanie gałęzi. Domyślnie `5`. (np. wartość `3` skróci zapis do `[KiB  86]`).
+* **`--no-dir-weight`** – Ukrywa wyświetlanie wag przy folderach, zachowując przy tym idealne wcięcia ramki. Waga zostanie pokazana tylko przy plikach.
+* **`--no-file-weight`** – Ukrywa wagi przy plikach. Pokazuje wyłącznie podsumowania zsumowane dla katalogów.
+* **`--real-dir-weight`** – Zmienia tryb obliczania. Domyślnie (bez tej flagi), waga folderu to suma wykazanych i odfiltrowanych plików na Twoim wykresie. Dodanie tej flagi sprawia, że program pokaże rzeczywisty fizyczny rozmiar folderu na dysku, ignorując wzorce pomijania (`--exclude` / `whitelist`).
+
 ---
 
 ### Podkomenda: `tree` -  Przykłady wywołań i niuanse terminali
@@ -436,6 +449,13 @@ cargo plot doc --help
 
 ```
 
+**5. Analizator dyskowy (Tylko foldery z prawdziwym rozmiarem dziesiętnym na dysku):**
+
+```bash
+cargo plot tree -t dirs -w decimal --no-file-weight --real-dir-weight
+
+```
+
 ---
 ---
 
@@ -619,6 +639,18 @@ Dostarcza mechanizmy ochronne (Defensive Programming), które zapobiegają wczyt
   * **Zakres ochrony**: Obejmuje grafikę (np. `.png`, `.psd`), binarki i artefakty kompilacji (np. `.exe`, `.rlib`, `.obj`), archiwa (np. `.zip`, `.iso`), bazy danych (np. `.sqlite`), dokumenty biurowe (np. `.docx`, `.pdf`), fonty oraz media (audio/wideo).
   * **Zastosowanie**: Wykorzystywana przez silnik zapisu (`write_md`) do filtrowania plików przed próbą ich odczytu. Jeśli rozszerzenie znajduje się na liście, generator pomija treść pliku, wstawiając jedynie stosowną informację w raporcie, co drastycznie redukuje zużycie zasobów systemowych i zapobiega błędom kodowania UTF-8.
 
+#### 13. Moduł `fn_weight` (Analiza zajętości miejsca)
+
+Dostarcza zaawansowane mechanizmy obliczania i formatowania wag (rozmiarów) plików oraz folderów.
+
+* **Enum `UnitSystem`** – Definiuje system matematyczny wyliczeń: `Decimal` (system SI, $1000^n$: kB, MB), `Binary` (system programistyczny IEC, $1024^n$: KiB, MiB) oraz `None` (wyłącza wagi).
+* **Struktura `WeightConfig`** – Centralny obiekt konfigurujący proces wizualizacji wag:
+  * `system: UnitSystem` – Wybór jednostek.
+  * `precision: usize` – Określa całkowitą szerokość pola liczbowego, gwarantując idealne pionowe wyrównanie drzewa (domyślnie 5, minimum 3).
+  * `show_for_files: bool` / `show_for_dirs: bool` – Niezależna kontrola widoczności wag dla plików i folderów (ukrycie wagi zachowuje oryginalne wcięcia ramki).
+  * `dir_sum_included: bool` – Potężna opcja sterująca logiką. Jeśli `true` (domyślnie), waga folderu to suma wyłącznie plików uwzględnionych przez Twoje filtry (whitelist/blacklist). Jeśli `false`, program zejdzie bezpośrednio na dysk twardy i wyliczy faktyczny, fizyczny rozmiar katalogu.
+* **`format_weight(bytes: u64, config: &WeightConfig) -> String`** – Główna funkcja parsująca bajty do wyrównanego ciągu tekstowego w formacie `[qq xxxxx] `.
+
 ### Użycie - Przykłady
 
 Biblioteka `cargo-plot` została zaprojektowana w sposób modułowy. Poniżej znajdują się kompleksowe przykłady użycia pokazujące krok po kroku, jak w pełni wykorzystać możliwości naszego API w Twoich plikach binarnych.
@@ -759,6 +791,33 @@ fn main() {
         },
         Err(e) => eprintln!("[-] KRYTYCZNY BŁĄD: {}", e),
     }
+}
+```
+
+#### 5. Analiza zajętości dysku (Drzewo z rozmiarami)
+
+Narzędzie posiada wbudowany silnik do sprawdzania rozmiaru plików, który pozwala na wygenerowanie drzewa przypominającego to z polecenia `du` w systemach Unix.
+
+```rust
+use lib::fn_filespath::{filespath, Task};
+use lib::fn_filestree::{filestree, FileNode};
+use lib::fn_weight::{WeightConfig, UnitSystem};
+use lib::fn_plotfiles::plotfiles_cli;
+
+fn main() {
+    let tasks = vec![Task { ..Default::default() }];
+    let paths = filespath(&tasks);
+
+    // Konfiguracja wag: System binarny (KiB, MiB), ukrycie wagi dla plików
+    let w_cfg = WeightConfig {
+        system: UnitSystem::Binary,
+        precision: 5,
+        show_for_files: false,
+        ..Default::default()
+    };
+
+    let nodes = filestree(paths, "files-first", &w_cfg);
+    println!("{}", plotfiles_cli(&nodes, "", None));
 }
 ```
 

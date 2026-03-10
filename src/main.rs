@@ -22,7 +22,7 @@ fn main() {
         Some(Commands::DistCopy(args)) => handle_dist_copy(args),
         None => {
             tui::run_tui();
-        },
+        }
     }
 }
 

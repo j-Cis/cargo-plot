@@ -22,6 +22,9 @@ pub fn run_tree_flow() {
 
     let sort = super::utils::select_sort();
 
+    // -- ZMIANA: Wywołujemy nowy konfigurator wag --
+    let w_cfg = super::utils::ask_for_weight_config();
+
     // Prefix '_' mówi Rustowi: "Wiem, że tego nie używam (jeszcze), nie krzycz"
     let _use_custom_style = confirm("Czy użyć niestandardowego stylu gałęzi?")
         .initial_value(false)
@@ -36,11 +39,7 @@ pub fn run_tree_flow() {
         .map(|t: &super::utils::TaskData| t.to_api_task())
         .collect();
         
-    // Tymczasowo, wyłączone:
-    let mut w_cfg = lib::fn_weight::WeightConfig::default();
-    w_cfg.system = lib::fn_weight::UnitSystem::None;
-
-    let nodes = filestree(filespath(&tasks), sort, &w_cfg); // <--- ZMIANA: Dodano &w_cfg
+    let nodes = filestree(filespath(&tasks), sort, &w_cfg);
 
     spin.stop("Skanowanie zakończone:");
 

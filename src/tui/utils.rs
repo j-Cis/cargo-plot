@@ -1,5 +1,6 @@
 // Plik: src/tui/utils.rs
 use cliclack::{input, select};
+use lib::fn_weight::{UnitSystem, WeightConfig};
 
 pub struct TaskData {
     pub loc: String,
@@ -115,4 +116,55 @@ pub fn select_tree_style() -> &'static str {
         .item("with-out", "Brak drzewa", "")
         .interact()
         .unwrap()
+}
+
+pub fn ask_for_weight_config() -> WeightConfig {
+    let system_str = select("Czy wyświetlać wagę (rozmiar) plików i folderów?")
+        .item("none", "❌ Nie (wyłączone)", "")
+        .item("binary", "💾 System binarny (KiB, MiB)", "IEC: 1024^n")
+        .item("decimal", "💽 System dziesiętny (kB, MB)", "SI: 1000^n")
+        .interact()
+        .unwrap();
+
+    let system = match system_str {
+        "binary" => UnitSystem::Binary,
+        "decimal" => UnitSystem::Decimal,
+        _ => return WeightConfig { system: UnitSystem::None, ..Default::default() },
+    };
+
+    // Jeśli wybrano system, zadajemy pytania szczegółowe
+    let precision_str: String = input("Precyzja (szerokość ramki liczbowej):")
+        .default_input("5")
+        .interact()
+        .unwrap();
+    
+    let precision = precision_str.parse::<usize>().unwrap_or(5).max(3);
+
+    let show_for_files = cliclack::confirm("Czy pokazywać rozmiar przy plikach?")
+        .initial_value(true)
+        .interact()
+        .unwrap();
+
+    let show_for_dirs = cliclack::confirm("Czy pokazywać zsumowany rozmiar przy folderach?")
+        .initial_value(true)
+        .interact()
+        .unwrap();
+
+    let mut dir_sum_included = true;
+    if show_for_dirs {
+        let sum_mode = select("Jak liczyć pojemność folderów?")
+            .item("filtered", "Suma widocznych plików", "Tylko pliki ujęte na liście")
+            .item("real", "Rzeczywisty rozmiar", "Bezpośrednio z dysku twardego")
+            .interact()
+            .unwrap();
+        dir_sum_included = sum_mode == "filtered";
+    }
+
+    WeightConfig {
+        system,
+        precision,
+        show_for_files,
+        show_for_dirs,
+        dir_sum_included,
+    }
 }

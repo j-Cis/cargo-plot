@@ -29,6 +29,15 @@ pub fn run_doc_flow() {
         let id_s = super::utils::select_id_style();
         let tree_s = super::utils::select_tree_style();
 
+        // -- NOWY BLOK WAG --
+        let w_cfg = if tree_s != "with-out" {
+            super::utils::ask_for_weight_config()
+        } else {
+            let mut cfg = lib::fn_weight::WeightConfig::default();
+            cfg.system = lib::fn_weight::UnitSystem::None;
+            cfg
+        };
+
         let mut tasks_for_this_report = Vec::new();
         loop {
             // Teraz funkcja jest zaimportowana, więc zadziała bezpośrednio
@@ -43,7 +52,7 @@ pub fn run_doc_flow() {
             }
         }
 
-        reports_configs.push((name, id_s, tree_s, tasks_for_this_report));
+        reports_configs.push((name, id_s, tree_s, tasks_for_this_report, w_cfg));
 
         if !confirm("Czy chcesz zdefiniować KOLEJNY, osobny raport (DocTask)?")
             .initial_value(false)
@@ -65,19 +74,14 @@ pub fn run_doc_flow() {
     let mut final_doc_tasks = Vec::new();
 
     for r in &reports_configs {
-        // Pomagamy Rustowi, określając typ 't' jako &TaskData
         let api_tasks: Vec<Task> = r.3.iter().map(|t: &TaskData| t.to_api_task()).collect();
-
-        // Tymczasowo wyłączamy wagi w TUI (pełne wdrożenie w Kroku 5)
-        let mut w_cfg = lib::fn_weight::WeightConfig::default();
-        w_cfg.system = lib::fn_weight::UnitSystem::None;
 
         final_doc_tasks.push(DocTask {
             output_filename: &r.0,
             insert_tree: r.2,
             id_style: r.1,
             tasks: api_tasks,
-            weight_config: w_cfg, // <--- NAPRAWA BŁĘDU
+            weight_config: r.4.clone(), // -- ZMIANA: Przypisujemy konfigurację TUI --
         });
     }
 

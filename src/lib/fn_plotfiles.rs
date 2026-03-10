@@ -36,7 +36,6 @@ impl Default for TreeStyle {
     }
 }
 
-
 /// Prywatna funkcja pomocnicza, która odwala całą powtarzalną robotę.
 fn plot(nodes: &[FileNode], indent: &str, s: &TreeStyle, use_color: bool) -> String {
     let mut result = String::new();
@@ -48,9 +47,9 @@ fn plot(nodes: &[FileNode], indent: &str, s: &TreeStyle, use_color: bool) -> Str
         // 1. Wybór odpowiedniego znaku gałęzi
         let branch = if node.is_dir {
             match (is_last, has_children) {
-                (true, true)   => &s.dir_last_with_children,
-                (false, true)  => &s.dir_mid_with_children,
-                (true, false)  => &s.dir_last_no_children,
+                (true, true) => &s.dir_last_with_children,
+                (false, true) => &s.dir_mid_with_children,
+                (true, false) => &s.dir_last_no_children,
                 (false, false) => &s.dir_mid_no_children,
             }
         } else if is_last {
@@ -62,16 +61,28 @@ fn plot(nodes: &[FileNode], indent: &str, s: &TreeStyle, use_color: bool) -> Str
         // 2. Formatowanie konkretnej linii (z kolorami lub bez)
         let line = if use_color {
             if node.is_dir {
-                format!("{}{} {}{}/\n", indent.green(), branch.green(), node.icon, node.name.truecolor(200, 200, 50))
+                format!(
+                    "{}{} {}{}/\n",
+                    indent.green(),
+                    branch.green(),
+                    node.icon,
+                    node.name.truecolor(200, 200, 50)
+                )
             } else {
-                format!("{}{} {}{}\n", indent.green(), branch.green(), node.icon, node.name.white())
+                format!(
+                    "{}{} {}{}\n",
+                    indent.green(),
+                    branch.green(),
+                    node.icon,
+                    node.name.white()
+                )
             }
         } else {
             format!("{}{} {} {}\n", indent, branch, node.icon, node.name)
         };
-        
+
         result.push_str(&line);
-        
+
         // 3. Rekurencja dla dzieci z wyliczonym nowym wcięciem
         if has_children {
             let new_indent = if is_last {
@@ -90,7 +101,7 @@ fn plot(nodes: &[FileNode], indent: &str, s: &TreeStyle, use_color: bool) -> Str
 pub fn plotfiles_txt(nodes: &[FileNode], indent: &str, style: Option<&TreeStyle>) -> String {
     let default_style = TreeStyle::default();
     let s = style.unwrap_or(&default_style);
-    
+
     plot(nodes, indent, s, false)
 }
 
@@ -98,6 +109,6 @@ pub fn plotfiles_txt(nodes: &[FileNode], indent: &str, style: Option<&TreeStyle>
 pub fn plotfiles_cli(nodes: &[FileNode], indent: &str, style: Option<&TreeStyle>) -> String {
     let default_style = TreeStyle::default();
     let s = style.unwrap_or(&default_style);
-    
+
     plot(nodes, indent, s, true)
 }

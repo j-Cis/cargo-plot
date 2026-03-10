@@ -10,25 +10,45 @@ pub fn generate_ids(paths: &[PathBuf]) -> HashMap<PathBuf, String> {
     sorted_paths.sort();
 
     for path in sorted_paths {
-      // Ignorujemy foldery, przypisujemy ID tylko plikom
+        // Ignorujemy foldery, przypisujemy ID tylko plikom
         if path.is_dir() {
             continue;
         }
         // DODAJEMY .to_string() NA KOŃCU, ABY ZROBIĆ NIEZALEŻNĄ KOPIĘ
-        let file_name = path.file_name().unwrap_or_default().to_string_lossy().to_string();
-        
+        let file_name = path
+            .file_name()
+            .unwrap_or_default()
+            .to_string_lossy()
+            .to_string();
+
         // Tutaj .replace() i tak zwraca już własnego Stringa, więc jest bezpiecznie
         let path_str = path.to_string_lossy().replace('\\', "/");
 
         // 1. Twarde reguły dla znanych plików
-        if file_name == "Cargo.toml" { map.insert(path.clone(), "TomlCargo".to_string()); continue; }
-        if file_name == "Makefile.toml" { map.insert(path.clone(), "TomlMakefile".to_string()); continue; }
-        if file_name == "build.rs" { map.insert(path.clone(), "RustBuild".to_string()); continue; }
-        if path_str.contains("src/ui/index.slint") { map.insert(path.clone(), "SlintIndex".to_string()); continue; }
+        if file_name == "Cargo.toml" {
+            map.insert(path.clone(), "TomlCargo".to_string());
+            continue;
+        }
+        if file_name == "Makefile.toml" {
+            map.insert(path.clone(), "TomlMakefile".to_string());
+            continue;
+        }
+        if file_name == "build.rs" {
+            map.insert(path.clone(), "RustBuild".to_string());
+            continue;
+        }
+        if path_str.contains("src/ui/index.slint") {
+            map.insert(path.clone(), "SlintIndex".to_string());
+            continue;
+        }
 
         // 2. Dynamiczne ID na podstawie ścieżki
         let prefix = if path_str.contains("src/lib") {
-            if file_name == "mod.rs" { "RustLibMod".to_string() } else { "RustLibPub".to_string() }
+            if file_name == "mod.rs" {
+                "RustLibMod".to_string()
+            } else {
+                "RustLibPub".to_string()
+            }
         } else if path_str.contains("src/bin") || path_str.contains("src/main.rs") {
             "RustBin".to_string()
         } else if path_str.contains("src/ui") {
@@ -40,7 +60,7 @@ pub fn generate_ids(paths: &[PathBuf]) -> HashMap<PathBuf, String> {
 
         // Licznik dla danej kategorii
         let count = counters.entry(prefix.clone()).or_insert(1);
-        
+
         let id = if file_name == "mod.rs" && prefix == "RustLibMod" {
             format!("{}_00", prefix) // mod.rs zawsze jako 00
         } else {

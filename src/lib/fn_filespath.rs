@@ -14,8 +14,8 @@ struct Rule {
 fn glob_to_regex(pattern: &str) -> Rule {
     let raw = pattern.trim();
     let mut p = raw.replace('\\', "/");
-    
-    // NAPRAWA: Jeśli użytkownik podał "./folder", ucinamy "./", 
+
+    // NAPRAWA: Jeśli użytkownik podał "./folder", ucinamy "./",
     // ponieważ relatywna ścieżka (rel_path) nigdy tego nie zawiera.
     if p.starts_with("./") {
         p = p[2..].to_string();
@@ -86,35 +86,48 @@ pub fn filespath(tasks: &[Task]) -> Vec<PathBuf> {
 
     for task in tasks {
         let root_path = Path::new(task.path_location);
-        let canonical_root = fs::canonicalize(root_path).unwrap_or_else(|_| root_path.to_path_buf());
+        let canonical_root =
+            fs::canonicalize(root_path).unwrap_or_else(|_| root_path.to_path_buf());
 
         // Przygotowanie reguł
         let mut exclude_rules = Vec::new();
         for p in &task.path_exclude {
-            if !p.trim().is_empty() { exclude_rules.push(glob_to_regex(p)); }
+            if !p.trim().is_empty() {
+                exclude_rules.push(glob_to_regex(p));
+            }
         }
 
         let mut include_only_rules = Vec::new();
         for p in &task.path_include_only {
-            if !p.trim().is_empty() { include_only_rules.push(glob_to_regex(p)); }
+            if !p.trim().is_empty() {
+                include_only_rules.push(glob_to_regex(p));
+            }
         }
 
         let mut filter_files_rules = Vec::new();
         for p in &task.filter_files {
-            if !p.trim().is_empty() { filter_files_rules.push(glob_to_regex(p)); }
+            if !p.trim().is_empty() {
+                filter_files_rules.push(glob_to_regex(p));
+            }
         }
 
         // =========================================================
         // KROK 1: PEŁNY SKAN Z ODRZUCENIEM CAŁYCH GAŁĘZI EXCLUDE
         // =========================================================
         let mut scanned_paths = Vec::new();
-        scan_step1(&canonical_root, &canonical_root, &exclude_rules, &mut scanned_paths);
+        scan_step1(
+            &canonical_root,
+            &canonical_root,
+            &exclude_rules,
+            &mut scanned_paths,
+        );
 
         // =========================================================
         // KROK 2: ZACHOWANIE FOLDERÓW I FILTROWANIE PLIKÓW INCLUDE
         // =========================================================
         for path in scanned_paths {
-            let rel_path = path.strip_prefix(&canonical_root)
+            let rel_path = path
+                .strip_prefix(&canonical_root)
                 .unwrap()
                 .to_string_lossy()
                 .replace('\\', "/");
@@ -126,19 +139,19 @@ pub fn filespath(tasks: &[Task]) -> Vec<PathBuf> {
                     if rule.only_dir {
                         // Jeśli reguła dotyczy TYLKO folderów
                         if path.is_dir() && rule.regex.is_match(&path_slash) {
-                            matches = true; 
+                            matches = true;
                             break;
                         }
                     } else {
                         // Jeśli reguła jest uniwersalna (pliki i foldery)
                         if rule.regex.is_match(&rel_path) || rule.regex.is_match(&path_slash) {
-                            matches = true; 
+                            matches = true;
                             break;
                         }
                     }
                 }
                 if !matches {
-                    continue; 
+                    continue;
                 }
             }
 
@@ -160,7 +173,9 @@ pub fn filespath(tasks: &[Task]) -> Vec<PathBuf> {
                     is_file_matched = true;
                 } else {
                     for rule in &filter_files_rules {
-                        if rule.only_dir { continue; } 
+                        if rule.only_dir {
+                            continue;
+                        }
                         if rule.regex.is_match(&rel_path) {
                             is_file_matched = true;
                             break;
@@ -170,7 +185,7 @@ pub fn filespath(tasks: &[Task]) -> Vec<PathBuf> {
 
                 if is_file_matched {
                     all_results.insert(path.clone());
-                    
+
                     // MAGIA DLA "files":
                     // Aby drzewo nie spłaszczyło się do zwykłej listy, musimy dodać foldery nadrzędne
                     // tylko dla TEGO KONKRETNEGO dopasowanego pliku. (Ukrywa to puste foldery!)
@@ -178,7 +193,9 @@ pub fn filespath(tasks: &[Task]) -> Vec<PathBuf> {
                         let mut current_parent = path.parent();
                         while let Some(p) = current_parent {
                             all_results.insert(p.to_path_buf());
-                            if p == canonical_root { break; }
+                            if p == canonical_root {
+                                break;
+                            }
                             current_parent = p.parent();
                         }
                     }
@@ -196,7 +213,7 @@ fn scan_step1(
     root_path: &Path,
     current_path: &Path,
     exclude_rules: &[Rule],
-    scanned_paths: &mut Vec<PathBuf>
+    scanned_paths: &mut Vec<PathBuf>,
 ) {
     let read_dir = match fs::read_dir(current_path) {
         Ok(rd) => rd,
@@ -215,7 +232,7 @@ fn scan_step1(
         if rel_path.is_empty() {
             continue;
         }
-        
+
         let path_slash = format!("{}/", rel_path);
 
         // KROK 1.1: Czy wykluczone przez EXCLUDE?
@@ -232,7 +249,7 @@ fn scan_step1(
 
         // Jeśli folder/plik jest wykluczony - URYWAMY GAŁĄŹ I NIE WCHODZIMY GŁĘBIEJ
         if is_excluded {
-            continue; 
+            continue;
         }
 
         // KROK 1.2: Dodajemy do tymczasowych wyników KROKU 1

@@ -1,7 +1,7 @@
 // src/lib/fn_copy_dist.rs
 use std::fs;
-use std::path::{Path, PathBuf};
 use std::io;
+use std::path::{Path, PathBuf};
 
 /// Struktura konfiguracyjna do zarządzania dystrybucją (Wzorzec: Parameter Object).
 pub struct DistConfig<'a> {
@@ -30,21 +30,32 @@ impl<'a> Default for DistConfig<'a> {
 /// Helper: Mapuje architekturę na przyjazne nazwy systemów.
 fn parse_os_from_triple(triple: &str) -> String {
     let t = triple.to_lowercase();
-    if t.contains("windows") { "windows".to_string() }
-    else if t.contains("linux") { "linux".to_string() }
-    else if t.contains("darwin") || t.contains("apple") { "macos".to_string() }
-    else if t.contains("android") { "android".to_string() }
-    else if t.contains("wasm") { "wasm".to_string() }
-    else { "unknown".to_string() }
+    if t.contains("windows") {
+        "windows".to_string()
+    } else if t.contains("linux") {
+        "linux".to_string()
+    } else if t.contains("darwin") || t.contains("apple") {
+        "macos".to_string()
+    } else if t.contains("android") {
+        "android".to_string()
+    } else if t.contains("wasm") {
+        "wasm".to_string()
+    } else {
+        "unknown".to_string()
+    }
 }
 
 /// Helper: Prosta heurystyka odróżniająca prawdziwą binarkę od śmieci po kompilacji w systemach Unix/Windows.
 fn is_likely_binary(path: &Path, os_name: &str) -> bool {
-    if !path.is_file() { return false; }
-    
+    if !path.is_file() {
+        return false;
+    }
+
     // Ignorujemy ukryte pliki (na wszelki wypadek)
     let file_name = path.file_name().unwrap_or_default().to_string_lossy();
-    if file_name.starts_with('.') { return false; }
+    if file_name.starts_with('.') {
+        return false;
+    }
 
     if let Some(ext) = path.extension() {
         let ext_str = ext.to_string_lossy().to_lowercase();
@@ -52,13 +63,19 @@ fn is_likely_binary(path: &Path, os_name: &str) -> bool {
         if ["d", "rlib", "rmeta", "pdb", "lib", "dll", "so", "dylib"].contains(&ext_str.as_str()) {
             return false;
         }
-        if os_name == "windows" { return ext_str == "exe"; }
-        if os_name == "wasm" { return ext_str == "wasm"; }
+        if os_name == "windows" {
+            return ext_str == "exe";
+        }
+        if os_name == "wasm" {
+            return ext_str == "wasm";
+        }
     } else {
         // Brak rozszerzenia to standard dla plików wykonywalnych na Linux/macOS
-        if os_name == "windows" { return false; }
+        if os_name == "windows" {
+            return false;
+        }
     }
-    
+
     true
 }
 
@@ -72,7 +89,10 @@ pub fn copy_dist(config: &DistConfig) -> io::Result<Vec<(PathBuf, PathBuf)>> {
     if !target_path.exists() {
         return Err(io::Error::new(
             io::ErrorKind::NotFound,
-            format!("Katalog '{}' nie istnieje. Uruchom najpierw `cargo build`.", config.target_dir)
+            format!(
+                "Katalog '{}' nie istnieje. Uruchom najpierw `cargo build`.",
+                config.target_dir
+            ),
         ));
     }
 
@@ -101,7 +121,13 @@ pub fn copy_dist(config: &DistConfig) -> io::Result<Vec<(PathBuf, PathBuf)>> {
         } else {
             // TRYB 2: Kopiuj KONKRETNE binarki
             for bin in &config.binaries {
-                let suffix = if os_name == "windows" { ".exe" } else if os_name == "wasm" { ".wasm" } else { "" };
+                let suffix = if os_name == "windows" {
+                    ".exe"
+                } else if os_name == "wasm" {
+                    ".wasm"
+                } else {
+                    ""
+                };
                 let full_name = format!("{}{}", bin, suffix);
                 let path = search_dir.join(&full_name);
                 if path.exists() {
@@ -161,7 +187,7 @@ pub fn copy_dist(config: &DistConfig) -> io::Result<Vec<(PathBuf, PathBuf)>> {
             fs::create_dir_all(&dest_dir)?;
             fs::copy(&src, &dest_file)?;
         }
-        
+
         processed_files.push((src, dest_file));
     }
 

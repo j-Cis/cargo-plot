@@ -9,7 +9,11 @@ pub enum CargoCli {
 }
 
 #[derive(Args, Debug)]
-#[command(author, version, about = "cargo-plot - Twój szwajcarski scyzoryk do dokumentacji w Rust")]
+#[command(
+    author,
+    version,
+    about = "cargo-plot - Twój szwajcarski scyzoryk do dokumentacji w Rust"
+)]
 pub struct PlotArgs {
     #[command(subcommand)]
     pub command: Option<Commands>,

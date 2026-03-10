@@ -4,13 +4,13 @@ use clap::Parser;
 mod cli;
 use cli::{CargoCli, Commands, OutputType, SharedTaskArgs};
 
-use lib::fn_datestamp::{datestamp, datestamp_now, NaiveDate, NaiveTime};
-use lib::fn_plotfiles::{plotfiles_cli}; 
-use lib::fn_filespath::{filespath, Task}; 
-use lib::fn_filestree::{filestree};
-use lib::fn_doc_models::DocTask;
+use lib::fn_copy_dist::{DistConfig, copy_dist};
+use lib::fn_datestamp::{NaiveDate, NaiveTime, datestamp, datestamp_now};
 use lib::fn_doc_gen::generate_docs;
-use lib::fn_copy_dist::{copy_dist, DistConfig};
+use lib::fn_doc_models::DocTask;
+use lib::fn_filespath::{Task, filespath};
+use lib::fn_filestree::filestree;
+use lib::fn_plotfiles::plotfiles_cli;
 
 fn main() {
     let CargoCli::Plot(plot_args) = CargoCli::parse();
@@ -29,7 +29,7 @@ fn main() {
 fn handle_tree(args: cli::TreeArgs) {
     let tasks = collect_tasks(&args.shared);
     let paths = filespath(&tasks);
-    
+
     let sort_str = match args.sort {
         cli::SortMethod::DirsFirst => "dirs-first",
         cli::SortMethod::FilesFirst => "files-first",
@@ -42,7 +42,7 @@ fn handle_tree(args: cli::TreeArgs) {
 
 fn handle_doc(args: cli::DocArgs) {
     let tasks = collect_tasks(&args.shared);
-    
+
     let doc_task = DocTask {
         output_filename: &args.out,
         insert_tree: match args.insert_tree {
@@ -59,7 +59,10 @@ fn handle_doc(args: cli::DocArgs) {
     };
 
     if args.dry_run {
-        println!("[!] SYMULACJA: Wykryto {} plików do przetworzenia.", filespath(&doc_task.tasks).len());
+        println!(
+            "[!] SYMULACJA: Wykryto {} plików do przetworzenia.",
+            filespath(&doc_task.tasks).len()
+        );
         return;
     }
 
@@ -95,7 +98,7 @@ fn handle_dist_copy(args: cli::DistCopyArgs) {
             for (s, d) in files {
                 println!(" [+] {} -> {}", s.display(), d.display());
             }
-        },
+        }
         Err(e) => eprintln!("[-] Błąd dystrybucji: {}", e),
     }
 }
@@ -113,7 +116,14 @@ fn collect_tasks(args: &SharedTaskArgs) -> Vec<Task<'_>> {
     if tasks.is_empty() && args.tasks.is_none() {
         let mut excludes: Vec<&str> = args.exclude.iter().map(|s| s.as_str()).collect();
         if !args.no_default_excludes {
-            excludes.extend(vec![".git/", "target/", "node_modules/", ".vs/", ".idea/", ".vscode/"]);
+            excludes.extend(vec![
+                ".git/",
+                "target/",
+                "node_modules/",
+                ".vs/",
+                ".idea/",
+                ".vscode/",
+            ]);
         }
 
         tasks.push(Task {
@@ -128,7 +138,7 @@ fn collect_tasks(args: &SharedTaskArgs) -> Vec<Task<'_>> {
             },
         });
     }
-    
+
     tasks
 }
 

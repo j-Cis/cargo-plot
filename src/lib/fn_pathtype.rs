@@ -12,16 +12,49 @@ pub const DIR_ICON: &str = "📂";
 /// Zwraca odpowiednią ikonę do drzewa ASCII oraz język formatowania Markdown.
 pub fn get_file_type(ext: &str) -> PathFileType {
     match ext {
-        "rs" => PathFileType { icon: "🦀", md_lang: "rust" },
-        "toml" => PathFileType { icon: "⚙️", md_lang: "toml" },
-        "slint" => PathFileType { icon: "🎨", md_lang: "slint" },
-        "md" => PathFileType { icon: "📝", md_lang: "markdown" },
-        "json" => PathFileType { icon: "🔣", md_lang: "json" },
-        "yaml" | "yml" => PathFileType { icon: "🛠️", md_lang: "yaml" },
-        "html" => PathFileType { icon: "🌐", md_lang: "html" },
-        "css" => PathFileType { icon: "🖌️", md_lang: "css" },
-        "js" => PathFileType { icon: "📜", md_lang: "javascript" },
-        "ts" => PathFileType { icon: "📘", md_lang: "typescript" },
-        _ => PathFileType { icon: "📄", md_lang: "text" }, // Domyślny fallback
+        "rs" => PathFileType {
+            icon: "🦀",
+            md_lang: "rust",
+        },
+        "toml" => PathFileType {
+            icon: "⚙️",
+            md_lang: "toml",
+        },
+        "slint" => PathFileType {
+            icon: "🎨",
+            md_lang: "slint",
+        },
+        "md" => PathFileType {
+            icon: "📝",
+            md_lang: "markdown",
+        },
+        "json" => PathFileType {
+            icon: "🔣",
+            md_lang: "json",
+        },
+        "yaml" | "yml" => PathFileType {
+            icon: "🛠️",
+            md_lang: "yaml",
+        },
+        "html" => PathFileType {
+            icon: "🌐",
+            md_lang: "html",
+        },
+        "css" => PathFileType {
+            icon: "🖌️",
+            md_lang: "css",
+        },
+        "js" => PathFileType {
+            icon: "📜",
+            md_lang: "javascript",
+        },
+        "ts" => PathFileType {
+            icon: "📘",
+            md_lang: "typescript",
+        },
+        _ => PathFileType {
+            icon: "📄",
+            md_lang: "text",
+        }, // Domyślny fallback
     }
 }

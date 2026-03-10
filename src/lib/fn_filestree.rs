@@ -1,7 +1,7 @@
+use crate::fn_pathtype::{DIR_ICON, get_file_type};
+use std::cmp::Ordering;
 use std::collections::BTreeMap;
 use std::path::PathBuf;
-use std::cmp::Ordering;
-use crate::fn_pathtype::{get_file_type, DIR_ICON};
 
 /// Struktura węzła drzewa
 #[derive(Debug, Clone)]
@@ -42,7 +42,10 @@ fn sort_nodes(nodes: &mut [FileNode], sort_method: &str) {
 pub fn filestree(paths: Vec<PathBuf>, sort_method: &str) -> Vec<FileNode> {
     let mut tree_map: BTreeMap<PathBuf, Vec<PathBuf>> = BTreeMap::new();
     for p in &paths {
-        let parent = p.parent().map(|p| p.to_path_buf()).unwrap_or_else(|| PathBuf::from("/"));
+        let parent = p
+            .parent()
+            .map(|p| p.to_path_buf())
+            .unwrap_or_else(|| PathBuf::from("/"));
         tree_map.entry(parent).or_default().push(p.clone());
     }
 
@@ -52,7 +55,8 @@ pub fn filestree(paths: Vec<PathBuf>, sort_method: &str) -> Vec<FileNode> {
         paths: &BTreeMap<PathBuf, Vec<PathBuf>>,
         sort_method: &str,
     ) -> FileNode {
-        let name = path.file_name()
+        let name = path
+            .file_name()
             .map(|n| n.to_string_lossy().to_string())
             .unwrap_or_else(|| "/".to_string());
 
@@ -78,10 +82,17 @@ pub fn filestree(paths: Vec<PathBuf>, sort_method: &str) -> Vec<FileNode> {
             children = child_nodes;
         }
 
-        FileNode { name, path: path.clone(), is_dir, icon, children }
+        FileNode {
+            name,
+            path: path.clone(),
+            is_dir,
+            icon,
+            children,
+        }
     }
 
-    let roots: Vec<PathBuf> = paths.iter()
+    let roots: Vec<PathBuf> = paths
+        .iter()
         .filter(|p| p.parent().is_none() || !paths.contains(&p.parent().unwrap().to_path_buf()))
         .cloned()
         .collect();

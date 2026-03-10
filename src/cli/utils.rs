@@ -1,6 +1,7 @@
 // Plik: src/cli/utils.rs
-use crate::cli::args::{OutputType, SharedTaskArgs};
+use crate::cli::args::{CliUnitSystem, OutputType, SharedTaskArgs};
 use lib::fn_filespath::Task;
+use lib::fn_weight::{UnitSystem, WeightConfig};
 
 pub fn collect_tasks(args: &SharedTaskArgs) -> Vec<Task<'_>> {
     let mut tasks = Vec::new();
@@ -50,4 +51,22 @@ fn parse_inline_task(input: &str) -> Task<'_> {
         }
     }
     task
+}
+
+/// Konwertuje parametry z linii poleceń na strukturę konfiguracyjną API
+pub fn build_weight_config(args: &SharedTaskArgs) -> WeightConfig {
+    let system = match args.weight_system {
+        CliUnitSystem::Decimal => UnitSystem::Decimal,
+        CliUnitSystem::Binary => UnitSystem::Binary,
+        CliUnitSystem::Both => UnitSystem::Both,
+        CliUnitSystem::None => UnitSystem::None,
+    };
+
+    WeightConfig {
+        system,
+        precision: args.weight_precision.max(3), // Minimum 3 znaki na liczbę
+        show_for_dirs: !args.no_dir_weight,
+        show_for_files: !args.no_file_weight,
+        dir_sum_included: !args.real_dir_weight, // Domyślnie sumujemy tylko ujęte w filtrach
+    }
 }

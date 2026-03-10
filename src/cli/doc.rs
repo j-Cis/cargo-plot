@@ -1,12 +1,15 @@
 // Plik: src/cli/doc.rs
 use crate::cli::args::{DocArgs, IdStyle, InsertTreeMethod};
-use crate::cli::utils::collect_tasks;
+use crate::cli::utils::{build_weight_config, collect_tasks};
 use lib::fn_doc_gen::generate_docs;
 use lib::fn_doc_models::DocTask;
 use lib::fn_filespath::filespath;
 
 pub fn handle_doc(args: DocArgs) {
     let tasks = collect_tasks(&args.shared);
+
+    // Pobieramy konfigurację wag dla drzewa osadzanego w dokumencie
+    let w_cfg = build_weight_config(&args.shared);
 
     let doc_task = DocTask {
         output_filename: &args.out,
@@ -21,6 +24,7 @@ pub fn handle_doc(args: DocArgs) {
             _ => "id-tag",
         },
         tasks,
+        weight_config: w_cfg, // !! UWAGA: Do tej modyfikacji musimy przygotować API w Kroku 2b
     };
 
     if args.dry_run {

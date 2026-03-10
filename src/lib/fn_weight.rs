@@ -37,8 +37,8 @@ pub fn format_weight(bytes: u64, config: &WeightConfig) -> String {
     }
 
     let (base, units) = match config.system {
-        UnitSystem::Binary => (1024.0, vec!["B", "KiB", "MiB", "GiB", "TiB", "PiB"]),
-        _ => (1000.0, vec!["B", "kB", "MB", "GB", "TB", "PB"]),
+        UnitSystem::Binary => (1024.0_f64, vec!["B", "KiB", "MiB", "GiB", "TiB", "PiB"]),
+        _ => (1000.0_f64, vec!["B", "kB", "MB", "GB", "TB", "PB"]),
     };
 
     if bytes == 0 {

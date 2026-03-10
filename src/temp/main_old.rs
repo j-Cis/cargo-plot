@@ -38,7 +38,7 @@ fn handle_tree(args: cli::TreeArgs) {
         _ => "alpha",
     };
 
-    //!! Tymczasowo, dla przejścia testu, wagi wyłączone:
+    // Tymczasowo, dla przejścia testu, wagi wyłączone:
     let mut w_cfg = lib::fn_weight::WeightConfig::default();
     w_cfg.system = lib::fn_weight::UnitSystem::None;
 

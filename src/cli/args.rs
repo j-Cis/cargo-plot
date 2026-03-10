@@ -31,6 +31,14 @@ pub enum Commands {
     DistCopy(DistCopyArgs),
 }
 
+#[derive(ValueEnum, Clone, Debug, PartialEq)]
+pub enum CliUnitSystem {
+    Decimal,
+    Binary,
+    Both, // Jeśli zdecydujemy się obsłużyć ten tryb później
+    None,
+}
+
 #[derive(Args, Debug, Clone)]
 pub struct SharedTaskArgs {
     /// Ścieżka bazowa do rozpoczęcia skanowania
@@ -64,6 +72,26 @@ pub struct SharedTaskArgs {
     /// Ścieżka do zewnętrznego pliku konfiguracyjnego (.toml)
     #[arg(long)]
     pub tasks: Option<String>,
+
+    /// System jednostek wagi plików
+    #[arg(short = 'w', long = "weight", value_enum, default_value_t = CliUnitSystem::None)]
+    pub weight_system: CliUnitSystem,
+
+    /// Szerokość całkowita formatowania liczby wagi (domyślnie 5)
+    #[arg(long = "weight-precision", default_value = "5")]
+    pub weight_precision: usize,
+
+    /// Czy ukryć wagi dla folderów
+    #[arg(long = "no-dir-weight")]
+    pub no_dir_weight: bool,
+
+    /// Czy ukryć wagi dla plików
+    #[arg(long = "no-file-weight")]
+    pub no_file_weight: bool,
+
+    /// Jeśli użyto, waga folderu to jego prawdziwy rozmiar na dysku, a nie tylko suma wyszukanych plików
+    #[arg(long = "real-dir-weight")]
+    pub real_dir_weight: bool,
 }
 
 #[derive(ValueEnum, Clone, Debug, PartialEq)]

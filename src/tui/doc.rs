@@ -68,11 +68,16 @@ pub fn run_doc_flow() {
         // Pomagamy Rustowi, określając typ 't' jako &TaskData
         let api_tasks: Vec<Task> = r.3.iter().map(|t: &TaskData| t.to_api_task()).collect();
 
+        // Tymczasowo wyłączamy wagi w TUI (pełne wdrożenie w Kroku 5)
+        let mut w_cfg = lib::fn_weight::WeightConfig::default();
+        w_cfg.system = lib::fn_weight::UnitSystem::None;
+
         final_doc_tasks.push(DocTask {
             output_filename: &r.0,
             insert_tree: r.2,
             id_style: r.1,
             tasks: api_tasks,
+            weight_config: w_cfg, // <--- NAPRAWA BŁĘDU
         });
     }
 

@@ -24,11 +24,8 @@ pub fn generate_docs(doc_tasks: Vec<DocTask>, output_dir: &str) -> io::Result<()
 
         // 2. Generowanie tekstu drzewa
         let tree_text = if doc_task.insert_tree != "with-out" {
-            // !! Tymczasowo wyłączamy wagi w raporcie, używając pustej konfiguracji
-            let mut w_cfg = crate::fn_weight::WeightConfig::default();
-            w_cfg.system = crate::fn_weight::UnitSystem::None;
-            
-            let tree_nodes = filestree(paths.clone(), doc_task.insert_tree, &w_cfg); // <--- ZMIANA: Dodano &w_cfg
+            //  używamy konfiguracji wbudowanej w zadanie!
+            let tree_nodes = filestree(paths.clone(), doc_task.insert_tree, &doc_task.weight_config); 
             let txt = plotfiles_txt(&tree_nodes, "", None);
             Some(txt)
         } else {

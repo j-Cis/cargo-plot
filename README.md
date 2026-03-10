@@ -144,7 +144,7 @@ Używamy sprawdzonych i wydajnych bibliotek z ekosystemu Rust:
 | Biblioteka | Odznaka | Rola w projekcie |
 | --- | --- | --- |
 | **Clap** | ![Clap](https://img.shields.io/badge/clap-v4.5.60-blue) | Obsługa argumentów wiersza poleceń (CLI). |
-| **Inquire** | ![Inquire](https://img.shields.io/badge/inquire-v0.9.4-orange) | Interaktywne menu i zapytania w trybie TUI. |
+| **Cliclack** | ![Cliclack](https://img.shields.io/badge/cliclack-v0.4.1-ff69b4) | Nowoczesny, interaktywny interfejs użytkownika (TUI). |
 | **Chrono** | ![Chrono](https://img.shields.io/badge/chrono-v0.4.44-green) | Precyzyjne generowanie unikalnych sygnatur czasowych. |
 | **Regex** | ![Regex](https://img.shields.io/badge/regex-v1.12.3-red) | Zaawansowane filtrowanie plików za pomocą wzorców Glob. |
 | **Colored** | ![Colored](https://img.shields.io/badge/colored-v3.1.1-yellow) | Kolorowanie drzewa plików w terminalu. |
@@ -439,7 +439,71 @@ cargo plot doc --help
 ---
 ---
 
-## TUI
+---
+
+## TUI (Interfejs Interaktywny)
+
+Tryb TUI (Text-based User Interface) to potężny, interaktywny kreator, który pozwala na wygodne korzystanie ze **100% możliwości API** biblioteki `cargo-plot` bez konieczności ręcznego wpisywania skomplikowanych flag w terminalu.
+
+### Szybki start
+
+Aby uruchomić interaktywny panel sterowania, wystarczy wywołać narzędzie bez żadnych dodatkowych argumentów:
+
+```powershell
+cargo plot
+
+```
+
+Narzędzie przywita Cię czytelnym menu, które poprowadzi Cię przez proces konfiguracji wybranych zadań.
+
+---
+
+### Funkcje i Moduły TUI
+
+Architektura TUI została podzielona na wyspecjalizowane moduły, z których każdy oferuje pełną kontrolę nad parametrami domeny.
+
+#### 1. 🌲 Tree Explorer (Eksplorator Drzewa)
+
+Pozwala na interaktywne budowanie wizualizacji struktury projektu.
+
+* **Obsługa Multi-Task**: Możesz zdefiniować wiele niezależnych lokalizacji (zadań) do przeskanowania, które zostaną połączone w jeden wspólny widok drzewa.
+* **Inteligentna Whitelista**: TUI automatycznie rozpoznaje, czy podana ścieżka jest folderem i stosuje wzorce rekurencyjne (np. zamienia `src` na `src/**/*`), aby zapewnić pełny skan zawartości.
+* **Pełne filtrowanie**: Interaktywne ustawianie czarnych list (blacklist), białych list (whitelist) oraz filtrów rozszerzeń plików (np. `*.rs, *.toml`).
+
+#### 2. 📄 Doc Orchestrator (Orkiestrator Raportów)
+
+Najbardziej zaawansowany moduł TUI, odzwierciedlający pełną moc silnika generowania dokumentacji.
+
+* **Hierarchiczna konfiguracja**: Pozwala na zdefiniowanie wielu plików raportów (`DocTask`) w jednej sesji.
+* **Wiele zadań na raport**: Każdy raport może składać się z dowolnej liczby zadań skanowania (`Task`), co pozwala na łączenie w jednym dokumencie kodów z różnych, odległych od siebie katalogów.
+* **Personalizacja**: Wybór stylu identyfikatorów sekcji (`tag`, `num`, `none`) oraz formatu spisu treści (drzewa).
+
+#### 3. 📦 Dist Manager (Zarządzanie Wydaniem)
+
+Automatyzuje przygotowanie binarek do dystrybucji.
+
+* **Wykrywanie binarek**: Możliwość podania konkretnych nazw lub automatycznego wykrycia wszystkich plików wykonywalnych w folderze `target`.
+* **Zarządzanie ścieżkami**: Dowolna konfiguracja katalogów źródłowych i docelowych.
+* **Bezpieczeństwo**: Opcja czyszczenia folderu `dist` przed operacją oraz tryb symulacji (**Dry Run**).
+
+#### 4. 🕒 Stamp Tool (Generator Sygnatur)
+
+Szybki kreator unikalnych znaczników czasu.
+
+* **Tryb Auto**: Błyskawiczne generowanie stempla dla aktualnego czasu systemowego.
+* **Tryb Manual**: Precyzyjne wpisywanie własnej daty i godziny z walidacją formatu.
+
+---
+
+### Zalety pracy w trybie TUI
+
+* **Pętla akcji**: Program nie zamyka się po wykonaniu zadania. Po każdej operacji zostaniesz zapytany, czy chcesz wykonać kolejną czynność, co pozwala na błyskawiczne generowanie serii raportów i podglądów drzew.
+* **Odporność na błędy**: TUI automatycznie czyści ścieżki (np. usuwa kłopotliwe przedrostki `./`), dzięki czemu wzorce dopasowania zawsze działają poprawnie.
+* **Feedback w czasie rzeczywistym**: Użycie animowanych spinnerów i kolorowych komunikatów informuje Cię na bieżąco o postępie skanowania i generowania plików.
+
+> **Wskazówka deweloperska**: Jeśli często powtarzasz te same złożone zadania, TUI jest idealne do ich szybkiego wyklikania, ale pamiętaj, że możesz je również zautomatyzować w skryptach CI/CD korzystając z [Interfejsu CLI](https://www.google.com/search?q=%23cli-interfejs-wiersza-polece%C5%84).
+
+---
 
 ---
 ---

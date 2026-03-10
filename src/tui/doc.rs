@@ -121,6 +121,10 @@ pub fn run_doc_flow() {
             weight_config: r.4.clone(),
             watermark: r.5,
             command_str: cmd_str,
+            // W TUI domyślnie zachowujemy się jak wcześniej (możemy to w przyszłości rozbudować)
+            suffix_stamp: true,
+            title_file: "RAPORT",
+            title_file_with_path: true,
         });
     }
 

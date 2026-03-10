@@ -8,8 +8,23 @@ description = "Szwajcarski scyzoryk do wizualizacji struktury projektu i generow
 license = "MIT OR Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/j-Cis/cargo-plot"
-keywords = ["cargo", "tree", "markdown", "documentation", "cli"]
-categories = ["development-tools::cargo-plugins", "command-line-utilities"]
+
+# Maksymalnie 5 słów kluczowych (limit crates.io) - zoptymalizowane pod SEO
+keywords = [
+    "cargo", 
+    "tree", 
+    "markdown", 
+    "filesystem",
+    "documentation"
+]
+
+# Rozszerzone kategorie (tutaj również jest limit max 5, my mamy 4 mocne)
+categories = [
+    "development-tools::cargo-plugins", 
+    "command-line-utilities",
+    "command-line-interface",
+    "text-processing",
+]
 resolver = "3"
 
 [package.metadata.cargo]
@@ -23,14 +38,29 @@ walkdir = "2.5.0"
 regex = "1.12.3"
 
 # Kluczowe dla interfejsu (CLI/TUI)
-clap = { version = "4.5.60", features = ["derive"] }
+# Wykorzystanie formatowania TOML v1.1.0 (wieloliniowe tabele z trailing comma)
+clap = { 
+    version = "4.5.60", 
+    features = ["derive"], 
+}
 cliclack = "0.4.1"
 colored = "3.1.1"
-
-# stare
-# inquire = "0.9.4"
-# atty = "0.2"
 
 [lib]
 name = "lib"
 path = "src/lib/mod.rs"
+
+# ==========================================
+# Globalna konfiguracja lintów (Analiza kodu)
+# ==========================================
+# [lints.rust]
+# Kategorycznie zabraniamy używania bloków `unsafe` w całym projekcie
+# unsafe_code = "forbid"
+# Ostrzegamy o nieużywanych importach, zmiennych i funkcjach
+# unused = "warn"
+#
+# [lints.clippy]
+# Włączamy surowsze reguły, ale jako ostrzeżenia (nie zepsują kompilacji)
+# pedantic = "warn"
+# Możemy tu też wyciszyć globalnie to, co nas irytuje (opcjonalnie):
+# too_many_arguments = "allow"

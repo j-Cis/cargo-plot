@@ -38,6 +38,9 @@ pub fn handle_doc(args: DocArgs) {
         weight_config: w_cfg,
         watermark: watermark_str,
         command_str: cmd_str,
+        suffix_stamp: args.suffix_stamp,
+        title_file: &args.title_file,
+        title_file_with_path: args.title_file_with_path,
     };
 
     if args.dry_run {

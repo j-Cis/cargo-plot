@@ -132,6 +132,18 @@ pub struct TreeArgs {
     /// Wyświetla użytą komendę CLI na początku pliku
     #[arg(long = "print-command")]
     pub print_command: bool,
+
+    /// Dodaje unikalny znacznik czasu do nazwy pliku wyjściowego
+    #[arg(long, visible_alias = "sufix-stamp")]
+    pub suffix_stamp: bool,
+
+    /// Główny tytuł dokumentu w zapisanym pliku
+    #[arg(long, default_value = "RAPORT")]
+    pub title_file: String,
+
+    /// Dodaje ścieżkę pliku do głównego tytułu dokumentu
+    #[arg(long)]
+    pub title_file_with_path: bool,
 }
 
 #[derive(ValueEnum, Clone, Debug, PartialEq)]
@@ -187,6 +199,18 @@ pub struct DocArgs {
     /// Wyświetla użytą komendę CLI na początku pliku
     #[arg(long = "print-command")]
     pub print_command: bool,
+
+    /// Dodaje unikalny znacznik czasu do nazwy pliku wyjściowego
+    #[arg(long, visible_alias = "sufix-stamp")]
+    pub suffix_stamp: bool,
+
+    /// Główny tytuł dokumentu w zapisanym pliku
+    #[arg(long, default_value = "RAPORT")]
+    pub title_file: String,
+
+    /// Dodaje ścieżkę pliku do głównego tytułu dokumentu
+    #[arg(long)]
+    pub title_file_with_path: bool,
 }
 
 #[derive(Args, Debug)]

@@ -15,8 +15,13 @@ pub fn generate_docs(doc_tasks: Vec<DocTask>, output_dir: &str) -> io::Result<()
         // Generujemy jeden wspólny znacznik czasu dla zadania
         let stamp = datestamp_now();
 
-        // Budujemy nazwę pliku np. "code__2026Q1D068W11_Mon09Mar_212719746.md"
-        let out_file = format!("{}__{}.md", doc_task.output_filename, stamp);
+        // LOGIKA NAZWY PLIKU
+        let out_file = if doc_task.suffix_stamp {
+            format!("{}__{}.md", doc_task.output_filename, stamp)
+        } else {
+            format!("{}.md", doc_task.output_filename)
+        };
+
         let out_path = format!("{}/{}", output_dir, out_file);
 
         // 1. Zbieramy ścieżki
@@ -45,6 +50,10 @@ pub fn generate_docs(doc_tasks: Vec<DocTask>, output_dir: &str) -> io::Result<()
             doc_task.id_style,
             doc_task.watermark,
             &doc_task.command_str,
+            &stamp,
+            doc_task.suffix_stamp,
+            doc_task.title_file,
+            doc_task.title_file_with_path,
         )?;
 
         // Możemy wydrukować info o POJEDYNCZYM wygenerowanym pliku

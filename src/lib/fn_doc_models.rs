@@ -10,4 +10,7 @@ pub struct DocTask<'a> {
     pub weight_config: WeightConfig, // Nowe pole
     pub watermark: &'a str,
     pub command_str: Option<String>,
+    pub suffix_stamp: bool,
+    pub title_file: &'a str,
+    pub title_file_with_path: bool,
 }

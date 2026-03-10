@@ -65,3 +65,15 @@ Mimo to, komendy lokalne są przydatne do testowania:
 cargo publish --dry-run
 
 ```
+
+## ⚡
+
+* `cargo run -- plot tree -s files-first --no-default-excludes -e "./f.md" -e "./d.md" -e "./target/" -e "./.git/" -e "./test/" -e "./.gitignore" -e "./DEV.md" -e "./Cargo.lock" -e "./LICENSE-APACHE" -e "./LICENSE-MIT" -e "./.github/" -e "./.cargo/" -e "./doc/" -e "./README.md" -w binary --weight-precision 5 --no-dir-weight --out-file "f.md" --print-console  --watermark last --print-command --title-file "Struktura Projektu"`
+
+* `cargo plot tree -s files-first --no-default-excludes -e "./f.md" -e "./d.md" -e "./target/" -e "./.git/" -e "./test/" -e "./.gitignore" -e "./DEV.md" -e "./Cargo.lock" -e "./LICENSE-APACHE" -e "./LICENSE-MIT" -e "./.github/" -e "./.cargo/" -e "./doc/" -e "./README.md" -w binary --weight-precision 5 --no-dir-weight --out-file "f.md" --print-console  --watermark last --print-command --title-file "Struktura Projektu"`
+
+* `cargo run -- plot doc --out-dir "." --out "d" -I num -T files-first --no-default-excludes -e "./f.md" -e "./d.md" -e "./target/" -e "./.git/" -e "./test/" -e "./.gitignore" -e "./DEV.md" -e "./Cargo.lock" -e "./LICENSE-APACHE" -e "./LICENSE-MIT" -e "./.github/" -e "./.cargo/" -e "./doc/" -e "./README.md" -w binary --weight-precision 5 --no-dir-weight  --watermark last --print-command --title-file "Dokumentacja Projektu"`
+
+* `cargo plot doc --out-dir "." --out "d" -I num -T files-first --no-default-excludes -e "./f.md" -e "./d.md" -e "./target/" -e "./.git/" -e "./test/" -e "./.gitignore" -e "./DEV.md" -e "./Cargo.lock" -e "./LICENSE-APACHE" -e "./LICENSE-MIT" -e "./.github/" -e "./.cargo/" -e "./doc/" -e "./README.md" -w binary --weight-precision 5 --no-dir-weight  --watermark last --print-command --title-file "Dokumentacja Projektu"`
+
+-------------------------------------------

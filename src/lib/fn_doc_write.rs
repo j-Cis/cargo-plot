@@ -6,6 +6,7 @@ use std::fs;
 use std::io;
 use std::path::PathBuf;
 
+#[allow(clippy::too_many_arguments)]
 pub fn write_md(
     out_path: &str,
     files: &[PathBuf],
@@ -14,10 +15,29 @@ pub fn write_md(
     id_style: &str,
     watermark: &str,
     command_str: &Option<String>,
+    stamp: &str,
+    suffix_stamp: bool,
+    title_file: &str,
+    title_file_with_path: bool,
 ) -> io::Result<()> {
     let mut content = String::new();
 
-    content.push_str(&format!("# RAPORT ({})\n\n", out_path));
+    // ==========================================
+    // LOGIKA TYTUŁU
+    // ==========================================
+    let mut title_line = format!("# {}", title_file);
+
+    if !suffix_stamp {
+        title_line.push_str(&format!(" {}", stamp));
+    }
+
+    if title_file_with_path {
+        title_line.push_str(&format!(" ({})", out_path));
+    }
+
+    content.push_str(&title_line);
+    content.push_str("\n\n");
+    // ==========================================
 
     let watermark_text = "> 🚀 Raport wygenerowany przy użyciu [cargo-plot](https://crates.io/crates/cargo-plot) | Źródło: [GitHub](https://github.com/j-Cis/cargo-plot)\n\n";
 

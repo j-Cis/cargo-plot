@@ -32,8 +32,49 @@ pub fn handle_tree(args: TreeArgs) {
     }
 
     // 2. Zapisz do pliku, jeśli podano argument --out-file
+    // 2. Zapisz do pliku, jeśli podano argument --out-file
     if let Some(out_file) = args.out_file {
+        let stamp = lib::fn_datestamp::datestamp_now();
+
+        // Magia ucinania rozszerzenia (np. z "plik.md" robimy "plik__STAMP.md")
+        let final_out_file = if args.suffix_stamp {
+            let path = std::path::Path::new(&out_file);
+            let stem = path.file_stem().unwrap_or_default().to_string_lossy();
+            let ext = path.extension().unwrap_or_default().to_string_lossy();
+            let parent = path.parent().unwrap_or_else(|| std::path::Path::new(""));
+
+            let new_name = if ext.is_empty() {
+                format!("{}__{}", stem, stamp)
+            } else {
+                format!("{}__{}.{}", stem, stamp, ext)
+            };
+
+            let pb = parent.join(new_name);
+            if parent.as_os_str().is_empty() {
+                pb.to_string_lossy().into_owned()
+            } else {
+                pb.to_string_lossy().replace('\\', "/")
+            }
+        } else {
+            out_file.clone()
+        };
+
         let mut content = String::new();
+
+        // ==========================================
+        // LOGIKA TYTUŁU DLA TREE
+        // ==========================================
+        let mut title_line = format!("# {}", args.title_file);
+        if !args.suffix_stamp {
+            title_line.push_str(&format!(" {}", stamp));
+        }
+        if args.title_file_with_path {
+            title_line.push_str(&format!(" ({})", final_out_file));
+        }
+        content.push_str(&title_line);
+        content.push_str("\n\n");
+        // ==========================================
+
         let watermark_text = "> 🚀 Wygenerowano przy użyciu [cargo-plot](https://crates.io/crates/cargo-plot) | Źródło: [GitHub](https://github.com/j-Cis/cargo-plot)\n\n";
 
         if args.watermark == crate::cli::args::WatermarkPosition::First {
@@ -45,7 +86,6 @@ pub fn handle_tree(args: TreeArgs) {
             content.push_str(&format!("**Wywołana komenda:**\n```bash\n{}\n```\n\n", cmd));
         }
 
-        // Generujemy pozbawiony kolorów tekst ascii
         let txt = lib::fn_plotfiles::plotfiles_txt(&nodes, "", None);
         content.push_str(&format!("```text\n{}\n```\n", txt));
 
@@ -54,7 +94,7 @@ pub fn handle_tree(args: TreeArgs) {
             content.push_str(watermark_text);
         }
 
-        std::fs::write(&out_file, content).unwrap();
-        println!(" [+] Sukces! Drzewo zapisano do pliku: {}", out_file);
+        std::fs::write(&final_out_file, content).unwrap();
+        println!(" [+] Sukces! Drzewo zapisano do pliku: {}", final_out_file);
     }
 }

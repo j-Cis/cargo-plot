@@ -30,28 +30,48 @@ pub fn ask_for_task_data(idx: usize) -> TaskData {
         .default_input(".")
         .interact()
         .unwrap();
-    let inc_raw: String = input("  Whitelist (inc):")
-        .required(false)
+
+    let use_defaults = cliclack::confirm("Czy użyć domyślnej listy ignorowanych (pomiń .git, target, node_modules itp.)?")
+        .initial_value(true)
         .interact()
-        .unwrap_or_default();
-    let exc_raw: String = input("  Blacklist (exc):")
-        .required(false)
-        .interact()
-        .unwrap_or_default();
-    let fil_raw: String = input("  Filtry plików (fil):")
-        .required(false)
-        .interact()
-        .unwrap_or_default();
+        .unwrap();
+
+    let mut inc = Vec::new();
+    let mut exc = Vec::new();
+    let mut fil = Vec::new();
+
+    if use_defaults {
+        exc = vec![
+            ".git/".to_string(), "target/".to_string(), "node_modules/".to_string(),
+            ".vs/".to_string(), ".idea/".to_string(), ".vscode/".to_string(),
+            ".cargo/".to_string(), ".github/".to_string(),
+        ];
+    } else {
+        let inc_raw: String = input("  Whitelist (inc) [oddzielaj przecinkiem]:")
+            .placeholder("np. ./src/, Cargo.toml, ./lib/")
+            .required(false)
+            .interact()
+            .unwrap_or_default();
+
+        let exc_raw: String = input("  Blacklist (exc) [oddzielaj przecinkiem]:")
+            .placeholder("np. ./target/, .git/, node_modules/, Cargo.lock")
+            .required(false)
+            .interact()
+            .unwrap_or_default();
+
+        let fil_raw: String = input("  Filtry plików (fil) [oddzielaj przecinkiem]:")
+            .placeholder("np. *.rs, *.md, build.rs")
+            .required(false)
+            .interact()
+            .unwrap_or_default();
+        inc = process_inc(split_and_trim(&inc_raw));
+        exc = split_and_trim(&exc_raw);
+        fil = split_and_trim(&fil_raw);
+    }
 
     let out_type = select_type();
 
-    TaskData {
-        loc,
-        inc: process_inc(split_and_trim(&inc_raw)),
-        exc: split_and_trim(&exc_raw),
-        fil: split_and_trim(&fil_raw),
-        out_type,
-    }
+    TaskData { loc, inc, exc, fil, out_type }
 }
 
 fn process_inc(list: Vec<String>) -> Vec<String> {

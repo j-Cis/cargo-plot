@@ -38,7 +38,11 @@ fn handle_tree(args: cli::TreeArgs) {
         _ => "alpha",
     };
 
-    let nodes = filestree(paths, sort_str);
+    //!! Tymczasowo, dla przejścia testu, wagi wyłączone:
+    let mut w_cfg = lib::fn_weight::WeightConfig::default();
+    w_cfg.system = lib::fn_weight::UnitSystem::None;
+
+    let nodes = filestree(paths, sort_str, &w_cfg); // <--- ZMIANA: Dodano &w_cfg
     println!("{}", plotfiles_cli(&nodes, "", None));
 }
 

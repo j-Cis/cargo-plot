@@ -1,3 +1,4 @@
+// Zaktualizowany Plik-021: src/lib/fn_plotfiles.rs
 use crate::fn_filestree::FileNode;
 use colored::*;
 
@@ -58,11 +59,22 @@ fn plot(nodes: &[FileNode], indent: &str, s: &TreeStyle, use_color: bool) -> Str
             &s.file_mid
         };
 
+        // KROK NOWY: Przygotowanie kolorowanej (lub nie) ramki z wagą
+        let weight_prefix = if node.weight_str.is_empty() {
+            String::new()
+        } else if use_color {
+            // W CLI waga będzie szara, by nie odciągać uwagi od struktury plików
+            node.weight_str.truecolor(120, 120, 120).to_string() 
+        } else {
+            node.weight_str.clone()
+        };
+
         // 2. Formatowanie konkretnej linii (z kolorami lub bez)
         let line = if use_color {
             if node.is_dir {
                 format!(
-                    "{}{} {}{}/\n",
+                    "{}{}{} {}{}/\n",
+                    weight_prefix,      // ZMIANA TUTAJ
                     indent.green(),
                     branch.green(),
                     node.icon,
@@ -70,7 +82,8 @@ fn plot(nodes: &[FileNode], indent: &str, s: &TreeStyle, use_color: bool) -> Str
                 )
             } else {
                 format!(
-                    "{}{} {}{}\n",
+                    "{}{}{} {}{}\n",
+                    weight_prefix,      // ZMIANA TUTAJ
                     indent.green(),
                     branch.green(),
                     node.icon,
@@ -78,7 +91,8 @@ fn plot(nodes: &[FileNode], indent: &str, s: &TreeStyle, use_color: bool) -> Str
                 )
             }
         } else {
-            format!("{}{} {} {}\n", indent, branch, node.icon, node.name)
+            // ZMIANA TUTAJ: Doklejenie prefixu dla zwykłego tekstu
+            format!("{}{}{} {} {}\n", weight_prefix, indent, branch, node.icon, node.name) 
         };
 
         result.push_str(&line);

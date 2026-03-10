@@ -35,7 +35,12 @@ pub fn run_tree_flow() {
         .iter()
         .map(|t: &super::utils::TaskData| t.to_api_task())
         .collect();
-    let nodes = filestree(filespath(&tasks), sort);
+        
+    //!! Tymczasowo, wyłączone:
+    let mut w_cfg = lib::fn_weight::WeightConfig::default();
+    w_cfg.system = lib::fn_weight::UnitSystem::None;
+
+    let nodes = filestree(filespath(&tasks), sort, &w_cfg); // <--- ZMIANA: Dodano &w_cfg
 
     spin.stop("Skanowanie zakończone:");
 

@@ -1,6 +1,7 @@
 pub mod fn_datestamp;
 pub mod fn_filespath;
 pub mod fn_filestree;
+pub mod fn_weight;
 pub mod fn_plotfiles;
 
 pub mod fn_doc_gen;

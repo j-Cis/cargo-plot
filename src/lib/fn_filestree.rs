@@ -1,4 +1,6 @@
+// Zaktualizowany Plik-004: src/lib/fn_filestree.rs
 use crate::fn_pathtype::{DIR_ICON, get_file_type};
+use crate::fn_weight::{WeightConfig, format_weight, get_path_weight};
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
 use std::path::PathBuf;
@@ -10,6 +12,8 @@ pub struct FileNode {
     pub path: PathBuf,
     pub is_dir: bool,
     pub icon: String,
+    pub weight_str: String, // Nowe pole na sformatowaną wagę [qq xxxxx]
+    pub weight_bytes: u64,  // Surowa waga do obliczeń sumarycznych
     pub children: Vec<FileNode>,
 }
 
@@ -20,16 +24,16 @@ fn sort_nodes(nodes: &mut [FileNode], sort_method: &str) {
             if a.is_dir == b.is_dir {
                 a.name.cmp(&b.name)
             } else if !a.is_dir {
-                Ordering::Less // Jeśli 'a' to plik, ma być wcześniej
+                Ordering::Less
             } else {
-                Ordering::Greater // Jeśli 'a' to folder, spada na dół
+                Ordering::Greater
             }
         }),
         "dirs-first" => nodes.sort_by(|a, b| {
             if a.is_dir == b.is_dir {
                 a.name.cmp(&b.name)
             } else if a.is_dir {
-                Ordering::Less // Jeśli 'a' to folder, ma być wcześniej
+                Ordering::Less
             } else {
                 Ordering::Greater
             }
@@ -38,8 +42,12 @@ fn sort_nodes(nodes: &mut [FileNode], sort_method: &str) {
     }
 }
 
-/// Funkcja formatująca - buduje drzewo i przypisuje ikony
-pub fn filestree(paths: Vec<PathBuf>, sort_method: &str) -> Vec<FileNode> {
+/// Funkcja formatująca - buduje drzewo i przypisuje ikony oraz wagi
+pub fn filestree(
+    paths: Vec<PathBuf>,
+    sort_method: &str,
+    weight_cfg: &WeightConfig, // NOWY ARGUMENT
+) -> Vec<FileNode> {
     let mut tree_map: BTreeMap<PathBuf, Vec<PathBuf>> = BTreeMap::new();
     for p in &paths {
         let parent = p
@@ -49,11 +57,11 @@ pub fn filestree(paths: Vec<PathBuf>, sort_method: &str) -> Vec<FileNode> {
         tree_map.entry(parent).or_default().push(p.clone());
     }
 
-    // ZMIANA: Usuwamy file_icons z funkcji wewnętrznej
     fn build_node(
         path: &PathBuf,
         paths: &BTreeMap<PathBuf, Vec<PathBuf>>,
         sort_method: &str,
+        weight_cfg: &WeightConfig, // NOWY ARGUMENT
     ) -> FileNode {
         let name = path
             .file_name()
@@ -62,7 +70,6 @@ pub fn filestree(paths: Vec<PathBuf>, sort_method: &str) -> Vec<FileNode> {
 
         let is_dir = path.is_dir();
 
-        // Pobieramy ikony z naszego pliku SSoT
         let icon = if is_dir {
             DIR_ICON.to_string()
         } else if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
@@ -71,15 +78,30 @@ pub fn filestree(paths: Vec<PathBuf>, sort_method: &str) -> Vec<FileNode> {
             "📄".to_string()
         };
 
+        // KROK A: Pobieramy bazową wagę (0 dla folderów w trybie sumy uwzględnionych)
+        let mut weight_bytes = get_path_weight(path, weight_cfg.dir_sum_included);
+
         let mut children = vec![];
         if let Some(child_paths) = paths.get(path) {
             let mut child_nodes: Vec<FileNode> = child_paths
                 .iter()
-                .map(|c| build_node(c, paths, sort_method)) // Usuwamy argument file_icons
+                .map(|c| build_node(c, paths, sort_method, weight_cfg))
                 .collect();
 
             crate::fn_filestree::sort_nodes(&mut child_nodes, sort_method);
+
+            // KROK B: Jeśli to folder i sumujemy tylko ujęte pliki, zsumuj wagi dzieci
+            if is_dir && weight_cfg.dir_sum_included {
+                weight_bytes = child_nodes.iter().map(|n| n.weight_bytes).sum();
+            }
+
             children = child_nodes;
+        }
+
+        // KROK C: Formatowanie wagi do ciągu "[qq xxxxx]"
+        let mut weight_str = String::new();
+        if (is_dir && weight_cfg.show_for_dirs) || (!is_dir && weight_cfg.show_for_files) {
+            weight_str = format_weight(weight_bytes, weight_cfg);
         }
 
         FileNode {
@@ -87,6 +109,8 @@ pub fn filestree(paths: Vec<PathBuf>, sort_method: &str) -> Vec<FileNode> {
             path: path.clone(),
             is_dir,
             icon,
+            weight_str,
+            weight_bytes,
             children,
         }
     }
@@ -99,7 +123,7 @@ pub fn filestree(paths: Vec<PathBuf>, sort_method: &str) -> Vec<FileNode> {
 
     let mut top_nodes: Vec<FileNode> = roots
         .into_iter()
-        .map(|r| build_node(&r, &tree_map, sort_method)) // Usuwamy argument file_icons
+        .map(|r| build_node(&r, &tree_map, sort_method, weight_cfg))
         .collect();
 
     crate::fn_filestree::sort_nodes(&mut top_nodes, sort_method);

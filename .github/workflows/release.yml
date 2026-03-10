@@ -1,0 +1,107 @@
+# Plik konfiguracyjny CD (Continuous Deployment) dla narzędzia cargo-plot.
+# Automatyzuje proces wydań po dodaniu taga wersji (np. v0.1.2).
+# Kompiluje i pakuje binarki dla Windows, Linux i macOS do sekcji GitHub Releases.
+# Wywołanie: git tag v0.1.2 && git push origin v0.1.2
+
+name: Deploy Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-upload:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # --- WINDOWS ---
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            archive_name: cargo-plot-x86_64-windows.zip
+            bin_name: cargo-plot.exe
+          
+          - target: i686-pc-windows-msvc
+            os: windows-latest
+            archive_name: cargo-plot-i686-windows.zip
+            bin_name: cargo-plot.exe
+
+          # --- LINUX ---
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+            archive_name: cargo-plot-x86_64-linux.tar.gz
+            bin_name: cargo-plot
+            use_musl: true
+
+          - target: i686-unknown-linux-gnu
+            os: ubuntu-latest
+            archive_name: cargo-plot-i686-linux.tar.gz
+            bin_name: cargo-plot
+            install_multilib: true
+
+          # --- MACOS ---
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            archive_name: cargo-plot-aarch64-macos.tar.gz
+            bin_name: cargo-plot
+
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            archive_name: cargo-plot-x86_64-macos.tar.gz
+            bin_name: cargo-plot
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        run: rustup update stable && rustup target add ${{ matrix.target }}
+
+      # --- ZALEŻNOŚCI LINUX ---
+      - name: Install Linux Deps
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y build-essential
+          
+      - name: Install Multilib (Linux 32-bit)
+        if: matrix.install_multilib == true
+        run: sudo apt-get install -y gcc-multilib
+
+      - name: Install MUSL Tools
+        if: matrix.use_musl == true
+        run: sudo apt-get install -y musl-tools
+
+      # --- BUDOWANIE ---
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }} --verbose
+
+      # --- PAKOWANIE (WINDOWS -> ZIP) ---
+      - name: Package Windows (Zip)
+        if: runner.os == 'Windows'
+        run: |
+          New-Item -ItemType Directory -Force -Path staging
+          Copy-Item -Path "target/${{ matrix.target }}/release/${{ matrix.bin_name }}" -Destination "staging/${{ matrix.bin_name }}"
+          Copy-Item -Path "README.md" -Destination "staging/README.md"
+          Compress-Archive -Path staging/* -DestinationPath ${{ matrix.archive_name }}
+
+      # --- PAKOWANIE (LINUX/MAC -> TAR.GZ) ---
+      - name: Package Unix (Tar)
+        if: runner.os != 'Windows'
+        run: |
+          mkdir staging
+          cp target/${{ matrix.target }}/release/${{ matrix.bin_name }} staging/${{ matrix.bin_name }}
+          cp README.md staging/README.md
+          chmod +x staging/${{ matrix.bin_name }}
+          tar -czvf ${{ matrix.archive_name }} -C staging .
+
+      # --- PUBLIKACJA ---
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ matrix.archive_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

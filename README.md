@@ -36,6 +36,15 @@ Biblioteka `cargo-plot` oferuje bogate API, które pozwala na:
 ---
 ---
 
+## 🌟 Używasz cargo-plot? Daj znać!
+
+Jeśli wykorzystujesz to narzędzie w swoim projekcie, bardzo chętnie o tym usłyszę! 
+To dla mnie największa motywacja do dalszego rozwoju.
+
+* Wyślij mi wiadomość na GitHubie.
+* Zostaw gwiazdkę ⭐ pod repozytorium.
+* Dodaj swój projekt do listy "Użytkownicy" (otwórz Pull Request!).
+
 ## 🛠 Zarządzanie Projektem i Instalacja
 
 Poniżej znajduje się zestawienie najczęściej używanych komend do budowania, testowania i instalacji narzędzia `cargo-plot`.

@@ -122,6 +122,28 @@ Przygotowanie binarek dla różnych systemów operacyjnych (wymaga zainstalowany
 ---
 ---
 
+## 🏅 Stan Projektu i Technologie
+
+[![Rust](https://img.shields.io/badge/Rust-v1.93.1%20%7C%202024_Edition-b8744a.svg?logo=rust&logoColor=white)](https://www.rust-lang.org/)
+[![Crates.io](https://img.shields.io/crates/v/cargo-plot.svg)](https://crates.io/crates/cargo-plot)
+[![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](LICENSE-MIT)
+
+### 🛠️ Główne Zależności
+
+Używamy sprawdzonych i wydajnych bibliotek z ekosystemu Rust:
+
+| Biblioteka | Odznaka | Rola w projekcie |
+| --- | --- | --- |
+| **Clap** | ![Clap](https://img.shields.io/badge/clap-v4.5.60-blue) | Obsługa argumentów wiersza poleceń (CLI). |
+| **Inquire** | ![Inquire](https://img.shields.io/badge/inquire-v0.9.4-orange) | Interaktywne menu i zapytania w trybie TUI. |
+| **Chrono** | ![Chrono](https://img.shields.io/badge/chrono-v0.4.44-green) | Precyzyjne generowanie unikalnych sygnatur czasowych. |
+| **Regex** | ![Regex](https://img.shields.io/badge/regex-v1.12.3-red) | Zaawansowane filtrowanie plików za pomocą wzorców Glob. |
+| **Colored** | ![Colored](https://img.shields.io/badge/colored-v3.1.1-yellow) | Kolorowanie drzewa plików w terminalu. |
+| **Walkdir** | ![Walkdir](https://img.shields.io/badge/walkdir-v2.5.0-lightgrey) | Szybkie i bezpieczne skanowanie struktury katalogów. |
+
+---
+---
+
 ## CLI (Interfejs Wiersza Poleceń)
 
 Narzędzie `cargo-plot` zostało zaprojektowane jako oficjalne rozszerzenie (subcommand) dla menedżera pakietów Cargo. Pozwala na błyskawiczne przeszukiwanie systemu plików, wizualizowanie struktury oraz generowanie kompleksowych raportów Markdown bezpośrednio z poziomu terminala.

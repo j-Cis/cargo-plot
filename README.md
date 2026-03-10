@@ -1,6 +1,6 @@
 # cargo-plot
 
-**cargo-plot** (v0.1.4) to biblioteka napisana w języku Rust (edycja 2024), której autorem jest Jan Roman Cisowski.
+**cargo-plot** (v0.1.5) to biblioteka napisana w języku Rust (edycja 2024), której autorem jest Jan Roman Cisowski.
 
 🔗 **Crates.io (Paczka)**: [crates.io/crates/cargo-plot](https://crates.io/crates/cargo-plot)
 🔗 **GitHub (Kod źródłowy)**: [github.com/j-Cis/cargo-plot](https://github.com/j-Cis/cargo-plot)

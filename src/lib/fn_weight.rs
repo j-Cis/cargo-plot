@@ -43,7 +43,7 @@ pub fn format_weight(bytes: u64, config: &WeightConfig) -> String {
 
     if bytes == 0 {
         return format!(
-            "[{:>2} {:>width$}] ",
+            "[{:>3} {:>width$}] ",
             units[0],
             "0",
             width = config.precision

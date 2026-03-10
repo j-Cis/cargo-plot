@@ -112,52 +112,139 @@ fn run_tree_flow() {
 }
 
 // --- FLOW: DOC ---
+// --- FLOW: DOC (Pełna orkiestracja: Wiele raportów, wiele zadań) ---
 fn run_doc_flow() {
-    let out_name: String = input("Nazwa raportu (prefix):")
-        .default_input("code")
+    // 1. Katalog wyjściowy dla wszystkich raportów
+    let output_dir: String = input("Katalog wyjściowy dla raportów:")
+        .default_input("doc")
         .interact()
         .unwrap();
 
-    let id_style = select("Styl nagłówków (ID):")
+    let mut doc_tasks_data = Vec::new(); // Tu będziemy trzymać dane (Stringi), żeby nie zniknęły
+
+    // 2. PĘTLA DODAWANIA RAPORTÓW (DocTask)
+    loop {
+        intro(format!(" 📄 Konfiguracja raportu nr {} ", doc_tasks_data.len() + 1)).unwrap();
+
+        let out_name: String = input("Nazwa pliku (prefix):")
+            .default_input("code")
+            .interact()
+            .unwrap();
+
+        let id_style = select_id_style();
+        let tree_style = select_tree_style();
+
+        // PĘTLA DODAWANIA ZADAŃ (Task) do tego konkretnego raportu
+        let mut sub_tasks_data = Vec::new();
+        loop {
+            let task = ask_for_full_task_data(sub_tasks_data.len() + 1);
+            sub_tasks_data.push(task);
+
+            if !confirm("Czy dodać kolejne zadanie skanowania (Task) DO TEGO raportu?").initial_value(false).interact().unwrap() {
+                break;
+            }
+        }
+
+        // Zapisujemy komplet danych dla jednego DocTask
+        doc_tasks_data.push((out_name, id_style, tree_style, sub_tasks_data));
+
+        if !confirm("Czy chcesz zdefiniować KOLEJNY, osobny raport (DocTask)?").initial_value(false).interact().unwrap() {
+            break;
+        }
+    }
+
+    let is_dry = confirm("Czy uruchomić tryb symulacji (Dry-Run)?").initial_value(false).interact().unwrap();
+
+    // 3. KONWERSJA DANYCH NA STRUKTURY API
+    // Musimy to zrobić ostrożnie, bo DocTask oczekuje referencji (&str)
+    let spin = spinner();
+    spin.start("Generowanie wszystkich raportów...");
+
+    let mut final_doc_tasks = Vec::new();
+
+    // Mapujemy nasze zebrane Stringi na struktury DocTask i Task
+    for doc_data in &doc_tasks_data {
+        let (name, id_s, tree_s, tasks_raw) = doc_data;
+        
+        let mut api_tasks = Vec::new();
+        for t_raw in tasks_raw {
+            api_tasks.push(Task {
+                path_location: &t_raw.loc,
+                path_include_only: t_raw.inc.iter().map(|s| s.as_str()).collect(),
+                path_exclude: t_raw.exc.iter().map(|s| s.as_str()).collect(),
+                filter_files: t_raw.fil.iter().map(|s| s.as_str()).collect(),
+                output_type: t_raw.out_type,
+                ..Default::default()
+            });
+        }
+
+        final_doc_tasks.push(DocTask {
+            output_filename: name,
+            insert_tree: tree_s,
+            id_style: id_s,
+            tasks: api_tasks,
+        });
+    }
+
+    if is_dry {
+        spin.stop(format!("Symulacja zakończona. Wygenerowano by {} raportów.", final_doc_tasks.len()));
+    } else {
+        match generate_docs(final_doc_tasks, &output_dir) {
+            Ok(_) => spin.stop(format!("Sukces! Wszystkie raporty zapisano w /{}/", output_dir)),
+            Err(e) => spin.error(format!("Błąd krytyczny: {}", e)),
+        }
+    }
+}
+
+// Pomocnicza struktura do przetrzymywania danych Task w TUI (właściciel Stringów)
+struct TaskData {
+    loc: String,
+    inc: Vec<String>,
+    exc: Vec<String>,
+    fil: Vec<String>,
+    out_type: &'static str,
+}
+
+// Funkcja zbierająca pełne dane o pojedynczym zadaniu skanowania
+fn ask_for_full_task_data(index: usize) -> TaskData {
+    println!("\n--- Zadanie skanowania #{} ---", index);
+    let loc: String = input("  Ścieżka (loc):").default_input(".").interact().unwrap();
+    
+    let inc_raw: String = input("  Whitelist (inc) [Enter = wszystko]:").required(false).interact().unwrap_or_default();
+    let mut inc = split_and_trim(&inc_raw);
+    
+    // Stosujemy Twoją logikę rekurencyjną dla folderów w whitelist
+    inc = inc.into_iter().map(|s| {
+        if s.ends_with('/') || !s.contains('.') {
+            format!("{}/**/*", s.trim_end_matches('/'))
+        } else { s }
+    }).collect();
+
+    let exc_raw: String = input("  Blacklist (exc):").default_input("target, .git, node_modules").required(false).interact().unwrap_or_default();
+    let exc = split_and_trim(&exc_raw);
+
+    let fil_raw: String = input("  Filtry plików (fil) [np. *.rs]:").required(false).interact().unwrap_or_default();
+    let fil = split_and_trim(&fil_raw);
+
+    let out_type = select_type();
+
+    TaskData { loc, inc, exc, fil, out_type }
+}
+
+fn select_id_style() -> &'static str {
+    select("Styl nagłówków (ID):")
         .item("id-tag", "Opisowy (tag)", "")
         .item("id-num", "Numerowany (num)", "")
-        .item("id-non", "Tylko ścieżka (none)", "")
-        .interact().unwrap();
+        .item("id-non", "Tylko ścieżka", "")
+        .interact().unwrap()
+}
 
-    let tree_style = select("Spis treści (drzewo):")
+fn select_tree_style() -> &'static str {
+    select("Spis treści (drzewo):")
         .item("files-first", "Pliki na górze", "")
         .item("dirs-first", "Foldery na górze", "")
         .item("with-out", "Brak drzewa", "")
-        .interact().unwrap();
-
-    let is_dry = confirm("Czy uruchomić tryb symulacji (Dry-Run)?")
-        .initial_value(false)
-        .interact().unwrap();
-
-    let spin = spinner();
-    spin.start("Generowanie dokumentacji...");
-
-    let tasks = vec![Task {
-        path_location: ".",
-        path_exclude: vec![".git/", "target/", "node_modules/", ".vs/", ".idea/", ".vscode/"],
-        ..Default::default()
-    }];
-
-    let doc_task = DocTask {
-        output_filename: &out_name,
-        insert_tree: tree_style,
-        id_style,
-        tasks,
-    };
-
-    if is_dry {
-        spin.stop("Symulacja zakończona (nie zapisano plików).");
-    } else {
-        match generate_docs(vec![doc_task], "doc") {
-            Ok(_) => spin.stop("Raport zapisany w folderze /doc"),
-            Err(e) => spin.error(format!("Błąd: {}", e)),
-        }
-    }
+        .interact().unwrap()
 }
 
 // --- FLOW: DIST ---

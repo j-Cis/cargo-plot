@@ -1,8 +1,6 @@
-
-/// MIDDLEWARE: Rozwija klamry we wzorcach (Brace Expansion).
-/// Np. "@tui{.rs,/,/**}" -> ["@tui.rs", "@tui/", "@tui/**"]
+/// [POL]: Wykonuje rozwinięcie klamer we wzorcu (np. {a,b} -> [a, b]). Obsługuje rekurencję.
+/// [ENG]: Performs brace expansion in the pattern (e.g. {a,b} -> [a, b]). Supports recursion.
 pub fn expand_braces(pattern: &str) -> Vec<String> {
-    // Szukamy pierwszej otwierającej i zamykającej klamry
     if let (Some(start), Some(end)) = (pattern.find('{'), pattern.find('}')) {
         if start < end {
             let prefix = &pattern[..start];
@@ -12,12 +10,10 @@ pub fn expand_braces(pattern: &str) -> Vec<String> {
             let mut expanded = Vec::new();
             for opt in options.split(',') {
                 let new_pattern = format!("{}{}{}", prefix, opt, suffix);
-                // Rekurencja! Jeśli wzorzec miał więcej klamer, rozwijamy dalej
                 expanded.extend(expand_braces(&new_pattern));
             }
             return expanded;
         }
     }
-    // Jeśli nie ma (więcej) klamer, po prostu zwracamy gotowy string
     vec![pattern.to_string()]
 }

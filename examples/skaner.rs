@@ -1,11 +1,9 @@
-use cargo_plot::core::path_matcher::PathMatchers;
-use cargo_plot::core::path_matcher_utils::expand_braces;
-use cargo_plot::core::path_getter::get_paths;
 use cargo_plot::core::path_class::get_icon_for_path;
+use cargo_plot::core::path_getter::get_paths;
+use cargo_plot::core::path_matcher::{/*PathMatcher,*/ PathMatchers, expand_braces};
 use std::collections::HashSet;
 use std::env;
 use std::process;
-
 
 /// Wyciąga flagi `-x` z argumentów wywołania.
 /// Jeśli nie znajdzie żadnych wzorców, wypisuje instrukcję i kończy program.
@@ -44,8 +42,9 @@ fn main() {
     }
     println!("⚙️  Wzorce po middleware (TOK): {:?}", patterns_tok);
 
-    let is_case_sensitive = false; 
-    let matchers = PathMatchers::new(&patterns_raw, is_case_sensitive).expect("Błąd kompilacji wzorców");
+    let is_case_sensitive = false;
+    let matchers =
+        PathMatchers::new(&patterns_raw, is_case_sensitive).expect("Błąd kompilacji wzorców");
     // let paths_to_test: Vec<&str> = include!("data.rs");
     let paths_to_test = get_paths("./src");
     // let wycinek = &paths_to_test[..std::cmp::min(25, paths_to_test.len())];
@@ -60,8 +59,7 @@ fn main() {
 
     let mut dopasowane = 0;
     let total = paths_to_test.len();
-    
-    
+
     // Ewaluacja
     matchers.evaluate(
         &paths_to_test,
@@ -74,9 +72,12 @@ fn main() {
         },
         |_path| {
             // Miejsce na logikę dla odrzuconych ścieżek
-        }
+        },
     );
 
     println!("----------");
-    println!("📊 Podsumowanie: Dopasowano {} z {} ścieżek.", dopasowane, total);
+    println!(
+        "📊 Podsumowanie: Dopasowano {} z {} ścieżek.",
+        dopasowane, total
+    );
 }

@@ -1,21 +1,28 @@
 use regex::Regex;
+use std::collections::HashSet;
 
 pub struct PathMatcher {
     regex: Regex,
     targets_file: bool, 
+    requires_sibling: bool, // ⚡ : Flaga świadomości kontekstu
 }
 
 impl PathMatcher {
     pub fn new(pattern: &str, case_sensitive: bool) -> Result<Self, regex::Error> {
+        // ⚡: Wykrywamy '@' i od razu usuwamy go ze wzorca!
+        let requires_sibling = pattern.contains('@');
+        let clean_pattern_str = pattern.replace('@', "");
+
         let mut re = String::new();
 
-        // 🔥 MAGIA: Wstrzykujemy flagę niewrażliwości na wielkość liter
+        // 🔥: Wstrzykujemy flagę niewrażliwości na wielkość liter
         if !case_sensitive {
             re.push_str("(?i)"); 
         }
         
         let mut is_anchored = false;
-        let mut p = pattern;
+        // Używamy wyczyszczonego wzorca (bez '@'), żeby nie psuć parsera z tabeli!
+        let mut p = clean_pattern_str.as_str();
 
         // BARIERA LOGICZNA: Jeśli wzorzec nie kończy się na ukośnik ani na '**',
         // to według Twojej tabeli celuje WYŁĄCZNIE w pliki.
@@ -96,10 +103,12 @@ impl PathMatcher {
         Ok(Self {
             regex: Regex::new(&re)?,
             targets_file,
+            requires_sibling,
         })
     }
 
-    pub fn is_match(&self, path: &str) -> bool {
+    // ⚡: is_match przyjmuje środowisko do sprawdzania rodzeństwa
+    pub fn is_match(&self, path: &str, env: &HashSet<&str>) -> bool {
         // TWARDA ZASADA: Jeśli wzorzec to plik, to natychmiastowo
         // odrzucamy każdą ścieżkę testową, która kończy się na ukośnik!
         if self.targets_file && path.ends_with('/') {
@@ -107,13 +116,40 @@ impl PathMatcher {
         }
 
         let clean_path = path.strip_prefix("./").unwrap_or(path);
-        self.regex.is_match(clean_path)
+
+        // Jeśli Regex odrzuca ścieżkę, nie ma o czym gadać
+        if !self.regex.is_match(clean_path) {
+            return false;
+        }
+
+        // ⚡: Regex powiedział "TAK", ale wzorzec miał "@", więc sprawdzamy brata!
+        if self.requires_sibling && !path.ends_with('/') {
+            // Z "./interfaces/tui.rs" robimy folder nadrzędny i nazwę pliku
+            let mut components: Vec<&str> = path.split('/').collect();
+            if let Some(file_name) = components.pop() {
+                let parent_dir = components.join("/"); // np. "./interfaces"
+                
+                // Z "tui.rs" bierzemy "tui"
+                let core_name = file_name.split('.').next().unwrap_or(""); 
+                
+                // Budujemy docelową nazwę folderu: "./interfaces/tui/"
+                let expected_sibling = format!("{}/{}/", parent_dir, core_name);
+
+                // Sprawdzamy, czy takie rodzeństwo istnieje na dysku
+                if !env.contains(expected_sibling.as_str()) {
+                    return false; // Sierota! Odrzucamy.
+                }
+            }
+        }
+
+        true
     }
 
     /// Ewaluuje kolekcję ścieżek, wywołując odpowiedni callback dla dopasowania i braku dopasowania.
     pub fn evaluate<I, S, OnMatch, OnMismatch>(
         &self,
         paths: I,
+        env: &HashSet<&str>,
         mut on_match: OnMatch,
         mut on_mismatch: OnMismatch,
     ) where
@@ -124,7 +160,7 @@ impl PathMatcher {
     {
         for path in paths {
             let path_ref = path.as_ref();
-            if self.is_match(path_ref) {
+            if self.is_match(path_ref, env) {
                 on_match(path_ref);
             } else {
                 on_mismatch(path_ref);
@@ -153,9 +189,10 @@ impl PathMatchers {
     }
 
     /// Zwraca true, jeśli ścieżka pasuje do JAKIEGOKOLWIEK wzorca (logiczne OR)
-    pub fn is_match(&self, path: &str) -> bool {
+    pub fn is_match(&self, path: &str, env: &HashSet<&str>) -> bool {
         for matcher in &self.matchers {
-            if matcher.is_match(path) {
+            // Przekazujemy `env` w dół do pojedynczego matchera
+            if matcher.is_match(path, env) {
                 return true;
             }
         }
@@ -166,6 +203,7 @@ impl PathMatchers {
     pub fn evaluate<I, S, OnMatch, OnMismatch>(
         &self,
         paths: I,
+        env: &HashSet<&str>,
         mut on_match: OnMatch,
         mut on_mismatch: OnMismatch,
     ) where
@@ -176,7 +214,7 @@ impl PathMatchers {
     {
         for path in paths {
             let path_ref = path.as_ref();
-            if self.is_match(path_ref) {
+            if self.is_match(path_ref, env) {
                 on_match(path_ref);
             } else {
                 on_mismatch(path_ref);

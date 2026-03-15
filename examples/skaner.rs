@@ -1,6 +1,6 @@
-use cargo_plot::core::path_matcher::{PathMatcher, PathMatchers, get_icon_for_path};
+use cargo_plot::core::path_matcher::{PathMatchers, get_icon_for_path};
 use cargo_plot::core::path_getter::get_paths;
-
+use std::collections::HashSet;
 use std::env;
 use std::process;
 
@@ -44,13 +44,19 @@ fn main() {
     // for path in paths_to_test.iter().take(25) {
     //     println!("{}", path);
     // }
+
+    // 🔴 NOWOŚĆ: Budujemy mapę środowiska z naszej listy ścieżek.
+    // Używamy .copied(), bo elements w Vec<&str> to &str, a chcemy mieć HashSet<&str>
+    let environment: HashSet<&str> = paths_to_test.iter().map(|s| s.as_str()).collect();
+
     let mut dopasowane = 0;
     let total = paths_to_test.len();
     
     
     // Ewaluacja
     matchers.evaluate(
-        paths_to_test,
+        &paths_to_test,
+        &environment, // 🔴 NOWOŚĆ: Wstrzykujemy środowisko do silnika!
         |path| {
             // 🔥 Używamy naszej nowej, czystej funkcji!
             let icon = get_icon_for_path(path);

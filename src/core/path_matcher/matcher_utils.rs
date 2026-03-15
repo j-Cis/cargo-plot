@@ -17,3 +17,54 @@ pub fn expand_braces(pattern: &str) -> Vec<String> {
     }
     vec![pattern.to_string()]
 }
+
+
+/// [POL]: Definiuje dostępne strategie sortowania kolekcji ścieżek.
+/// [ENG]: Defines available sorting strategies for path collections.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SortStrategy {
+    /// [POL]: Brak stosowania algorytmu sortowania.
+    /// [ENG]: No sorting algorithm applied.
+    None,
+
+    /// [POL]: Sortowanie alfanumeryczne w porządku rosnącym.
+    /// [ENG]: Alphanumeric sorting in ascending order.
+    Az,
+
+    /// [POL]: Sortowanie alfanumeryczne w porządku malejącym.
+    /// [ENG]: Alphanumeric sorting in descending order.
+    Za,
+
+    /// [POL]: Priorytet dla plików, następnie sortowanie alfanumeryczne rosnąco.
+    /// [ENG]: Priority for files, followed by alphanumeric ascending sort.
+    AzFileFirst,
+
+    /// [POL]: Priorytet dla plików, następnie sortowanie alfanumeryczne malejąco.
+    /// [ENG]: Priority for files, followed by alphanumeric descending sort.
+    ZaFileFirst,
+
+    /// [POL]: Priorytet dla katalogów, następnie sortowanie alfanumeryczne rosnąco.
+    /// [ENG]: Priority for directories, followed by alphanumeric ascending sort.
+    AzDirFirst,
+
+    /// [POL]: Priorytet dla katalogów, następnie sortowanie alfanumeryczne malejąco.
+    /// [ENG]: Priority for directories, followed by alphanumeric descending sort.
+    ZaDirFirst,
+
+
+    /// [POL]: Sortowanie alfanumeryczne rosnąco, grupujące logiczne pary plik-katalog (np. moduły) z priorytetem dla plików.
+    /// [ENG]: Alphanumeric ascending sort grouping logical file-directory pairs (e.g. modules), prioritising files.
+    AzFileFirstMerge,
+
+    /// [POL]: Sortowanie alfanumeryczne malejąco, grupujące logiczne pary plik-katalog z priorytetem dla plików.
+    /// [ENG]: Alphanumeric descending sort grouping logical file-directory pairs, prioritising files.
+    ZaFileFirstMerge,
+
+    /// [POL]: Sortowanie alfanumeryczne rosnąco, grupujące logiczne pary plik-katalog z priorytetem dla katalogów.
+    /// [ENG]: Alphanumeric ascending sort grouping logical file-directory pairs, prioritising directories.
+    AzDirFirstMerge,
+
+    /// [POL]: Sortowanie alfanumeryczne malejąco, grupujące logiczne pary plik-katalog z priorytetem dla katalogów.
+    /// [ENG]: Alphanumeric descending sort grouping logical file-directory pairs, prioritising directories.
+    ZaDirFirstMerge,
+}

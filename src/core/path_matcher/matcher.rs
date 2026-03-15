@@ -13,9 +13,9 @@ pub struct PathMatcher {
 }
 
 impl PathMatcher {
-    pub fn new(pattern: &str, case_sensitive: bool) -> Result<Self, regex::Error> {
-        /// [POL]: Kompiluje wzorzec tekstowy do wyrażenia regularnego, ekstrahując flagi sterujące.
-        /// [ENG]: Compiles a text pattern into a regular expression, extracting control flags.
+    pub fn new(pattern: &str, case_sensitive: bool) -> Result<Self, regex::Error> {        
+        // [POL]: Kompiluje wzorzec tekstowy do wyrażenia regularnego, ekstrahując flagi sterujące.
+        // [ENG]: Compiles a text pattern into a regular expression, extracting control flags.
         let is_deep = pattern.ends_with('+');
         let requires_sibling = pattern.contains('@');
         let requires_orphan = pattern.contains('$');

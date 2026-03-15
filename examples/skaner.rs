@@ -1,5 +1,7 @@
-use cargo_plot::core::path_matcher::{PathMatchers, get_icon_for_path, expand_braces};
+use cargo_plot::core::path_matcher::PathMatchers;
+use cargo_plot::core::path_matcher_utils::expand_braces;
 use cargo_plot::core::path_getter::get_paths;
+use cargo_plot::core::path_class::get_icon_for_path;
 use std::collections::HashSet;
 use std::env;
 use std::process;

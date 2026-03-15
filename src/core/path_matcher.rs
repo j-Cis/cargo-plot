@@ -1,40 +1,20 @@
 use regex::Regex;
 use std::collections::HashSet;
-
-/// MIDDLEWARE: Rozwija klamry we wzorcach (Brace Expansion).
-/// Np. "@tui{.rs,/,/**}" -> ["@tui.rs", "@tui/", "@tui/**"]
-pub fn expand_braces(pattern: &str) -> Vec<String> {
-    // Szukamy pierwszej otwierającej i zamykającej klamry
-    if let (Some(start), Some(end)) = (pattern.find('{'), pattern.find('}')) {
-        if start < end {
-            let prefix = &pattern[..start];
-            let suffix = &pattern[end + 1..];
-            let options = &pattern[start + 1..end];
-
-            let mut expanded = Vec::new();
-            for opt in options.split(',') {
-                let new_pattern = format!("{}{}{}", prefix, opt, suffix);
-                // Rekurencja! Jeśli wzorzec miał więcej klamer, rozwijamy dalej
-                expanded.extend(expand_braces(&new_pattern));
-            }
-            return expanded;
-        }
-    }
-    // Jeśli nie ma (więcej) klamer, po prostu zwracamy gotowy string
-    vec![pattern.to_string()]
-}
+use super::path_matcher_utils::expand_braces;
 
 pub struct PathMatcher {
     regex: Regex,
     targets_file: bool, 
-    requires_sibling: bool, // ⚡ : Flaga świadomości kontekstu
+    requires_sibling: bool, // @ : Para (Plik <=> Folder)
+    requires_orphan: bool,  // $ : Jednostronne (Plik => Folder)
 }
 
 impl PathMatcher {
     pub fn new(pattern: &str, case_sensitive: bool) -> Result<Self, regex::Error> {
-        // ⚡: Wykrywamy '@' i od razu usuwamy go ze wzorca!
+        // Detekcja flag i usuwanie ich ze wzorca (replace nie psuje reszty stringa)
         let requires_sibling = pattern.contains('@');
-        let clean_pattern_str = pattern.replace('@', "");
+        let requires_orphan = pattern.contains('$');
+        let clean_pattern_str = pattern.replace('@', "").replace('$', "");
 
         let mut re = String::new();
 
@@ -44,12 +24,15 @@ impl PathMatcher {
         }
         
         let mut is_anchored = false;
+
         // Używamy wyczyszczonego wzorca (bez '@'), żeby nie psuć parsera z tabeli!
         let mut p = clean_pattern_str.as_str();
 
         // BARIERA LOGICZNA: Jeśli wzorzec nie kończy się na ukośnik ani na '**',
         // to według Twojej tabeli celuje WYŁĄCZNIE w pliki.
-        let targets_file = !pattern.ends_with('/') && !pattern.ends_with("**");
+        // let targets_file = !pattern.ends_with('/') && !pattern.ends_with("**");
+        // BARDZO WAŻNE: targets_file sprawdzamy na 'p' (czystym wzorcu)
+        let targets_file = !p.ends_with('/') && !p.ends_with("**");
 
         // 1. ZASADY KOTWICZENIA
         if p.starts_with("./") {
@@ -129,6 +112,7 @@ impl PathMatcher {
             regex: Regex::new(&re)?,
             targets_file,
             requires_sibling,
+            requires_orphan,
         })
     }
 
@@ -147,8 +131,10 @@ impl PathMatcher {
             return false;
         }
 
-        // ⚡: Regex powiedział "TAK", ale wzorzec miał "@", więc sprawdzamy brata!
-        if self.requires_sibling && !path.ends_with('/') {
+        // ⚡: Regex powiedział "TAK", ale wzorzec miał "@" lub "$", więc sprawdzamy brata!
+        // --- ZASADA RODZEŃSTWA (@) LUB SIEROT ($) dla PLIKÓW ---
+        // Obie zasady wymagają od pliku posiadania folderu-brata
+        if (self.requires_sibling || self.requires_orphan) && !path.ends_with('/') {
             // Z "./interfaces/tui.rs" robimy folder nadrzędny i nazwę pliku
             let mut components: Vec<&str> = path.split('/').collect();
             if let Some(file_name) = components.pop() {
@@ -158,12 +144,33 @@ impl PathMatcher {
                 let core_name = file_name.split('.').next().unwrap_or(""); 
                 
                 // Budujemy docelową nazwę folderu: "./interfaces/tui/"
-                let expected_sibling = format!("{}/{}/", parent_dir, core_name);
+                let expected_folder = if parent_dir.is_empty() {
+                    format!("{}/", core_name)
+                } else {
+                    format!("{}/{}/", parent_dir, core_name)
+                };
 
                 // Sprawdzamy, czy takie rodzeństwo istnieje na dysku
-                if !env.contains(expected_sibling.as_str()) {
-                    return false; // Sierota! Odrzucamy.
+                if !env.contains(expected_folder.as_str()) {
+                    return false; // Plik nie ma folderu -> Odrzucamy dla @ i $
                 }
+            }
+        }
+
+        // --- DODATKOWA ZASADA RODZEŃSTWA (@) DLA FOLDERÓW ---
+        // Tylko @ wymaga, aby folder też miał plik-indeks
+        if self.requires_sibling && path.ends_with('/') {
+            let dir_no_slash = path.trim_end_matches('/');
+            
+            // Szukamy w środowisku pliku, który autoryzuje ten folder
+            let has_file_sibling = env.iter().any(|&p| {
+                p.starts_with(dir_no_slash) && 
+                p[dir_no_slash.len()..].starts_with('.') && 
+                !p.ends_with('/')
+            });
+
+            if !has_file_sibling {
+                return false; // Folder nie ma pliku -> Odrzucamy TYLKO dla @
             }
         }
 
@@ -254,23 +261,3 @@ impl PathMatchers {
     }
 }
 
-
-/// Zwraca odpowiednią ikonę (emoji) dla podanej ścieżki,
-/// rozpoznając foldery (końcówka '/') oraz elementy ukryte (kropka na początku nazwy).
-pub fn get_icon_for_path(path: &str) -> &'static str {
-    let is_dir = path.ends_with('/');
-    
-    // Wyciągamy samą nazwę pliku/folderu:
-    // 1. Usuwamy ew. ukośnik z końca (żeby folder nie zwrócił pustego stringa)
-    // 2. Dzielimy przez ukośniki i bierzemy ostatni element
-    let nazwa = path.trim_end_matches('/').split('/').last().unwrap_or("");
-    let is_hidden = nazwa.starts_with('.');
-
-    // Dobieramy odpowiednią ikonę na podstawie dwóch cech
-    match (is_dir, is_hidden) {
-        (true, false) => "📁",  // Zwykły folder
-        (true, true)  => "🗃️",  // Ukryty folder (z kropką)
-        (false, false)=> "📄",  // Zwykły plik
-        (false, true) => "⚙️ ", // Ukryty plik (konfiguracyjny z kropką)
-    }
-}

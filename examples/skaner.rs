@@ -1,4 +1,4 @@
-use cargo_plot::core::path_matcher::{PathMatchers, get_icon_for_path};
+use cargo_plot::core::path_matcher::{PathMatchers, get_icon_for_path, expand_braces};
 use cargo_plot::core::path_getter::get_paths;
 use std::collections::HashSet;
 use std::env;
@@ -32,11 +32,18 @@ fn get_patterns_from_cli() -> Vec<String> {
 
 fn main() {
     // 1. ODCZYT ARGUMENTÓW Z KONSOLI
-    let patterns = get_patterns_from_cli();
-    println!("🔍 Skanuję używając wzorców: {:?}", patterns);
+    let patterns_raw = get_patterns_from_cli();
+    println!("🔍 Wzorce wejściowe (RAW): {:?}", patterns_raw);
+
+    // 🔴 NOWOŚĆ: Przepuszczamy wzorce przez middleware w celach wizualnych
+    let mut patterns_tok = Vec::new();
+    for pat in &patterns_raw {
+        patterns_tok.extend(expand_braces(pat));
+    }
+    println!("⚙️  Wzorce po middleware (TOK): {:?}", patterns_tok);
 
     let is_case_sensitive = false; 
-    let matchers = PathMatchers::new(&patterns, is_case_sensitive).expect("Błąd kompilacji wzorców");
+    let matchers = PathMatchers::new(&patterns_raw, is_case_sensitive).expect("Błąd kompilacji wzorców");
     // let paths_to_test: Vec<&str> = include!("data.rs");
     let paths_to_test = get_paths("./src");
     // let wycinek = &paths_to_test[..std::cmp::min(25, paths_to_test.len())];

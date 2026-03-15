@@ -1,6 +1,29 @@
 use regex::Regex;
 use std::collections::HashSet;
 
+/// MIDDLEWARE: Rozwija klamry we wzorcach (Brace Expansion).
+/// Np. "@tui{.rs,/,/**}" -> ["@tui.rs", "@tui/", "@tui/**"]
+pub fn expand_braces(pattern: &str) -> Vec<String> {
+    // Szukamy pierwszej otwierającej i zamykającej klamry
+    if let (Some(start), Some(end)) = (pattern.find('{'), pattern.find('}')) {
+        if start < end {
+            let prefix = &pattern[..start];
+            let suffix = &pattern[end + 1..];
+            let options = &pattern[start + 1..end];
+
+            let mut expanded = Vec::new();
+            for opt in options.split(',') {
+                let new_pattern = format!("{}{}{}", prefix, opt, suffix);
+                // Rekurencja! Jeśli wzorzec miał więcej klamer, rozwijamy dalej
+                expanded.extend(expand_braces(&new_pattern));
+            }
+            return expanded;
+        }
+    }
+    // Jeśli nie ma (więcej) klamer, po prostu zwracamy gotowy string
+    vec![pattern.to_string()]
+}
+
 pub struct PathMatcher {
     regex: Regex,
     targets_file: bool, 
@@ -75,6 +98,8 @@ impl PathMatcher {
                 }
                 '?' => re.push_str("[^/]"),
                 '{' => {
+                    // UWAGA: Ten blok '{' działa tylko jeśli klamry NIE ZOSTAŁY ROZWINIĘTE
+                    // przez middleware (bo np. nie miały przecinka). Inaczej parser nigdy tu nie wejdzie.
                     let mut options = String::new();
                     i += 1;
                     while i < chars.len() && chars[i] != '}' {
@@ -182,8 +207,14 @@ impl PathMatchers {
     {
         let mut matchers = Vec::new();
         for pat in patterns {
-            // Używamy "świętej" funkcji do skompilowania każdego z nich
-            matchers.push(PathMatcher::new(pat.as_ref(), case_sensitive)?);
+            // ⚡ TUTAJ JEST GŁÓWNA ZMIANA:
+            // Najpierw przepuszczamy wzorzec przez nasz nowy Middleware:
+            let expanded_patterns = expand_braces(pat.as_ref());
+            
+            // Dopiero potem kompilujemy każdą z wygenerowanych wersji:
+            for expanded_pat in expanded_patterns {
+                matchers.push(PathMatcher::new(&expanded_pat, case_sensitive)?);
+            }
         }
         Ok(Self { matchers })
     }

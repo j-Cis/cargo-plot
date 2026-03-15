@@ -5,5 +5,5 @@ pub mod matcher_utils;
 pub mod matchers;
 
 pub use self::matcher::PathMatcher;
-pub use self::matcher_utils::expand_braces;
+pub use self::matcher_utils::{expand_braces,SortStrategy,sort_paths};
 pub use self::matchers::PathMatchers;

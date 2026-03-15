@@ -1,6 +1,6 @@
 use cargo_plot::core::path_class::get_icon_for_path;
 use cargo_plot::core::path_getter::get_paths;
-use cargo_plot::core::path_matcher::{/*PathMatcher,*/ PathMatchers, expand_braces};
+use cargo_plot::core::path_matcher::{/*PathMatcher,*/ PathMatchers, expand_braces,SortStrategy};
 use std::collections::HashSet;
 use std::env;
 use std::process;
@@ -64,6 +64,7 @@ fn main() {
     matchers.evaluate(
         &paths_to_test,
         &environment, // 🔴 NOWOŚĆ: Wstrzykujemy środowisko do silnika!
+        SortStrategy::AzFileFirstMerge,
         |path| {
             // 🔥 Używamy naszej nowej, czystej funkcji!
             let icon = get_icon_for_path(path);

@@ -1,5 +1,5 @@
 use super::matcher::PathMatcher;
-use super::matcher_utils::expand_braces;
+use super::matcher_utils::{expand_braces, SortStrategy, sort_paths};
 use std::collections::HashSet;
 
 /// [POL]: Kontener przechowujący kolekcję silników dopasowujących ścieżki.
@@ -40,12 +40,13 @@ impl PathMatchers {
         false
     }
 
-    /// [POL]: Ewaluuje zbiór ścieżek, wykonując odpowiednie domknięcia dla dopasowanych i niedopasowanych elementów.
-    /// [ENG]: Evaluates a set of paths, executing respective closures for matched and mismatched elements.
+    /// [POL]: Ewaluuje zbiór ścieżek, sortuje je i wykonuje odpowiednie domknięcia.
+    /// [ENG]: Evaluates a set of paths, sorts them, and executes respective closures.
     pub fn evaluate<I, S, OnMatch, OnMismatch>(
         &self,
         paths: I,
         env: &HashSet<&str>,
+        strategy: SortStrategy,
         mut on_match: OnMatch,
         mut on_mismatch: OnMismatch,
     ) where
@@ -54,13 +55,25 @@ impl PathMatchers {
         OnMatch: FnMut(&str),
         OnMismatch: FnMut(&str),
     {
+        let mut matched = Vec::new();
+        let mut mismatched = Vec::new();
+
         for path in paths {
-            let path_ref = path.as_ref();
-            if self.is_match(path_ref, env) {
-                on_match(path_ref);
+            if self.is_match(path.as_ref(), env) {
+                matched.push(path);
             } else {
-                on_mismatch(path_ref);
+                mismatched.push(path);
             }
+        }
+
+        sort_paths(&mut matched, strategy);
+        sort_paths(&mut mismatched, strategy);
+
+        for path in matched {
+            on_match(path.as_ref());
+        }
+        for path in mismatched {
+            on_mismatch(path.as_ref());
         }
     }
 }

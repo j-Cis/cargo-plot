@@ -1,5 +1,6 @@
 use regex::Regex;
 use std::collections::HashSet;
+use super::matcher_utils::{SortStrategy, sort_paths};
 
 /// [POL]: Struktura odpowiedzialna za dopasowanie pojedynczego wzorca z uwzględnieniem zależności strukturalnych.
 /// [ENG]: Structure responsible for matching a single pattern considering structural dependencies.
@@ -204,12 +205,13 @@ impl PathMatcher {
         true
     }
 
-    /// [POL]: Ewaluuje ścieżkę i wywołuje odpowiednie akcje.
-    /// [ENG]: Evaluates path and triggers respective actions.
+    /// [POL]: Ewaluuje kolekcję ścieżek, sortuje wyniki i wywołuje odpowiednie akcje.
+    /// [ENG]: Evaluates a path collection, sorts the results, and triggers respective actions.
     pub fn evaluate<I, S, OnMatch, OnMismatch>(
         &self,
         paths: I,
         env: &HashSet<&str>,
+        strategy: SortStrategy,
         mut on_match: OnMatch,
         mut on_mismatch: OnMismatch,
     ) where
@@ -218,13 +220,25 @@ impl PathMatcher {
         OnMatch: FnMut(&str),
         OnMismatch: FnMut(&str),
     {
+        let mut matched = Vec::new();
+        let mut mismatched = Vec::new();
+
         for path in paths {
-            let path_ref = path.as_ref();
-            if self.is_match(path_ref, env) {
-                on_match(path_ref);
+            if self.is_match(path.as_ref(), env) {
+                matched.push(path);
             } else {
-                on_mismatch(path_ref);
+                mismatched.push(path);
             }
+        }
+
+        sort_paths(&mut matched, strategy);
+        sort_paths(&mut mismatched, strategy);
+
+        for path in matched {
+            on_match(path.as_ref());
+        }
+        for path in mismatched {
+            on_mismatch(path.as_ref());
         }
     }
 

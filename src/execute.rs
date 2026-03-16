@@ -89,26 +89,26 @@ where
     match view_mode {
         ViewMode::Grid => {
             if do_include {
-                stats.included.grid = Some(PathGrid::build(&stats.included.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name));
+                stats.m_matched.grid = Some(PathGrid::build(&stats.m_matched.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name));
             }
             if do_exclude {
-                stats.excluded.grid = Some(PathGrid::build(&stats.excluded.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name));
+                stats.x_mismatched.grid = Some(PathGrid::build(&stats.x_mismatched.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name));
             }
         }
         ViewMode::Tree => {
             if do_include {
-                stats.included.tree = Some(PathTree::build(&stats.included.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name));
+                stats.m_matched.tree = Some(PathTree::build(&stats.m_matched.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name));
             }
             if do_exclude {
-                stats.excluded.tree = Some(PathTree::build(&stats.excluded.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name));
+                stats.x_mismatched.tree = Some(PathTree::build(&stats.x_mismatched.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name));
             }
         }
         ViewMode::List => {
             if do_include {
-                stats.included.list = Some(PathList::build(&stats.included.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg));
+                stats.m_matched.list = Some(PathList::build(&stats.m_matched.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg));
             }
             if do_exclude {
-                stats.excluded.list = Some(PathList::build(&stats.excluded.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg));
+                stats.x_mismatched.list = Some(PathList::build(&stats.x_mismatched.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg));
             }
         }
     }

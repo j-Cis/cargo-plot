@@ -244,16 +244,16 @@ impl PathMatcher {
         strategy.apply(&mut mismatched);
 
         let stats = MatchStats {
-            matched: matched.len(),
-            rejected: mismatched.len(),
+            m_size_matched: matched.len(),
+            x_size_mismatched: mismatched.len(),
             total: matched.len() + mismatched.len(),
-            included: ResultSet {
+            m_matched: ResultSet {
                 paths: matched.iter().map(|s| s.as_ref().to_string()).collect(),
                 tree: None,
                 list: None,
                 grid: None, 
             },
-            excluded: ResultSet {
+            x_mismatched: ResultSet {
                 paths: mismatched.iter().map(|s| s.as_ref().to_string()).collect(),
                 tree: None,
                 list: None,
@@ -407,16 +407,16 @@ impl PathMatchers {
         strategy.apply(&mut mismatched);
 
         let stats = MatchStats {
-            matched: matched.len(),
-            rejected: mismatched.len(),
+            m_size_matched: matched.len(),
+            x_size_mismatched: mismatched.len(),
             total: matched.len() + mismatched.len(),
-            included: ResultSet {
+            m_matched: ResultSet {
                 paths: matched.iter().map(|s| s.as_ref().to_string()).collect(),
                 tree: None,
                 list: None,
                 grid: None,  
             },
-            excluded: ResultSet {
+            x_mismatched: ResultSet {
                 paths: mismatched.iter().map(|s| s.as_ref().to_string()).collect(),
                 tree: None,
                 list: None,

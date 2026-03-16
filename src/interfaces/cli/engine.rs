@@ -56,10 +56,10 @@ pub fn run(args: CliArgs) {
     println!("----------");
     println!(
         "📊 Podsumowanie: Dopasowano {} z {} ścieżek.",
-        stats.matched, stats.total
+        stats.m_size_matched, stats.total
     );
     println!(
         "📊 Podsumowanie: Odrzucono {} z {} ścieżek.",
-        stats.rejected, stats.total
+        stats.x_size_mismatched, stats.total
     );
 }

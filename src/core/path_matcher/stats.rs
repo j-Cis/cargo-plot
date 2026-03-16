@@ -13,11 +13,11 @@ pub struct ResultSet {
 // [PL]: Prosty obiekt statystyk, aby uniknąć ręcznego liczenia w Engine.
 #[derive(Default)]
 pub struct MatchStats {
-    pub matched: usize,
-    pub rejected: usize,
+    pub m_size_matched: usize,
+    pub x_size_mismatched: usize,
     pub total: usize,
-    pub included: ResultSet,
-    pub excluded: ResultSet,
+    pub m_matched: ResultSet,
+    pub x_mismatched: ResultSet,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -39,13 +39,13 @@ impl MatchStats {
         match view_mode {
             ViewMode::Grid => {
                 if do_include {
-                    if let Some(grid) = &self.included.grid {
+                    if let Some(grid) = &self.m_matched.grid {
                         out.push_str("✅ DOPASOWANIA\n");
                         out.push_str(&grid.render_cli());
                     }
                 }
                 if do_exclude {
-                    if let Some(grid) = &self.excluded.grid {
+                    if let Some(grid) = &self.x_mismatched.grid {
                         out.push_str("❌ ODRZUCENIA\n");
                         out.push_str(&grid.render_cli());
                     }
@@ -53,13 +53,13 @@ impl MatchStats {
             }
             ViewMode::Tree => {
                 if do_include {
-                    if let Some(tree) = &self.included.tree {
+                    if let Some(tree) = &self.m_matched.tree {
                         out.push_str("✅ DOPASOWANIA\n");
                         out.push_str(&tree.render_cli());
                     }
                 }
                 if do_exclude {
-                    if let Some(tree) = &self.excluded.tree {
+                    if let Some(tree) = &self.x_mismatched.tree {
                         out.push_str("❌ ODRZUCENIA\n");
                         out.push_str(&tree.render_cli());
                     }
@@ -67,13 +67,13 @@ impl MatchStats {
             }
             ViewMode::List => {
                 if do_include {
-                    if let Some(list) = &self.included.list {
+                    if let Some(list) = &self.m_matched.list {
                         out.push_str("✅ DOPASOWANIA\n");
                         out.push_str(&list.render_cli(true));
                     }
                 }
                 if do_exclude {
-                    if let Some(list) = &self.excluded.list {
+                    if let Some(list) = &self.x_mismatched.list {
                         out.push_str("❌ ODRZUCENIA\n");
                         out.push_str(&list.render_cli(false));
                     }

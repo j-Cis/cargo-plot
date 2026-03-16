@@ -45,13 +45,12 @@ impl PathList {
     /// [PL]: Renderuje listę dla terminala (z kolorami i ikonami).
     pub fn render_cli(&self, is_match: bool) -> String {
         let mut out = String::new();
-        let tag = if is_match { "✅ MATCH: ".green() } else { "❌ REJECT:".red() };
+        // let tag = if is_match { "✅ MATCH: ".green() } else { "❌ REJECT:".red() };
 
         for item in &self.items {
             let line = format!(
-                "{} {} {} {}\n",
+                "{} {} {}\n",
                 item.weight_str.truecolor(120, 120, 120),
-                tag,
                 item.icon,
                 if item.is_dir { item.name.yellow() } else { item.name.white() }
             );

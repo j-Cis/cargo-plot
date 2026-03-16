@@ -25,7 +25,7 @@ pub fn run(args: CliArgs) {
         show_mode,
         view_mode,
         args.no_root,
-        |_| {}, // ⚡ Closure są puste, bo renderujemy PO zebraniu statystyk
+        |_| {}, //  Closure są puste, bo renderujemy PO zebraniu statystyk
         |_| {},
         // |file_stat| { 
         //     if !args.treeview {
@@ -49,54 +49,8 @@ pub fn run(args: CliArgs) {
         // },
     );
 
-    let do_include = show_mode == ShowMode::Include || show_mode == ShowMode::Context;
-    let do_exclude = show_mode == ShowMode::Exclude || show_mode == ShowMode::Context;
-
     // 2. RENDEROWANIE WYNIKÓW
-    match view_mode {
-        ViewMode::Grid => {
-            if do_include {
-                if let Some(grid) = &stats.included.grid {
-                    println!("✅ DOPASOWANIA");
-                    print!("{}", grid.render_cli());
-                }
-            }
-            if do_exclude {
-                if let Some(grid) = &stats.excluded.grid {
-                    println!("❌ ODRZUCENIA");
-                    print!("{}", grid.render_cli());
-                }
-            }
-        }
-        ViewMode::Tree => {
-            if do_include {
-                if let Some(tree) = &stats.included.tree {
-                    println!("✅ DOPASOWANIA");
-                    print!("{}", tree.render_cli());
-                }
-            }
-            if do_exclude {
-                if let Some(tree) = &stats.excluded.tree {
-                    println!("❌ ODRZUCENIA");
-                    print!("{}", tree.render_cli());
-                }
-            }
-        }
-        ViewMode::List => {
-            if do_include {
-                if let Some(list) = &stats.included.list {
-                    println!("✅ DOPASOWANIA");
-                    print!("{}", list.render_cli(true));
-                }
-            }
-            if do_exclude {
-                if let Some(list) = &stats.excluded.list {
-                    println!("❌ ODRZUCENIA");
-                    print!("{}", list.render_cli(false));
-                }
-            }
-        }
-    }
+    print!("{}", stats.render_output(view_mode, show_mode));    
 
     // 3. PODSUMOWANIE
     println!("----------");

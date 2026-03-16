@@ -54,8 +54,6 @@ where
     // [PL]: Wyciągamy PULĘ ŚCIEŻEK (Encyklopedię)
     let paths_set = paths_store.get_index();
 
-   
-    
     let entry_abs = path_ctx.entry_absolute.clone();
     // 6. Zwracamy statystyki do Engine'u
     let mut stats = matchers.evaluate(
@@ -117,3 +115,4 @@ where
 
     stats
 }
+

@@ -1,5 +1,8 @@
-use std::fs;
+// use std::fs;
 use std::path::{Path, PathBuf};
+pub mod weight;
+
+use self::weight::get_path_weight;
 
 /// [PL]: Struktura przechowująca metadane (statystyki) pliku lub folderu.
 #[derive(Debug, Clone)]
@@ -18,9 +21,10 @@ impl FileStats {
     pub fn fetch(path: &str, entry_absolute: &str) -> Self {
         let absolute = Path::new(entry_absolute).join(path);
         
-        let weight_bytes = fs::metadata(&absolute)
-            .map(|m| m.len())
-            .unwrap_or(0);
+        let weight_bytes = get_path_weight(&absolute, true);
+        // let weight_bytes = fs::metadata(&absolute)
+        //     .map(|m| m.len())
+        //     .unwrap_or(0);
 
         Self {
             path: path.to_string(),

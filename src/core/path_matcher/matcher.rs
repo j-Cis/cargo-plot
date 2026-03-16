@@ -1,5 +1,5 @@
 use super::sort::SortStrategy;
-use super::stats::MatchStats;
+use super::stats::{MatchStats,ResultSet};
 use regex::Regex;
 use std::collections::HashSet;
 
@@ -252,8 +252,18 @@ impl PathMatcher {
             matched: matched.len(),
             rejected: mismatched.len(),
             total: matched.len() + mismatched.len(),
-            included: matched.iter().map(|s| s.as_ref().to_string()).collect(),
-            excluded: mismatched.iter().map(|s| s.as_ref().to_string()).collect(),
+            included: ResultSet {
+                paths: matched.iter().map(|s| s.as_ref().to_string()).collect(),
+                tree: None,
+                list: None,
+                grid: None, 
+            },
+            excluded: ResultSet {
+                paths: mismatched.iter().map(|s| s.as_ref().to_string()).collect(),
+                tree: None,
+                list: None,
+                grid: None,
+            },
         };
 
         if show_include {

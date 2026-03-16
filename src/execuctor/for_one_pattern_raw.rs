@@ -1,9 +1,13 @@
 use crate::core::path_matcher::matcher::PathMatcher;
-use crate::core::path_matcher::stats::MatchStats;
-use crate::core::path_store::PathStore;
+use crate::core::path_store::store::PathStore;
 use crate::core::path_store::context::PathContext;
 // [PL]: Reeksportujemy strategię, aby Kokpit nie musiał szukać jej w core.
 pub use crate::core::path_matcher::sort::SortStrategy;
+use crate::core::path_matcher::stats::MatchStats;
+use crate::core::path_view::{PathList, PathTree, PathGrid};
+use crate::core::file_stats::weight::WeightConfig;
+use crate::core::file_stats::FileStats;
+use std::path::Path;
 
 /// [POL]: Egzekutor operujący na pojedynczym, surowym wzorcu wpisanym przez użytkownika.
 /// [ENG]: Executor operating on a single, raw pattern provided by the user.
@@ -15,12 +19,15 @@ pub fn execute<OnMatch, OnMismatch>(
     sort_strategy: SortStrategy,
     show_include: bool,
     show_exclude: bool,
-    on_match: OnMatch,
-    on_mismatch: OnMismatch,
+    is_treeview: bool, 
+    is_gridview: bool,
+    no_root: bool,   
+    mut on_match: OnMatch,
+    mut on_mismatch: OnMismatch,
 ) -> MatchStats
 where
-    OnMatch: FnMut(&str),
-    OnMismatch: FnMut(&str),
+    OnMatch: FnMut(&FileStats),
+    OnMismatch: FnMut(&FileStats),
 {
     // 1. Inicjalizacja kontekstów
     let path_ctx = PathContext::resolve(enter_path).unwrap_or_else(|e| {
@@ -46,17 +53,55 @@ where
     // [PL]: Wyciągamy PULĘ ŚCIEŻEK (Encyklopedię)
     let paths_set = paths_store.get_index();
 
-    // 5. Ewaluacja i wykonanie callbacków
-    
+    let entry_abs = path_ctx.entry_absolute.clone();
 
-    // 6. Zwracamy statystyki do Engine'u
-    matcher.evaluate(
+    // 5. Ewaluacja i wykonanie callbacków
+    let mut stats = matcher.evaluate(
         &paths_store.list,
         &paths_set,
         sort_strategy,
         show_include,
         show_exclude,
-        on_match,
-        on_mismatch,
-    )
+        |raw_path| {
+            let s = FileStats::fetch(raw_path, &entry_abs);
+            on_match(&s);
+        },
+        |raw_path| {
+            let s = FileStats::fetch(raw_path, &entry_abs);
+            on_mismatch(&s);
+        },
+    );
+    // 6. ⚡ MAGIA BUDOWANIA WIDOKÓW
+    let weight_cfg = WeightConfig::default();
+    let root_name = if no_root {
+        None
+    } else {
+        Path::new(&path_ctx.entry_absolute).file_name().and_then(|n| n.to_str())
+    };
+    
+    if is_gridview {
+        if show_include {
+            stats.included.grid = Some(PathGrid::build(&stats.included.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name));
+        }
+        if show_exclude {
+            stats.excluded.grid = Some(PathGrid::build(&stats.excluded.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name));
+        }
+    } else if is_treeview {
+        if show_include {
+            stats.included.tree = Some(PathTree::build(&stats.included.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name));
+        }
+        if show_exclude {
+            stats.excluded.tree = Some(PathTree::build(&stats.excluded.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name));
+        }
+    } else {
+        if show_include {
+            stats.included.list = Some(PathList::build(&stats.included.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg));
+        }
+        if show_exclude {
+            stats.excluded.list = Some(PathList::build(&stats.excluded.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg));
+        }
+    }
+
+    // 7. Zwracamy statystyki do Engine'u
+    stats
 }

@@ -1,6 +1,6 @@
 use super::matcher::PathMatcher;
 use super::sort::SortStrategy;
-use super::stats::MatchStats;
+use super::stats::{MatchStats,ResultSet,ShowMode};
 use std::collections::HashSet;
 
 /// [POL]: Kontener przechowujący kolekcję silników dopasowujących ścieżki.
@@ -73,8 +73,7 @@ impl PathMatchers {
         paths: I,
         env: &HashSet<&str>,
         strategy: SortStrategy,
-        show_include: bool,
-        show_exclude: bool,
+        show_mode: ShowMode,
         mut on_match: OnMatch,
         mut on_mismatch: OnMismatch,
     ) -> MatchStats
@@ -102,17 +101,27 @@ impl PathMatchers {
             matched: matched.len(),
             rejected: mismatched.len(),
             total: matched.len() + mismatched.len(),
-            included: matched.iter().map(|s| s.as_ref().to_string()).collect(),
-            excluded: mismatched.iter().map(|s| s.as_ref().to_string()).collect(),
+            included: ResultSet {
+                paths: matched.iter().map(|s| s.as_ref().to_string()).collect(),
+                tree: None,
+                list: None,
+                grid: None,  
+            },
+            excluded: ResultSet {
+                paths: mismatched.iter().map(|s| s.as_ref().to_string()).collect(),
+                tree: None,
+                list: None,
+                grid: None,  
+            },
         };
 
-        if show_include {
+        if show_mode == ShowMode::Include || show_mode == ShowMode::Context {
             for path in matched {
                 on_match(path.as_ref());
             }
         }
 
-        if show_exclude {
+        if show_mode == ShowMode::Exclude || show_mode == ShowMode::Context {
             for path in mismatched {
                 on_mismatch(path.as_ref());
             }

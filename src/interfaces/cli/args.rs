@@ -1,4 +1,5 @@
 use cargo_plot::core::path_matcher::SortStrategy;
+use cargo_plot::core::path_view::ViewMode;
 use clap::{Args, Parser, ValueEnum};
 
 /// [POL]: Główny wrapper dla wtyczki Cargo.
@@ -13,7 +14,7 @@ pub enum CargoCli {
 
 /// [POL]: Nasze docelowe argumenty CLI. Zauważ, że teraz to jest `Args`, a nie `Parser`.
 #[derive(Args, Debug)]
-#[command(author, version, about = "Zaawansowany skaner struktury plików Rusta", long_about = None)]
+#[command(author, version, about = "Zaawansowany skaner struktury plików", long_about = None)]
 pub struct CliArgs {
     /// [EN]: Input path to scan.
     /// [PL]: Ścieżka wejściowa do skanowania.
@@ -27,17 +28,17 @@ pub struct CliArgs {
 
     /// [EN]: Display only matched paths.
     /// [PL]: Wyświetlaj tylko dopasowane ścieżki.
-    #[arg(long)]
+    #[arg(short = 'm', long = "on-match")]
     pub include: bool,
 
     /// [EN]: Display only rejected paths.
     /// [PL]: Wyświetlaj tylko odrzucone ścieżki.
-    #[arg(long)]
+    #[arg(short = 'x', long = "on-mismatch")]
     pub exclude: bool,
 
     /// [EN]: Ignore case.
     /// [PL]: Ignoruj wielkość liter.
-    #[arg(short = 'i', long = "ignore-case")]
+    #[arg(long = "ignore-case")]
     pub ignore_case: bool,
 
     /// [EN]: Results sorting strategy.
@@ -45,9 +46,20 @@ pub struct CliArgs {
     #[arg(short = 's', long = "sort", value_enum, default_value_t = CliSortStrategy::AzFileMerge)]
     pub sort: CliSortStrategy,
 
-    /// [POL]: Wyświetla wyniki w formie hierarchicznego drzewa zamiast płaskiej listy.
-    #[arg(short = 't', long = "treeview", default_value_t = false)]
-    pub treeview: bool,
+    /// [POL]: Wybiera format wyświetlania wyników (drzewo, lista, siatka).
+    #[arg(short = 'v', long = "view", value_enum, default_value_t = CliViewMode::Tree)]
+    pub view: CliViewMode,
+
+    /// [POL]: Ukrywa główny folder (root) w widoku drzewa.
+    #[arg(long = "treeview-no-root", default_value_t = false)]
+    pub no_root: bool,
+}
+
+#[derive(Debug, Clone, Copy, ValueEnum, PartialEq)]
+pub enum CliViewMode {
+    Tree,
+    List,
+    Grid,
 }
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
@@ -79,6 +91,16 @@ impl From<CliSortStrategy> for SortStrategy {
             CliSortStrategy::ZaFileMerge => SortStrategy::ZaFileFirstMerge,
             CliSortStrategy::AzDirMerge => SortStrategy::AzDirFirstMerge,
             CliSortStrategy::ZaDirMerge => SortStrategy::ZaDirFirstMerge,
+        }
+    }
+}
+
+impl From<CliViewMode> for ViewMode {
+    fn from(val: CliViewMode) -> Self {
+        match val {
+            CliViewMode::Tree => ViewMode::Tree,
+            CliViewMode::List => ViewMode::List,
+            CliViewMode::Grid => ViewMode::Grid,
         }
     }
 }

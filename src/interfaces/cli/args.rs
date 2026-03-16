@@ -61,9 +61,9 @@ pub enum CliSortStrategy {
     ZaDirMerge,
 }
 
-impl Into<SortStrategy> for CliSortStrategy {
-    fn into(self) -> SortStrategy {
-        match self {
+impl From<CliSortStrategy> for SortStrategy {
+    fn from(val: CliSortStrategy) -> Self {
+        match val {
             CliSortStrategy::None => SortStrategy::None,
             CliSortStrategy::Az => SortStrategy::Az,
             CliSortStrategy::Za => SortStrategy::Za,

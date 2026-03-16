@@ -29,15 +29,13 @@ impl PathMatcher {
         let requires_sibling = actual_pattern.contains('@');
         let requires_orphan = actual_pattern.contains('$');
         let clean_pattern_str = actual_pattern
-            .replace('@', "")
-            .replace('$', "")
-            .replace('+', "");
+            .replace(['@', '$', '+'], "");
 
         let base_name = clean_pattern_str
             .trim_end_matches('/')
             .trim_end_matches("**")
             .split('/')
-            .last()
+            .next_back()
             .unwrap_or("")
             .split('.')
             .next()
@@ -122,7 +120,7 @@ impl PathMatcher {
                         i += 1;
                     }
                     let escaped: Vec<String> =
-                        options.split(',').map(|s| regex::escape(s)).collect();
+                        options.split(',').map(regex::escape).collect();
                     re.push_str(&format!("(?:{})", escaped.join("|")));
                 }
                 '[' => {
@@ -219,6 +217,7 @@ impl PathMatcher {
 
     /// [POL]: Ewaluuje kolekcję ścieżek, sortuje wyniki i wywołuje odpowiednie akcje.
     /// [ENG]: Evaluates a path collection, sorts the results, and triggers respective actions.
+    // #[allow(clippy::too_many_arguments)]
     pub fn evaluate<I, S, OnMatch, OnMismatch>(
         &self,
         paths: I,

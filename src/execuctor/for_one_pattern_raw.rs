@@ -7,6 +7,7 @@ pub use crate::core::path_matcher::sort::SortStrategy;
 
 /// [POL]: Egzekutor operujący na pojedynczym, surowym wzorcu wpisanym przez użytkownika.
 /// [ENG]: Executor operating on a single, raw pattern provided by the user.
+// #[allow(clippy::too_many_arguments)]
 pub fn execute<OnMatch, OnMismatch>(
     enter_path: &str,
     raw_pattern: &str,
@@ -46,7 +47,10 @@ where
     let paths_set = paths_store.get_index();
 
     // 5. Ewaluacja i wykonanie callbacków
-    let stats = matcher.evaluate(
+    
+
+    // 6. Zwracamy statystyki do Engine'u
+    matcher.evaluate(
         &paths_store.list,
         &paths_set,
         sort_strategy,
@@ -54,8 +58,5 @@ where
         show_exclude,
         on_match,
         on_mismatch,
-    );
-
-    // 6. Zwracamy statystyki do Engine'u
-    stats
+    )
 }

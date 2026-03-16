@@ -8,6 +8,7 @@ pub use crate::core::path_matcher::sort::SortStrategy;
 
 /// [POL]: Egzekutor operujący na wielu wzorcach (wersja po rozwinięciu klamer/tokenizacji).
 /// [ENG]: Executor operating on multiple patterns (post brace expansion/tokenisation).
+// #[allow(clippy::too_many_arguments)]
 pub fn execute<OnMatch, OnMismatch>(
     enter_path: &str,
     patterns: &[String],
@@ -50,7 +51,10 @@ where
     let paths_set = paths_store.get_index();
 
     // 5. Ewaluacja i wykonanie callbacków
-    let stats = matchers.evaluate(
+    
+
+    // 6. Zwracamy statystyki do Engine'u
+    matchers.evaluate(
         &paths_store.list,
         &paths_set,
         sort_strategy,
@@ -58,8 +62,5 @@ where
         show_exclude,
         on_match,
         on_mismatch,
-    );
-
-    // 6. Zwracamy statystyki do Engine'u
-    stats
+    )
 }

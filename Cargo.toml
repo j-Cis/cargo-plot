@@ -31,14 +31,14 @@ ctrlc = "3.5.2"
 # ==========================================
 # Globalna konfiguracja lintów (Analiza kodu)
 # ==========================================
-# [lints.rust]
+[lints.rust]
 # Kategorycznie zabraniamy używania bloków `unsafe` w całym projekcie
-# unsafe_code = "forbid"
+unsafe_code = "forbid"
 # Ostrzegamy o nieużywanych importach, zmiennych i funkcjach
 # unused = "warn"
 #
-# [lints.clippy]
+[lints.clippy]
 # Włączamy surowsze reguły, ale jako ostrzeżenia (nie zepsują kompilacji)
 # pedantic = "warn"
 # Możemy tu też wyciszyć globalnie to, co nas irytuje (opcjonalnie):
-# too_many_arguments = "allow"
+too_many_arguments = "allow"

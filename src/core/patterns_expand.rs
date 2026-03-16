@@ -29,8 +29,8 @@ impl PatternContext {
     /// [POL]: Prywatna metoda: rozwija klamry we wzorcu (np. {a,b} -> [a, b]). Obsługuje rekurencję.
     /// [ENG]: Private method: expands braces in a pattern (e.g. {a,b} -> [a, b]). Supports recursion.
     fn expand_braces(pattern: &str) -> Vec<String> {
-        if let (Some(start), Some(end)) = (pattern.find('{'), pattern.find('}')) {
-            if start < end {
+        if let (Some(start), Some(end)) = (pattern.find('{'), pattern.find('}'))
+            && start < end {
                 let prefix = &pattern[..start];
                 let suffix = &pattern[end + 1..];
                 let options = &pattern[start + 1..end];
@@ -42,7 +42,6 @@ impl PatternContext {
                 }
                 return tok;
             }
-        }
         vec![pattern.to_string()]
     }
 }

@@ -67,6 +67,7 @@ impl PathMatchers {
 
     /// [POL]: Ewaluuje zbiór ścieżek, sortuje je i wykonuje odpowiednie domknięcia.
     /// [ENG]: Evaluates a set of paths, sorts them, and executes respective closures.
+    // #[allow(clippy::too_many_arguments)]
     pub fn evaluate<I, S, OnMatch, OnMismatch>(
         &self,
         paths: I,

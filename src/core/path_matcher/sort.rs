@@ -96,11 +96,10 @@ impl SortStrategy {
     /// [ENG]: Private method. Extracts the core path name for Merge strategies.
     fn get_merge_key(path: &str) -> &str {
         let trimmed = path.trim_end_matches('/');
-        if let Some(idx) = trimmed.rfind('.') {
-            if idx > 0 && trimmed.as_bytes()[idx - 1] != b'/' {
+        if let Some(idx) = trimmed.rfind('.')
+            && idx > 0 && trimmed.as_bytes()[idx - 1] != b'/' {
                 return &trimmed[..idx];
             }
-        }
         trimmed
     }
 }

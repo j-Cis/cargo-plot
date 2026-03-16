@@ -5,6 +5,7 @@ use crate::core::path_store::store::PathStore;
 use crate::core::patterns_expand::PatternContext;
 // [PL]: Reeksportujemy strategię, aby Kokpit nie musiał szukać jej w core.
 pub use crate::core::path_matcher::sort::SortStrategy;
+use crate::core::file_stats::FileStats;
 
 /// [POL]: Egzekutor operujący na wielu wzorcach (wersja po rozwinięciu klamer/tokenizacji).
 /// [ENG]: Executor operating on multiple patterns (post brace expansion/tokenisation).
@@ -16,12 +17,15 @@ pub fn execute<OnMatch, OnMismatch>(
     sort_strategy: SortStrategy,
     show_include: bool,
     show_exclude: bool,
-    on_match: OnMatch,
-    on_mismatch: OnMismatch,
+    mut on_match: OnMatch,
+    mut on_mismatch: OnMismatch,
 ) -> MatchStats
 where
-    OnMatch: FnMut(&str),
-    OnMismatch: FnMut(&str),
+    // OnMatch: FnMut(&str),
+    // OnMismatch: FnMut(&str),
+    // ⚡ Teraz callbacki oczekują bogatego obiektu, a nie tylko tekstu
+    OnMatch: FnMut(&FileStats),
+    OnMismatch: FnMut(&FileStats),
 {
     // 1. Inicjalizacja kontekstów
     let pattern_ctx = PatternContext::new(patterns);
@@ -50,9 +54,9 @@ where
     // [PL]: Wyciągamy PULĘ ŚCIEŻEK (Encyklopedię)
     let paths_set = paths_store.get_index();
 
-    // 5. Ewaluacja i wykonanie callbacków
+   
     
-
+    let entry_abs = path_ctx.entry_absolute.clone();
     // 6. Zwracamy statystyki do Engine'u
     matchers.evaluate(
         &paths_store.list,
@@ -60,7 +64,15 @@ where
         sort_strategy,
         show_include,
         show_exclude,
-        on_match,
-        on_mismatch,
+       |raw_path| {
+            // Pośrednik pobiera statystyki
+            let stats = FileStats::fetch(raw_path, &entry_abs);
+            on_match(&stats);
+        },
+        |raw_path| {
+            // Pośrednik pobiera statystyki
+            let stats = FileStats::fetch(raw_path, &entry_abs);
+            on_mismatch(&stats);
+        },
     )
 }

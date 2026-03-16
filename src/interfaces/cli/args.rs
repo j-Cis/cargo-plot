@@ -44,6 +44,10 @@ pub struct CliArgs {
     /// [PL]: Strategia sortowania wyników.
     #[arg(short = 's', long = "sort", value_enum, default_value_t = CliSortStrategy::AzFileMerge)]
     pub sort: CliSortStrategy,
+
+    /// [POL]: Wyświetla wyniki w formie hierarchicznego drzewa zamiast płaskiej listy.
+    #[arg(short = 't', long = "treeview", default_value_t = false)]
+    pub treeview: bool,
 }
 
 #[derive(Debug, Clone, Copy, ValueEnum)]

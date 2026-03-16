@@ -1,11 +1,11 @@
+use colored::Colorize;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
-use colored::Colorize;
 
 use super::node::FileNode;
-use crate::core::file_stats::weight::{self, WeightConfig, UnitSystem};
-use crate::theme::for_path_tree::{get_file_type, TreeStyle, DIR_ICON};
+use crate::core::file_stats::weight::{self, UnitSystem, WeightConfig};
 use crate::core::path_matcher::SortStrategy;
+use crate::theme::for_path_tree::{DIR_ICON, TreeStyle, get_file_type};
 
 pub struct PathGrid {
     roots: Vec<FileNode>,
@@ -27,7 +27,9 @@ impl PathGrid {
         let mut tree_map: BTreeMap<PathBuf, Vec<PathBuf>> = BTreeMap::new();
 
         for p in &paths {
-            let parent = p.parent().map_or_else(|| PathBuf::from("."), Path::to_path_buf);
+            let parent = p
+                .parent()
+                .map_or_else(|| PathBuf::from("."), Path::to_path_buf);
             tree_map.entry(parent).or_default().push(p.clone());
         }
 
@@ -38,7 +40,9 @@ impl PathGrid {
             sort_strategy: SortStrategy,
             weight_cfg: &WeightConfig,
         ) -> FileNode {
-            let name = path.file_name().map_or_else(|| "/".to_string(), |n| n.to_string_lossy().to_string());
+            let name = path
+                .file_name()
+                .map_or_else(|| "/".to_string(), |n| n.to_string_lossy().to_string());
             let is_dir = path.is_dir() || path.to_string_lossy().ends_with('/');
             let icon = if is_dir {
                 DIR_ICON.to_string()
@@ -49,7 +53,8 @@ impl PathGrid {
             };
 
             let absolute_path = base_path.join(path);
-            let mut weight_bytes = weight::get_path_weight(&absolute_path, weight_cfg.dir_sum_included);
+            let mut weight_bytes =
+                weight::get_path_weight(&absolute_path, weight_cfg.dir_sum_included);
             let mut children = vec![];
 
             if let Some(child_paths) = paths_map.get(path) {
@@ -67,14 +72,24 @@ impl PathGrid {
             }
 
             let weight_str = weight::format_weight(weight_bytes, is_dir, weight_cfg);
-            FileNode { name, path: path.clone(), is_dir, icon, weight_str, weight_bytes, children }
+            FileNode {
+                name,
+                path: path.clone(),
+                is_dir,
+                icon,
+                weight_str,
+                weight_bytes,
+                children,
+            }
         }
 
         let roots_paths: Vec<PathBuf> = paths
             .iter()
             .filter(|p| {
                 let parent = p.parent();
-                parent.is_none() || parent.unwrap() == Path::new("") || !paths.contains(&parent.unwrap().to_path_buf())
+                parent.is_none()
+                    || parent.unwrap() == Path::new("")
+                    || !paths.contains(&parent.unwrap().to_path_buf())
             })
             .cloned()
             .collect();
@@ -89,15 +104,27 @@ impl PathGrid {
         let final_roots = if let Some(r_name) = root_name {
             let empty_weight = if weight_cfg.system != UnitSystem::None {
                 " ".repeat(7 + weight_cfg.precision)
-            } else { String::new() };
+            } else {
+                String::new()
+            };
 
             vec![FileNode {
-                name: r_name.to_string(), path: PathBuf::from(r_name), is_dir: true,
-                icon: DIR_ICON.to_string(), weight_str: empty_weight, weight_bytes: 0, children: top_nodes,
+                name: r_name.to_string(),
+                path: PathBuf::from(r_name),
+                is_dir: true,
+                icon: DIR_ICON.to_string(),
+                weight_str: empty_weight,
+                weight_bytes: 0,
+                children: top_nodes,
             }]
-        } else { top_nodes };
+        } else {
+            top_nodes
+        };
 
-        Self { roots: final_roots, style: TreeStyle::default() }
+        Self {
+            roots: final_roots,
+            style: TreeStyle::default(),
+        }
     }
 
     #[must_use]
@@ -118,15 +145,34 @@ impl PathGrid {
                     (true, false) => &self.style.dir_last_no_children,
                     (false, false) => &self.style.dir_mid_no_children,
                 }
-            } else if is_last { &self.style.file_last } else { &self.style.file_mid };
+            } else if is_last {
+                &self.style.file_last
+            } else {
+                &self.style.file_mid
+            };
 
-            let current_len = node.weight_str.chars().count() + indent_len + branch.chars().count() + 1 + node.icon.chars().count() + 1 + node.name.chars().count();
-            if current_len > max { max = current_len; }
+            let current_len = node.weight_str.chars().count()
+                + indent_len
+                + branch.chars().count()
+                + 1
+                + node.icon.chars().count()
+                + 1
+                + node.name.chars().count();
+            if current_len > max {
+                max = current_len;
+            }
 
             if has_children {
-                let next_indent = indent_len + if is_last { self.style.indent_last.chars().count() } else { self.style.indent_mid.chars().count() };
+                let next_indent = indent_len
+                    + if is_last {
+                        self.style.indent_last.chars().count()
+                    } else {
+                        self.style.indent_mid.chars().count()
+                    };
                 let child_max = self.calc_max_width(&node.children, next_indent);
-                if child_max > max { max = child_max; }
+                if child_max > max {
+                    max = child_max;
+                }
             }
         }
         max
@@ -144,34 +190,84 @@ impl PathGrid {
                     (true, false) => &self.style.dir_last_no_children,
                     (false, false) => &self.style.dir_mid_no_children,
                 }
-            } else if is_last { &self.style.file_last } else { &self.style.file_mid };
+            } else if is_last {
+                &self.style.file_last
+            } else {
+                &self.style.file_mid
+            };
 
-            let weight_prefix = if node.weight_str.is_empty() { String::new() } 
-                else if use_color { node.weight_str.truecolor(120, 120, 120).to_string() } 
-                else { node.weight_str.clone() };
+            let weight_prefix = if node.weight_str.is_empty() {
+                String::new()
+            } else if use_color {
+                node.weight_str.truecolor(120, 120, 120).to_string()
+            } else {
+                node.weight_str.clone()
+            };
 
-            let raw_left_len = node.weight_str.chars().count() + indent.chars().count() + branch.chars().count() + 1 + node.icon.chars().count() + 1 + node.name.chars().count();
-            let pad_len = max_width.saturating_sub(raw_left_len) + 4; 
+            let raw_left_len = node.weight_str.chars().count()
+                + indent.chars().count()
+                + branch.chars().count()
+                + 1
+                + node.icon.chars().count()
+                + 1
+                + node.name.chars().count();
+            let pad_len = max_width.saturating_sub(raw_left_len) + 4;
             let padding = " ".repeat(pad_len);
 
             let rel_path_str = node.path.to_string_lossy().replace('\\', "/");
-            let display_path = if node.is_dir && !rel_path_str.ends_with('/') { format!("./{}/", rel_path_str) } 
-                else if !rel_path_str.starts_with("./") && !rel_path_str.starts_with('.') { format!("./{}", rel_path_str) } 
-                else { rel_path_str };
+            let display_path = if node.is_dir && !rel_path_str.ends_with('/') {
+                format!("./{}/", rel_path_str)
+            } else if !rel_path_str.starts_with("./") && !rel_path_str.starts_with('.') {
+                format!("./{}", rel_path_str)
+            } else {
+                rel_path_str
+            };
 
             let right_colored = if use_color {
-                if node.is_dir { display_path.truecolor(200, 200, 50).to_string() } else { display_path.white().to_string() }
-            } else { display_path };
+                if node.is_dir {
+                    display_path.truecolor(200, 200, 50).to_string()
+                } else {
+                    display_path.white().to_string()
+                }
+            } else {
+                display_path
+            };
 
             let left_colored = if use_color {
-                if node.is_dir { format!("{}{}{} {}{}", weight_prefix, indent.green(), branch.green(), node.icon, node.name.truecolor(200, 200, 50)) } 
-                else { format!("{}{}{} {}{}", weight_prefix, indent.green(), branch.green(), node.icon, node.name.white()) }
-            } else { format!("{}{}{} {} {}", weight_prefix, indent, branch, node.icon, node.name) };
+                if node.is_dir {
+                    format!(
+                        "{}{}{} {}{}",
+                        weight_prefix,
+                        indent.green(),
+                        branch.green(),
+                        node.icon,
+                        node.name.truecolor(200, 200, 50)
+                    )
+                } else {
+                    format!(
+                        "{}{}{} {}{}",
+                        weight_prefix,
+                        indent.green(),
+                        branch.green(),
+                        node.icon,
+                        node.name.white()
+                    )
+                }
+            } else {
+                format!(
+                    "{}{}{} {} {}",
+                    weight_prefix, indent, branch, node.icon, node.name
+                )
+            };
 
             result.push_str(&format!("{}{}{}\n", left_colored, padding, right_colored));
 
             if has_children {
-                let new_indent = if is_last { format!("{}{}", indent, self.style.indent_last) } else { format!("{}{}", indent, self.style.indent_mid) };
+                let new_indent = if is_last {
+                    format!("{}{}", indent, self.style.indent_last)
+                } else {
+                    format!("{}{}", indent, self.style.indent_mid)
+                };
                 result.push_str(&self.plot(&node.children, &new_indent, use_color, max_width));
             }
         }

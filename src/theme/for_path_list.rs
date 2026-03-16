@@ -3,7 +3,11 @@
 pub fn get_icon_for_path(path: &str) -> &'static str {
     let is_dir = path.ends_with('/');
 
-    let nazwa = path.trim_end_matches('/').split('/').next_back().unwrap_or("");
+    let nazwa = path
+        .trim_end_matches('/')
+        .split('/')
+        .next_back()
+        .unwrap_or("");
     let is_hidden = nazwa.starts_with('.');
 
     match (is_dir, is_hidden) {

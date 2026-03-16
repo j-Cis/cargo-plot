@@ -1,4 +1,4 @@
-use crate::core::path_view::{PathList, PathTree, PathGrid, ViewMode};
+use crate::core::path_view::{PathGrid, PathList, PathTree, ViewMode};
 
 /// [PL]: Podzbiór wyników zawierający surowe ścieżki i wygenerowane widoki.
 #[derive(Default)]
@@ -38,45 +38,33 @@ impl MatchStats {
 
         match view_mode {
             ViewMode::Grid => {
-                if do_include {
-                    if let Some(grid) = &self.m_matched.grid {
-                        out.push_str("✅ DOPASOWANIA\n");
-                        out.push_str(&grid.render_cli());
-                    }
+                if do_include && let Some(grid) = &self.m_matched.grid {
+                    out.push_str("✅ DOPASOWANIA\n");
+                    out.push_str(&grid.render_cli());
                 }
-                if do_exclude {
-                    if let Some(grid) = &self.x_mismatched.grid {
-                        out.push_str("❌ ODRZUCENIA\n");
-                        out.push_str(&grid.render_cli());
-                    }
+                if do_exclude && let Some(grid) = &self.x_mismatched.grid {
+                    out.push_str("❌ ODRZUCENIA\n");
+                    out.push_str(&grid.render_cli());
                 }
             }
             ViewMode::Tree => {
-                if do_include {
-                    if let Some(tree) = &self.m_matched.tree {
-                        out.push_str("✅ DOPASOWANIA\n");
-                        out.push_str(&tree.render_cli());
-                    }
+                if do_include && let Some(tree) = &self.m_matched.tree {
+                    out.push_str("✅ DOPASOWANIA\n");
+                    out.push_str(&tree.render_cli());
                 }
-                if do_exclude {
-                    if let Some(tree) = &self.x_mismatched.tree {
-                        out.push_str("❌ ODRZUCENIA\n");
-                        out.push_str(&tree.render_cli());
-                    }
+                if do_exclude && let Some(tree) = &self.x_mismatched.tree {
+                    out.push_str("❌ ODRZUCENIA\n");
+                    out.push_str(&tree.render_cli());
                 }
             }
             ViewMode::List => {
-                if do_include {
-                    if let Some(list) = &self.m_matched.list {
-                        out.push_str("✅ DOPASOWANIA\n");
-                        out.push_str(&list.render_cli(true));
-                    }
+                if do_include && let Some(list) = &self.m_matched.list {
+                    out.push_str("✅ DOPASOWANIA\n");
+                    out.push_str(&list.render_cli(true));
                 }
-                if do_exclude {
-                    if let Some(list) = &self.x_mismatched.list {
-                        out.push_str("❌ ODRZUCENIA\n");
-                        out.push_str(&list.render_cli(false));
-                    }
+                if do_exclude && let Some(list) = &self.x_mismatched.list {
+                    out.push_str("❌ ODRZUCENIA\n");
+                    out.push_str(&list.render_cli(false));
                 }
             }
         }

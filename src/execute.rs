@@ -1,10 +1,10 @@
-pub use crate::core::path_matcher::SortStrategy;
-use crate::core::path_matcher::{PathMatchers,MatchStats, ShowMode};
-use crate::core::path_store::{PathContext,PathStore};
-use crate::core::patterns_expand::PatternContext;
-use crate::core::path_view::{PathList, PathTree, PathGrid, ViewMode};
-use crate::core::file_stats::weight::WeightConfig;
 use crate::core::file_stats::FileStats;
+use crate::core::file_stats::weight::WeightConfig;
+pub use crate::core::path_matcher::SortStrategy;
+use crate::core::path_matcher::{MatchStats, PathMatchers, ShowMode};
+use crate::core::path_store::{PathContext, PathStore};
+use crate::core::path_view::{PathGrid, PathList, PathTree, ViewMode};
+use crate::core::patterns_expand::PatternContext;
 use std::path::Path;
 
 /// [POL]: Egzekutor operujący na wielu wzorcach (wersja po rozwinięciu klamer/tokenizacji).
@@ -78,7 +78,9 @@ where
     let root_name = if no_root {
         None
     } else {
-        Path::new(&path_ctx.entry_absolute).file_name().and_then(|n| n.to_str())
+        Path::new(&path_ctx.entry_absolute)
+            .file_name()
+            .and_then(|n| n.to_str())
     };
 
     // Pomocnicze flagi do budowania (żeby kod w match był krótki)
@@ -89,30 +91,63 @@ where
     match view_mode {
         ViewMode::Grid => {
             if do_include {
-                stats.m_matched.grid = Some(PathGrid::build(&stats.m_matched.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name));
+                stats.m_matched.grid = Some(PathGrid::build(
+                    &stats.m_matched.paths,
+                    &path_ctx.entry_absolute,
+                    sort_strategy,
+                    &weight_cfg,
+                    root_name,
+                ));
             }
             if do_exclude {
-                stats.x_mismatched.grid = Some(PathGrid::build(&stats.x_mismatched.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name));
+                stats.x_mismatched.grid = Some(PathGrid::build(
+                    &stats.x_mismatched.paths,
+                    &path_ctx.entry_absolute,
+                    sort_strategy,
+                    &weight_cfg,
+                    root_name,
+                ));
             }
         }
         ViewMode::Tree => {
             if do_include {
-                stats.m_matched.tree = Some(PathTree::build(&stats.m_matched.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name));
+                stats.m_matched.tree = Some(PathTree::build(
+                    &stats.m_matched.paths,
+                    &path_ctx.entry_absolute,
+                    sort_strategy,
+                    &weight_cfg,
+                    root_name,
+                ));
             }
             if do_exclude {
-                stats.x_mismatched.tree = Some(PathTree::build(&stats.x_mismatched.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name));
+                stats.x_mismatched.tree = Some(PathTree::build(
+                    &stats.x_mismatched.paths,
+                    &path_ctx.entry_absolute,
+                    sort_strategy,
+                    &weight_cfg,
+                    root_name,
+                ));
             }
         }
         ViewMode::List => {
             if do_include {
-                stats.m_matched.list = Some(PathList::build(&stats.m_matched.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg));
+                stats.m_matched.list = Some(PathList::build(
+                    &stats.m_matched.paths,
+                    &path_ctx.entry_absolute,
+                    sort_strategy,
+                    &weight_cfg,
+                ));
             }
             if do_exclude {
-                stats.x_mismatched.list = Some(PathList::build(&stats.x_mismatched.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg));
+                stats.x_mismatched.list = Some(PathList::build(
+                    &stats.x_mismatched.paths,
+                    &path_ctx.entry_absolute,
+                    sort_strategy,
+                    &weight_cfg,
+                ));
             }
         }
     }
 
     stats
 }
-

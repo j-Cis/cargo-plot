@@ -1,5 +1,5 @@
-use std::path::PathBuf;
 use crate::core::path_matcher::SortStrategy;
+use std::path::PathBuf;
 
 /// [PL]: Reprezentuje pojedynczy węzeł w drzewie systemu plików.
 #[derive(Debug, Clone)]
@@ -23,7 +23,7 @@ impl FileNode {
         nodes.sort_by(|a, b| {
             let a_is_dir = a.is_dir;
             let b_is_dir = b.is_dir;
-            
+
             // Klucz Merge: "interfaces.rs" -> "interfaces", "interfaces/" -> "interfaces"
             let a_merge = Self::get_merge_key(&a.name);
             let b_merge = Self::get_merge_key(&b.name);
@@ -50,12 +50,8 @@ impl FileNode {
                 }
 
                 // 5. KATALOGI PIERWSZE + MERGE (Zgodnie z Twoją notatką: fallback do DirFirst)
-                SortStrategy::AzDirFirstMerge => {
-                    (!a_is_dir, &a.name).cmp(&(!b_is_dir, &b.name))
-                }
-                SortStrategy::ZaDirFirstMerge => {
-                    (!a_is_dir, &b.name).cmp(&(!b_is_dir, &a.name))
-                }
+                SortStrategy::AzDirFirstMerge => (!a_is_dir, &a.name).cmp(&(!b_is_dir, &b.name)),
+                SortStrategy::ZaDirFirstMerge => (!a_is_dir, &b.name).cmp(&(!b_is_dir, &a.name)),
 
                 _ => a.name.cmp(&b.name),
             }
@@ -64,10 +60,10 @@ impl FileNode {
 
     /// [PL]: Wyciąga rdzeń nazwy do grupowania (np. "main.rs" -> "main").
     fn get_merge_key(name: &str) -> &str {
-        if let Some(idx) = name.rfind('.') {
-            if idx > 0 {
-                return &name[..idx];
-            }
+        if let Some(idx) = name.rfind('.')
+            && idx > 0
+        {
+            return &name[..idx];
         }
         name
     }

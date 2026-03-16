@@ -1,7 +1,7 @@
 use crate::interfaces::cli::args::CliArgs;
-use cargo_plot::execute::{self, SortStrategy};
-use cargo_plot::core::path_view::ViewMode;
 use cargo_plot::core::path_matcher::stats::ShowMode;
+use cargo_plot::core::path_view::ViewMode;
+use cargo_plot::execute::{self, SortStrategy};
 // use cargo_plot::theme::for_path_list::get_icon_for_path;
 
 /// [EN]: The execution engine (Cockpit).
@@ -27,12 +27,12 @@ pub fn run(args: CliArgs) {
         args.no_root,
         |_| {}, //  Closure są puste, bo renderujemy PO zebraniu statystyk
         |_| {},
-        // |file_stat| { 
+        // |file_stat| {
         //     if !args.treeview {
         //         println!(
-        //             "✅ MATCH:  {} {} ({} B)", 
-        //             get_icon_for_path(&file_stat.path), 
-        //             file_stat.path, 
+        //             "✅ MATCH:  {} {} ({} B)",
+        //             get_icon_for_path(&file_stat.path),
+        //             file_stat.path,
         //             file_stat.weight_bytes
         //         );
         //     }
@@ -40,9 +40,9 @@ pub fn run(args: CliArgs) {
         // |file_stat| {
         //     if !args.treeview && show_exclude {
         //         println!(
-        //             "❌ REJECT: {} {} ({} B)", 
-        //             get_icon_for_path(&file_stat.path), 
-        //             file_stat.path, 
+        //             "❌ REJECT: {} {} ({} B)",
+        //             get_icon_for_path(&file_stat.path),
+        //             file_stat.path,
         //             file_stat.weight_bytes
         //         );
         //     }
@@ -50,7 +50,7 @@ pub fn run(args: CliArgs) {
     );
 
     // 2. RENDEROWANIE WYNIKÓW
-    print!("{}", stats.render_output(view_mode, show_mode));    
+    print!("{}", stats.render_output(view_mode, show_mode));
 
     // 3. PODSUMOWANIE
     println!("----------");

@@ -1,12 +1,12 @@
+use colored::Colorize;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
-use colored::Colorize;
 
 // Importy z rodzeństwa i innych modułów core
 use super::node::FileNode;
-use crate::core::file_stats::weight::{self, WeightConfig, UnitSystem};
-use crate::theme::for_path_tree::{get_file_type, TreeStyle, DIR_ICON, FILE_ICON};
+use crate::core::file_stats::weight::{self, UnitSystem, WeightConfig};
 use crate::core::path_matcher::SortStrategy;
+use crate::theme::for_path_tree::{DIR_ICON, FILE_ICON, TreeStyle, get_file_type};
 pub struct PathTree {
     roots: Vec<FileNode>,
     style: TreeStyle,
@@ -26,7 +26,9 @@ impl PathTree {
         let mut tree_map: BTreeMap<PathBuf, Vec<PathBuf>> = BTreeMap::new();
 
         for p in &paths {
-            let parent = p.parent().map_or_else(|| PathBuf::from("."), Path::to_path_buf);
+            let parent = p
+                .parent()
+                .map_or_else(|| PathBuf::from("."), Path::to_path_buf);
             tree_map.entry(parent).or_default().push(p.clone());
         }
 
@@ -51,7 +53,8 @@ impl PathTree {
             };
 
             let absolute_path = base_path.join(path);
-            let mut weight_bytes = weight::get_path_weight(&absolute_path, weight_cfg.dir_sum_included);
+            let mut weight_bytes =
+                weight::get_path_weight(&absolute_path, weight_cfg.dir_sum_included);
             let mut children = vec![];
 
             if let Some(child_paths) = paths_map.get(path) {
@@ -70,14 +73,24 @@ impl PathTree {
 
             let weight_str = weight::format_weight(weight_bytes, is_dir, weight_cfg);
 
-            FileNode { name, path: path.clone(), is_dir, icon, weight_str, weight_bytes, children }
+            FileNode {
+                name,
+                path: path.clone(),
+                is_dir,
+                icon,
+                weight_str,
+                weight_bytes,
+                children,
+            }
         }
 
         let roots_paths: Vec<PathBuf> = paths
             .iter()
             .filter(|p| {
                 let parent = p.parent();
-                parent.is_none() || parent.unwrap() == Path::new("") || !paths.contains(&parent.unwrap().to_path_buf())
+                parent.is_none()
+                    || parent.unwrap() == Path::new("")
+                    || !paths.contains(&parent.unwrap().to_path_buf())
             })
             .cloned()
             .collect();
@@ -109,14 +122,21 @@ impl PathTree {
             top_nodes
         };
 
-        Self { roots: final_roots, style: TreeStyle::default() }
+        Self {
+            roots: final_roots,
+            style: TreeStyle::default(),
+        }
     }
 
     #[must_use]
-    pub fn render_cli(&self) -> String { self.plot(&self.roots, "", true) }
+    pub fn render_cli(&self) -> String {
+        self.plot(&self.roots, "", true)
+    }
 
     #[must_use]
-    pub fn render_txt(&self) -> String { self.plot(&self.roots, "", false) }
+    pub fn render_txt(&self) -> String {
+        self.plot(&self.roots, "", false)
+    }
 
     fn plot(&self, nodes: &[FileNode], indent: &str, use_color: bool) -> String {
         let mut result = String::new();
@@ -147,14 +167,16 @@ impl PathTree {
 
             let line = if use_color {
                 if node.is_dir {
-                    format!("{weight_prefix}{}{branch_color} {icon} {name}\n",
+                    format!(
+                        "{weight_prefix}{}{branch_color} {icon} {name}\n",
                         indent.green(),
                         branch_color = branch.green(),
                         icon = node.icon,
                         name = node.name.truecolor(200, 200, 50)
                     )
                 } else {
-                    format!("{weight_prefix}{}{branch_color} {icon} {name}\n",
+                    format!(
+                        "{weight_prefix}{}{branch_color} {icon} {name}\n",
                         indent.green(),
                         branch_color = branch.green(),
                         icon = node.icon,
@@ -162,7 +184,8 @@ impl PathTree {
                     )
                 }
             } else {
-                format!("{weight_prefix}{indent}{branch} {icon} {name}\n",
+                format!(
+                    "{weight_prefix}{indent}{branch} {icon} {name}\n",
                     icon = node.icon,
                     name = node.name
                 )

@@ -1,5 +1,5 @@
 use super::sort::SortStrategy;
-use super::stats::{MatchStats,ResultSet, ShowMode};
+use super::stats::{MatchStats, ResultSet, ShowMode};
 use regex::Regex;
 use std::collections::HashSet;
 
@@ -12,21 +12,21 @@ use std::collections::HashSet;
 pub struct PathMatcher {
     regex: Regex,
     targets_file: bool,
-    // [POL]: Flaga @ (para plik-folder) 
+    // [POL]: Flaga @ (para plik-folder)
     // [ENG]: Flag @ (file-directory pair)
-    requires_sibling: bool, 
+    requires_sibling: bool,
     // [POL]: Flaga $ (jednostronna relacja)
     // [ENG]: Flag $ (one-way relation)
-    requires_orphan: bool,  
-    // [POL]: Flaga + (rekurencyjne zacienianie) 
+    requires_orphan: bool,
+    // [POL]: Flaga + (rekurencyjne zacienianie)
     // [ENG]: Flag + (recursive shadowing)
-    is_deep: bool,     
-    // [POL]: Nazwa bazowa modułu do weryfikacji relacji     
+    is_deep: bool,
+    // [POL]: Nazwa bazowa modułu do weryfikacji relacji
     // [ENG]: Base name of the module for relation verification
-    base_name: String,      
+    base_name: String,
     // [POL]: Flaga negacji (!).
     // [ENG]: Negation flag (!).
-    pub is_negated: bool,   
+    pub is_negated: bool,
 }
 
 impl PathMatcher {
@@ -115,8 +115,7 @@ impl PathMatcher {
                         options.push(chars[i]);
                         i += 1;
                     }
-                    let escaped: Vec<String> =
-                        options.split(',').map(regex::escape).collect();
+                    let escaped: Vec<String> = options.split(',').map(regex::escape).collect();
                     re.push_str(&format!("(?:{})", escaped.join("|")));
                 }
                 '[' => {
@@ -251,7 +250,7 @@ impl PathMatcher {
                 paths: matched.iter().map(|s| s.as_ref().to_string()).collect(),
                 tree: None,
                 list: None,
-                grid: None, 
+                grid: None,
             },
             x_mismatched: ResultSet {
                 paths: mismatched.iter().map(|s| s.as_ref().to_string()).collect(),
@@ -315,7 +314,6 @@ impl PathMatcher {
     }
 }
 
-
 // ==============================================================================
 // ⚡ KONTENER WIELU WZORCÓW (PathMatchers)
 // ==============================================================================
@@ -368,11 +366,7 @@ impl PathMatchers {
 
         // [POL]: Ostateczna decyzja na podstawie zebranych danych.
         // [ENG]: Final decision based on collected data.
-        if has_positive {
-            matched_positive
-        } else {
-            true
-        }
+        if has_positive { matched_positive } else { true }
     }
 
     /// [POL]: Ewaluuje zbiór ścieżek, sortuje je i wykonuje odpowiednie domknięcia.
@@ -414,13 +408,13 @@ impl PathMatchers {
                 paths: matched.iter().map(|s| s.as_ref().to_string()).collect(),
                 tree: None,
                 list: None,
-                grid: None,  
+                grid: None,
             },
             x_mismatched: ResultSet {
                 paths: mismatched.iter().map(|s| s.as_ref().to_string()).collect(),
                 tree: None,
                 list: None,
-                grid: None,  
+                grid: None,
             },
         };
 

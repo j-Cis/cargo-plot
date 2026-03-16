@@ -97,9 +97,11 @@ impl SortStrategy {
     fn get_merge_key(path: &str) -> &str {
         let trimmed = path.trim_end_matches('/');
         if let Some(idx) = trimmed.rfind('.')
-            && idx > 0 && trimmed.as_bytes()[idx - 1] != b'/' {
-                return &trimmed[..idx];
-            }
+            && idx > 0
+            && trimmed.as_bytes()[idx - 1] != b'/'
+        {
+            return &trimmed[..idx];
+        }
         trimmed
     }
 }

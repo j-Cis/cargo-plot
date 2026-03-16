@@ -88,7 +88,12 @@ pub fn format_weight(bytes: u64, is_dir: bool, config: &WeightConfig) -> String 
     };
 
     if bytes == 0 {
-        return format!("[{:>3} {:>width$}] ", units[0], "0", width = config.precision);
+        return format!(
+            "[{:>3} {:>width$}] ",
+            units[0],
+            "0",
+            width = config.precision
+        );
     }
 
     let bytes_f = bytes as f64;
@@ -99,7 +104,9 @@ pub fn format_weight(bytes: u64, is_dir: bool, config: &WeightConfig) -> String 
 
     let mut formatted_value = format!("{value:.10}");
     if formatted_value.len() > config.precision {
-        formatted_value = formatted_value[..config.precision].trim_end_matches('.').to_string();
+        formatted_value = formatted_value[..config.precision]
+            .trim_end_matches('.')
+            .to_string();
     } else {
         formatted_value = format!("{formatted_value:>width$}", width = config.precision);
     }

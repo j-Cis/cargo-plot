@@ -1,26 +1,34 @@
 use regex::Regex;
 use std::collections::HashSet;
-use super::matcher_utils::{SortStrategy, sort_paths};
+use super::sort::SortStrategy; 
+use super::stats::MatchStats;
 
 /// [POL]: Struktura odpowiedzialna za dopasowanie pojedynczego wzorca z uwzględnieniem zależności strukturalnych.
 /// [ENG]: Structure responsible for matching a single pattern considering structural dependencies.
 pub struct PathMatcher {
     regex: Regex,
     targets_file: bool,
-    requires_sibling: bool, // [POL]: Flaga @ (para plik-folder) |                 [ENG]: Flag @ (file-directory pair)
-    requires_orphan: bool, // [POL]: Flaga $ (jednostronna relacja) |             [ENG]: Flag $ (one-way relation)
-    is_deep: bool, // [POL]: Flaga + (rekurencyjne zacienianie) |         [ENG]: Flag + (recursive shadowing)
-    base_name: String, // [POL]: Nazwa bazowa modułu do weryfikacji relacji | [ENG]: Base name of the module for relation verification
+    requires_sibling: bool, // [POL]: Flaga @ (para plik-folder)                 | [ENG]: Flag @ (file-directory pair)
+    requires_orphan: bool,  // [POL]: Flaga $ (jednostronna relacja)             | [ENG]: Flag $ (one-way relation)
+    is_deep: bool,          // [POL]: Flaga + (rekurencyjne zacienianie)         | [ENG]: Flag + (recursive shadowing)
+    base_name: String,      // [POL]: Nazwa bazowa modułu do weryfikacji relacji | [ENG]: Base name of the module for relation verification
+    pub is_negated: bool,   // [POL]: Flaga negacji (!).                         | [ENG]: Negation flag (!).
 }
 
 impl PathMatcher {
     pub fn new(pattern: &str, case_sensitive: bool) -> Result<Self, regex::Error> {        
         // [POL]: Kompiluje wzorzec tekstowy do wyrażenia regularnego, ekstrahując flagi sterujące.
         // [ENG]: Compiles a text pattern into a regular expression, extracting control flags.
-        let is_deep = pattern.ends_with('+');
-        let requires_sibling = pattern.contains('@');
-        let requires_orphan = pattern.contains('$');
-        let clean_pattern_str = pattern.replace('@', "").replace('$', "").replace('+', "");
+        
+        // [POL]: Detekcja negacji. Jeśli obecny '!', oznaczamy i obcinamy go do dalszej analizy.
+        // [ENG]: Negation detection. If '!' is present, mark it and trim it for further analysis.
+        let is_negated = pattern.starts_with('!');
+        let actual_pattern = if is_negated { &pattern[1..] } else { pattern };
+
+        let is_deep = actual_pattern.ends_with('+');
+        let requires_sibling = actual_pattern.contains('@');
+        let requires_orphan = actual_pattern.contains('$');
+        let clean_pattern_str = actual_pattern.replace('@', "").replace('$', "").replace('+', "");
 
         let base_name = clean_pattern_str
             .trim_end_matches('/')
@@ -138,8 +146,9 @@ impl PathMatcher {
             targets_file,
             requires_sibling,
             requires_orphan,
-            is_deep,   // 🆕
-            base_name, // 🆕
+            is_deep,   
+            base_name, 
+            is_negated,
         })
     }
 
@@ -212,9 +221,12 @@ impl PathMatcher {
         paths: I,
         env: &HashSet<&str>,
         strategy: SortStrategy,
+        show_include: bool,
+        show_exclude: bool,
         mut on_match: OnMatch,
         mut on_mismatch: OnMismatch,
-    ) where
+    ) 
+    where
         I: IntoIterator<Item = S>,
         S: AsRef<str>,
         OnMatch: FnMut(&str),
@@ -231,8 +243,8 @@ impl PathMatcher {
             }
         }
 
-        sort_paths(&mut matched, strategy);
-        sort_paths(&mut mismatched, strategy);
+        strategy.apply(&mut matched);
+        strategy.apply(&mut mismatched);
 
         for path in matched {
             on_match(path.as_ref());

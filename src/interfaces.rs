@@ -2,3 +2,4 @@
 // [PL]: Warstwa interakcji z użytkownikiem (Porty i Adaptery).
 
 pub mod tui;
+pub mod cli;

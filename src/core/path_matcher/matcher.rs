@@ -1,35 +1,43 @@
 use super::sort::SortStrategy;
-use super::stats::{MatchStats,ResultSet};
+use super::stats::{MatchStats,ResultSet, ShowMode};
 use regex::Regex;
 use std::collections::HashSet;
+
+// ==============================================================================
+// ⚡ POJEDYNCZY WZORZEC (PathMatcher)
+// ==============================================================================
 
 /// [POL]: Struktura odpowiedzialna za dopasowanie pojedynczego wzorca z uwzględnieniem zależności strukturalnych.
 /// [ENG]: Structure responsible for matching a single pattern considering structural dependencies.
 pub struct PathMatcher {
     regex: Regex,
     targets_file: bool,
-    requires_sibling: bool, // [POL]: Flaga @ (para plik-folder)                 | [ENG]: Flag @ (file-directory pair)
-    requires_orphan: bool, // [POL]: Flaga $ (jednostronna relacja)             | [ENG]: Flag $ (one-way relation)
-    is_deep: bool, // [POL]: Flaga + (rekurencyjne zacienianie)         | [ENG]: Flag + (recursive shadowing)
-    base_name: String, // [POL]: Nazwa bazowa modułu do weryfikacji relacji | [ENG]: Base name of the module for relation verification
-    pub is_negated: bool, // [POL]: Flaga negacji (!).                         | [ENG]: Negation flag (!).
+    // [POL]: Flaga @ (para plik-folder) 
+    // [ENG]: Flag @ (file-directory pair)
+    requires_sibling: bool, 
+    // [POL]: Flaga $ (jednostronna relacja)
+    // [ENG]: Flag $ (one-way relation)
+    requires_orphan: bool,  
+    // [POL]: Flaga + (rekurencyjne zacienianie) 
+    // [ENG]: Flag + (recursive shadowing)
+    is_deep: bool,     
+    // [POL]: Nazwa bazowa modułu do weryfikacji relacji     
+    // [ENG]: Base name of the module for relation verification
+    base_name: String,      
+    // [POL]: Flaga negacji (!).
+    // [ENG]: Negation flag (!).
+    pub is_negated: bool,   
 }
 
 impl PathMatcher {
     pub fn new(pattern: &str, case_sensitive: bool) -> Result<Self, regex::Error> {
-        // [POL]: Kompiluje wzorzec tekstowy do wyrażenia regularnego, ekstrahując flagi sterujące.
-        // [ENG]: Compiles a text pattern into a regular expression, extracting control flags.
-
-        // [POL]: Detekcja negacji. Jeśli obecny '!', oznaczamy i obcinamy go do dalszej analizy.
-        // [ENG]: Negation detection. If '!' is present, mark it and trim it for further analysis.
         let is_negated = pattern.starts_with('!');
         let actual_pattern = if is_negated { &pattern[1..] } else { pattern };
 
         let is_deep = actual_pattern.ends_with('+');
         let requires_sibling = actual_pattern.contains('@');
         let requires_orphan = actual_pattern.contains('$');
-        let clean_pattern_str = actual_pattern
-            .replace(['@', '$', '+'], "");
+        let clean_pattern_str = actual_pattern.replace(['@', '$', '+'], "");
 
         let base_name = clean_pattern_str
             .trim_end_matches('/')
@@ -51,17 +59,6 @@ impl PathMatcher {
         let mut is_anchored = false;
         let mut p = clean_pattern_str.as_str();
 
-        // [POL]: KLASYFIKACJA CELU DOPASOWANIA. Zmienna określa, czy wzorzec odnosi się wyłącznie do plików.
-        // Brak ukośnika '/' lub sekwencji '**' na końcu oznacza restrykcję do obiektów niebędących katalogami.
-        // [ENG]: MATCH TARGET CLASSIFICATION. This variable determines if the pattern is restricted to files only.
-        // The absence of a trailing slash '/' or the '**' sequence implies a restriction to non-directory objects.
-        // // let targets_file = !pattern.ends_with('/') && !pattern.ends_with("**");
-        // [POL]: ANALIZA CIĄGU ZNORMALIZOWANEGO. Weryfikacja odbywa się na zmiennej 'p' (wzorzec bazowy),
-        // a nie na surowym 'pattern'. Gwarantuje to, że flagi sterujące (np. '@', '$', '+') nie zostaną
-        // błędnie zinterpretowane jako część ścieżki, co zafałszowałoby wykrycie intencji wzorca.
-        // [ENG]: NORMALISED STRING ANALYSIS. Verification is performed on variable 'p' (base pattern)
-        // instead of the raw 'pattern'. This ensures that control flags (e.g. '@', '$', '+') are not
-        // misinterpreted as path components, which would compromise the detection of the intended target type.
         let targets_file = !p.ends_with('/') && !p.ends_with("**");
 
         if p.starts_with("./") {
@@ -89,7 +86,6 @@ impl PathMatcher {
                     }
                 }
                 '.' => re.push_str("\\."),
-                // '/' => re.push('/'),
                 '/' => {
                     if is_deep && i == chars.len() - 1 {
                         // [POL]: Pominięcie końcowego ukośnika dla flagi '+'.
@@ -223,8 +219,7 @@ impl PathMatcher {
         paths: I,
         env: &HashSet<&str>,
         strategy: SortStrategy,
-        show_include: bool,
-        show_exclude: bool,
+        show_mode: ShowMode,
         mut on_match: OnMatch,
         mut on_mismatch: OnMismatch,
     ) -> MatchStats
@@ -266,13 +261,13 @@ impl PathMatcher {
             },
         };
 
-        if show_include {
+        if show_mode == ShowMode::Include || show_mode == ShowMode::Context {
             for path in &matched {
                 on_match(path.as_ref());
             }
         }
 
-        if show_exclude {
+        if show_mode == ShowMode::Exclude || show_mode == ShowMode::Context {
             for path in &mismatched {
                 on_mismatch(path.as_ref());
             }
@@ -317,5 +312,130 @@ impl PathMatcher {
             }
         }
         false
+    }
+}
+
+
+// ==============================================================================
+// ⚡ KONTENER WIELU WZORCÓW (PathMatchers)
+// ==============================================================================
+
+/// [POL]: Kontener przechowujący kolekcję silników dopasowujących ścieżki.
+/// [ENG]: A container holding a collection of path matching engines.
+pub struct PathMatchers {
+    matchers: Vec<PathMatcher>,
+}
+
+impl PathMatchers {
+    /// [POL]: Tworzy nową instancję, kompilując listę wzorców po uprzednim rozwinięciu klamer.
+    /// [ENG]: Creates a new instance by compiling a list of patterns after performing brace expansion.
+    pub fn new<I, S>(patterns: I, case_sensitive: bool) -> Result<Self, regex::Error>
+    where
+        I: IntoIterator<Item = S>,
+        S: AsRef<str>,
+    {
+        let mut matchers = Vec::new();
+        for pat in patterns {
+            matchers.push(PathMatcher::new(pat.as_ref(), case_sensitive)?);
+        }
+        Ok(Self { matchers })
+    }
+
+    /// [POL]: Weryfikuje, czy ścieżka spełnia warunki narzucone przez zbiór wzorców (w tym negacje).
+    /// [ENG]: Verifies if the path meets the conditions imposed by the pattern set (including negations).
+    pub fn is_match(&self, path: &str, env: &HashSet<&str>) -> bool {
+        if self.matchers.is_empty() {
+            return false;
+        }
+
+        let mut has_positive = false;
+        let mut matched_positive = false;
+
+        for matcher in &self.matchers {
+            if matcher.is_negated {
+                // [POL]: Twarde WETO. Dopasowanie negatywne bezwzględnie odrzuca ścieżkę.
+                // [ENG]: Hard VETO. A negative match unconditionally rejects the path.
+                if matcher.is_match(path, env) {
+                    return false;
+                }
+            } else {
+                has_positive = true;
+                if !matched_positive && matcher.is_match(path, env) {
+                    matched_positive = true;
+                }
+            }
+        }
+
+        // [POL]: Ostateczna decyzja na podstawie zebranych danych.
+        // [ENG]: Final decision based on collected data.
+        if has_positive {
+            matched_positive
+        } else {
+            true
+        }
+    }
+
+    /// [POL]: Ewaluuje zbiór ścieżek, sortuje je i wykonuje odpowiednie domknięcia.
+    /// [ENG]: Evaluates a set of paths, sorts them, and executes respective closures.
+    pub fn evaluate<I, S, OnMatch, OnMismatch>(
+        &self,
+        paths: I,
+        env: &HashSet<&str>,
+        strategy: SortStrategy,
+        show_mode: ShowMode,
+        mut on_match: OnMatch,
+        mut on_mismatch: OnMismatch,
+    ) -> MatchStats
+    where
+        I: IntoIterator<Item = S>,
+        S: AsRef<str>,
+        OnMatch: FnMut(&str),
+        OnMismatch: FnMut(&str),
+    {
+        let mut matched = Vec::new();
+        let mut mismatched = Vec::new();
+
+        for path in paths {
+            if self.is_match(path.as_ref(), env) {
+                matched.push(path);
+            } else {
+                mismatched.push(path);
+            }
+        }
+
+        strategy.apply(&mut matched);
+        strategy.apply(&mut mismatched);
+
+        let stats = MatchStats {
+            matched: matched.len(),
+            rejected: mismatched.len(),
+            total: matched.len() + mismatched.len(),
+            included: ResultSet {
+                paths: matched.iter().map(|s| s.as_ref().to_string()).collect(),
+                tree: None,
+                list: None,
+                grid: None,  
+            },
+            excluded: ResultSet {
+                paths: mismatched.iter().map(|s| s.as_ref().to_string()).collect(),
+                tree: None,
+                list: None,
+                grid: None,  
+            },
+        };
+
+        if show_mode == ShowMode::Include || show_mode == ShowMode::Context {
+            for path in matched {
+                on_match(path.as_ref());
+            }
+        }
+
+        if show_mode == ShowMode::Exclude || show_mode == ShowMode::Context {
+            for path in mismatched {
+                on_mismatch(path.as_ref());
+            }
+        }
+
+        stats
     }
 }

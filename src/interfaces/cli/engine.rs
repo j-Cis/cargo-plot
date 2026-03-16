@@ -57,13 +57,13 @@ pub fn run(args: CliArgs) {
         ViewMode::Grid => {
             if do_include {
                 if let Some(grid) = &stats.included.grid {
-                    println!("🌲 Widok Siatki (DOPASOWANE):");
+                    println!("✅ DOPASOWANIA");
                     print!("{}", grid.render_cli());
                 }
             }
             if do_exclude {
                 if let Some(grid) = &stats.excluded.grid {
-                    println!("🌲 Widok Siatki (ODRZUCONE):");
+                    println!("❌ ODRZUCENIA");
                     print!("{}", grid.render_cli());
                 }
             }
@@ -71,13 +71,13 @@ pub fn run(args: CliArgs) {
         ViewMode::Tree => {
             if do_include {
                 if let Some(tree) = &stats.included.tree {
-                    println!("🌲 Widok Drzewa (DOPASOWANE):");
+                    println!("✅ DOPASOWANIA");
                     print!("{}", tree.render_cli());
                 }
             }
             if do_exclude {
                 if let Some(tree) = &stats.excluded.tree {
-                    println!("🌲 Widok Drzewa (ODRZUCONE):");
+                    println!("❌ ODRZUCENIA");
                     print!("{}", tree.render_cli());
                 }
             }
@@ -85,13 +85,13 @@ pub fn run(args: CliArgs) {
         ViewMode::List => {
             if do_include {
                 if let Some(list) = &stats.included.list {
-                    // render_cli(true) -> dodaje zielony znaczek ✅
+                    println!("✅ DOPASOWANIA");
                     print!("{}", list.render_cli(true));
                 }
             }
             if do_exclude {
                 if let Some(list) = &stats.excluded.list {
-                    // render_cli(false) -> dodaje czerwony znaczek ❌
+                    println!("❌ ODRZUCENIA");
                     print!("{}", list.render_cli(false));
                 }
             }

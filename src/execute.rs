@@ -1,18 +1,14 @@
-use crate::core::path_matcher::matchers::PathMatchers;
-use crate::core::path_matcher::stats::{MatchStats, ShowMode};
-use crate::core::path_store::context::PathContext;
-use crate::core::path_store::store::PathStore;
+pub use crate::core::path_matcher::SortStrategy;
+use crate::core::path_matcher::{PathMatchers,MatchStats, ShowMode};
+use crate::core::path_store::{PathContext,PathStore};
 use crate::core::patterns_expand::PatternContext;
 use crate::core::path_view::{PathList, PathTree, PathGrid, ViewMode};
 use crate::core::file_stats::weight::WeightConfig;
-use std::path::Path;
-// [PL]: Reeksportujemy strategię, aby Kokpit nie musiał szukać jej w core.
-pub use crate::core::path_matcher::sort::SortStrategy;
 use crate::core::file_stats::FileStats;
+use std::path::Path;
 
 /// [POL]: Egzekutor operujący na wielu wzorcach (wersja po rozwinięciu klamer/tokenizacji).
 /// [ENG]: Executor operating on multiple patterns (post brace expansion/tokenisation).
-// #[allow(clippy::too_many_arguments)]
 pub fn execute<OnMatch, OnMismatch>(
     enter_path: &str,
     patterns: &[String],

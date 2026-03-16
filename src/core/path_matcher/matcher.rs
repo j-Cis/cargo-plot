@@ -225,7 +225,7 @@ impl PathMatcher {
         show_exclude: bool,
         mut on_match: OnMatch,
         mut on_mismatch: OnMismatch,
-    ) 
+    ) -> MatchStats
     where
         I: IntoIterator<Item = S>,
         S: AsRef<str>,
@@ -246,12 +246,27 @@ impl PathMatcher {
         strategy.apply(&mut matched);
         strategy.apply(&mut mismatched);
 
-        for path in matched {
-            on_match(path.as_ref());
+        let stats = MatchStats {
+            matched: matched.len(),
+            rejected: mismatched.len(),
+            total: matched.len() + mismatched.len(),
+            included: matched.iter().map(|s| s.as_ref().to_string()).collect(),
+            excluded: mismatched.iter().map(|s| s.as_ref().to_string()).collect(),
+        };
+
+        if show_include {
+            for path in &matched {
+                on_match(path.as_ref());
+            }
         }
-        for path in mismatched {
-            on_mismatch(path.as_ref());
+        
+        if show_exclude {
+            for path in &mismatched {
+                on_mismatch(path.as_ref());
+            }
         }
+
+        stats
     }
 
     /// [POL]: Weryfikuje autoryzację korzenia modułu w relacji plik-folder dla trybu 'deep'.

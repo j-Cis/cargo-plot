@@ -1,4 +1,3 @@
-use std::path::Path;
 use crate::interfaces::cli::args::CliArgs;
 
 // [EN]: Imports from our library core.

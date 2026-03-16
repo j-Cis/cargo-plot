@@ -17,12 +17,18 @@ impl PathContext {
 
         // 1. BASE ABSOLUTE: Gdzie fizycznie odpalono program?
         let cwd = env::current_dir().map_err(|e| format!("Błąd odczytu CWD: {}", e))?;
-        let base_abs = cwd.to_string_lossy().trim_start_matches(r"\\?\").replace('\\', "/");
+        let base_abs = cwd
+            .to_string_lossy()
+            .trim_start_matches(r"\\?\")
+            .replace('\\', "/");
 
         // 2. ENTRY ABSOLUTE: Pełna ścieżka do folderu, który skanujemy
         let abs_path = fs::canonicalize(path_ref)
             .map_err(|e| format!("Nie można ustalić ścieżki '{:?}': {}", path_ref, e))?;
-        let entry_abs = abs_path.to_string_lossy().trim_start_matches(r"\\?\").replace('\\', "/");
+        let entry_abs = abs_path
+            .to_string_lossy()
+            .trim_start_matches(r"\\?\")
+            .replace('\\', "/");
 
         // 3. ENTRY RELATIVE: Ścieżka od terminala do skanowanego folderu
         let entry_rel = match abs_path.strip_prefix(&cwd) {
@@ -35,8 +41,8 @@ impl PathContext {
                 }
             }
             Err(_) => {
-                // Jeśli cel jest na innym dysku (np. C:\ a terminal na D:\) 
-                // lub całkiem poza strukturą CWD, relatywna nie istnieje. 
+                // Jeśli cel jest na innym dysku (np. C:\ a terminal na D:\)
+                // lub całkiem poza strukturą CWD, relatywna nie istnieje.
                 // Wracamy wtedy do tego, co wpisał użytkownik, lub dajemy absolutną.
                 path_ref.to_string_lossy().replace('\\', "/")
             }

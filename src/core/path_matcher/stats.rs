@@ -5,6 +5,6 @@ pub struct MatchStats {
     pub matched: usize,
     pub rejected: usize,
     pub total: usize,
-    pub included: Vec<String>, 
-    pub excluded: Vec<String>, 
+    pub included: Vec<String>,
+    pub excluded: Vec<String>,
 }

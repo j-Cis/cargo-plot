@@ -53,4 +53,4 @@ impl PathStore {
     pub fn get_index(&self) -> HashSet<&str> {
         self.list.iter().map(|s| s.as_str()).collect()
     }
-} 
+}

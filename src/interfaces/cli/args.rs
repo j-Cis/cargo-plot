@@ -1,7 +1,7 @@
-use clap::{Parser, Args, ValueEnum};
 use cargo_plot::core::path_matcher::SortStrategy;
+use clap::{Args, Parser, ValueEnum};
 
-/// [POL]: Główny wrapper dla wtyczki Cargo. 
+/// [POL]: Główny wrapper dla wtyczki Cargo.
 /// Oszukuje clap'a, mówiąc mu: "Główny program nazywa się 'cargo', a 'plot' to jego subkomenda".
 #[derive(Parser, Debug)]
 #[command(name = "cargo", bin_name = "cargo")]

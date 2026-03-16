@@ -1,8 +1,8 @@
 pub mod args;
 pub mod engine;
 
-use clap::Parser;
 use self::args::CargoCli;
+use clap::Parser;
 
 // [EN]: Main entry point for the CLI interface.
 // [PL]: Główny punkt wejścia dla interfejsu CLI.
@@ -11,7 +11,7 @@ pub fn run_cli() {
     let args_os = std::env::args();
     let mut args: Vec<String> = args_os.collect();
 
-    // [EN]: Injection trick: If run via 'cargo run -- -d...', 'plot' is missing. 
+    // [EN]: Injection trick: If run via 'cargo run -- -d...', 'plot' is missing.
     // We insert it manually so the parser matches the Cargo plugin structure.
     // [PL]: Trik z wstrzyknięciem: Jeśli uruchomiono przez 'cargo run -- -d...', brakuje 'plot'.
     // Wstawiamy go ręcznie, aby parser pasował do struktury wtyczki Cargo.

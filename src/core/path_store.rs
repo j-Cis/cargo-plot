@@ -1,6 +1,5 @@
-pub mod store;
 pub mod context;
+pub mod store;
 
-
-pub use self::store::PathStore;
 pub use self::context::PathContext;
+pub use self::store::PathStore;

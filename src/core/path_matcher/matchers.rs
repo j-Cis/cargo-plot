@@ -1,8 +1,7 @@
 use super::matcher::PathMatcher;
-use super::sort::SortStrategy;  
+use super::sort::SortStrategy;
 use super::stats::MatchStats;
 use std::collections::HashSet;
-
 
 /// [POL]: Kontener przechowujący kolekcję silników dopasowujących ścieżki.
 /// [ENG]: A container holding a collection of path matching engines.
@@ -20,9 +19,9 @@ impl PathMatchers {
     {
         let mut matchers = Vec::new();
         //for pat in patterns {
-            // [POL]: Przetwarzanie wstępne wzorca (Brace Expansion).
-            // [ENG]: Pattern preprocessing (Brace Expansion).
-            // let expanded_patterns = expand_braces(pat.as_ref());
+        // [POL]: Przetwarzanie wstępne wzorca (Brace Expansion).
+        // [ENG]: Pattern preprocessing (Brace Expansion).
+        // let expanded_patterns = expand_braces(pat.as_ref());
         for pat in patterns {
             matchers.push(PathMatcher::new(pat.as_ref(), case_sensitive)?);
         }
@@ -105,7 +104,6 @@ impl PathMatchers {
             included: matched.iter().map(|s| s.as_ref().to_string()).collect(),
             excluded: mismatched.iter().map(|s| s.as_ref().to_string()).collect(),
         };
-
 
         if show_include {
             for path in matched {

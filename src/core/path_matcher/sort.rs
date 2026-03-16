@@ -32,7 +32,6 @@ pub enum SortStrategy {
     /// [ENG]: Priority for directories, followed by alphanumeric descending sort.
     ZaDirFirst,
 
-
     /// [POL]: Sortowanie alfanumeryczne rosnąco, grupujące logiczne pary plik-katalog (np. moduły) z priorytetem dla plików.
     /// [ENG]: Alphanumeric ascending sort grouping logical file-directory pairs (e.g. modules), prioritising files.
     AzFileFirstMerge,
@@ -51,7 +50,7 @@ pub enum SortStrategy {
 }
 
 impl SortStrategy {
-    /// [POL]: Sortuje kolekcję ścieżek w miejscu (in-place) na podstawie wybranej strategii. 
+    /// [POL]: Sortuje kolekcję ścieżek w miejscu (in-place) na podstawie wybranej strategii.
     /// [ENG]: Sorts a collection of paths in-place based on the selected strategy.
     pub fn apply<S: AsRef<str>>(&self, paths: &mut [S]) {
         if *self == SortStrategy::None {
@@ -77,10 +76,18 @@ impl SortStrategy {
                 SortStrategy::ZaFileFirst => (a_is_dir, b).cmp(&(b_is_dir, a)),
                 SortStrategy::AzDirFirst => (!a_is_dir, a).cmp(&(!b_is_dir, b)),
                 SortStrategy::ZaDirFirst => (!a_is_dir, b).cmp(&(!b_is_dir, a)),
-                SortStrategy::AzFileFirstMerge => (a_merge, a_is_dir, a).cmp(&(b_merge, b_is_dir, b)),
-                SortStrategy::ZaFileFirstMerge => (b_merge, a_is_dir, b).cmp(&(a_merge, b_is_dir, a)),
-                SortStrategy::AzDirFirstMerge => (a_merge, !a_is_dir, a).cmp(&(b_merge, !b_is_dir, b)),
-                SortStrategy::ZaDirFirstMerge => (b_merge, !a_is_dir, b).cmp(&(a_merge, !b_is_dir, a)),
+                SortStrategy::AzFileFirstMerge => {
+                    (a_merge, a_is_dir, a).cmp(&(b_merge, b_is_dir, b))
+                }
+                SortStrategy::ZaFileFirstMerge => {
+                    (b_merge, a_is_dir, b).cmp(&(a_merge, b_is_dir, a))
+                }
+                SortStrategy::AzDirFirstMerge => {
+                    (a_merge, !a_is_dir, a).cmp(&(b_merge, !b_is_dir, b))
+                }
+                SortStrategy::ZaDirFirstMerge => {
+                    (b_merge, !a_is_dir, b).cmp(&(a_merge, !b_is_dir, a))
+                }
             }
         });
     }

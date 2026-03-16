@@ -1,3 +1,3 @@
 pub mod core;
-pub mod execuctor;
+pub mod execute;
 pub mod theme;

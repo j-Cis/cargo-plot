@@ -5,7 +5,7 @@ use colored::Colorize;
 // Importy z rodzeństwa i innych modułów core
 use super::node::FileNode;
 use crate::core::file_stats::weight::{self, WeightConfig, UnitSystem};
-use crate::theme::for_path_tree::{get_file_type, TreeStyle, DIR_ICON};
+use crate::theme::for_path_tree::{get_file_type, TreeStyle, DIR_ICON, FILE_ICON};
 use crate::core::path_matcher::SortStrategy;
 pub struct PathTree {
     roots: Vec<FileNode>,
@@ -47,7 +47,7 @@ impl PathTree {
             } else if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
                 get_file_type(ext).icon.to_string()
             } else {
-                "📄".to_string()
+                FILE_ICON.to_string()
             };
 
             let absolute_path = base_path.join(path);

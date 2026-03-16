@@ -1,9 +1,7 @@
 use crate::interfaces::cli::args::CliArgs;
-use cargo_plot::execuctor::for_many_patterns_tok::{self, SortStrategy};
+use cargo_plot::execute::{self, SortStrategy};
 use cargo_plot::core::path_view::ViewMode;
 use cargo_plot::core::path_matcher::stats::ShowMode;
-// lub dla jednego wzorca:
-// use cargo_plot::execuctor::for_one_pattern_raw::{self, SortStrategy};
 // use cargo_plot::theme::for_path_list::get_icon_for_path;
 
 /// [EN]: The execution engine (Cockpit).
@@ -19,7 +17,7 @@ pub fn run(args: CliArgs) {
         _ => ShowMode::Context,             // Brak flag (lub podane obie) = pokazujemy wszystko
     };
 
-    let stats = for_many_patterns_tok::execute(
+    let stats = execute::execute(
         &args.enter_path,
         &args.patterns,
         is_case_sensitive,

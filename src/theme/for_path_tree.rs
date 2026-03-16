@@ -5,6 +5,8 @@
 /// [PL]: Globalna ikona używana dla węzłów będących folderami.
 pub const DIR_ICON: &str = "📂";
 
+pub const FILE_ICON: &str = "📄";
+
 /// [EN]: Defines visual and metadata properties for a file type.
 /// [PL]: Definiuje wizualne i metadanowe właściwości dla typu pliku.
 pub struct PathFileType {

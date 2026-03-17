@@ -1,156 +1,182 @@
-use super::state::Lang;
+use cargo_plot::i18n::Lang;
+use console::style;
 
-// =====================================================================
-// BAZOWY FORMATER
-// =====================================================================
-
-// Uniwersalny padding - dodaje spacje po bokach każdego tekstu.
-// Zmieniasz to tutaj -> zmienia się w CAŁEJ aplikacji!
 fn pad(text: &str) -> String {
     format!("  {}  ", text)
 }
-
-// =====================================================================
-// STRUKTURA WYMUSZAJĄCA JAWNE NAZWY JĘZYKÓW
-// =====================================================================
 
 pub struct Txt {
     pub pol: &'static str,
     pub eng: &'static str,
 }
 
-// =====================================================================
-// GŁÓWNA CECHA (TRAIT)
-// =====================================================================
-
 pub trait Translatable {
-    // 1. Zwraca tekst w wielu językach
     fn trans(&self) -> Txt;
-
-    // 2. Opcjonalna stylizacja (kolory itp.).
-    // Domyślnie zwraca tekst bez zmian.
     fn theme(&self, text: String) -> String {
         text
     }
 }
 
-// =====================================================================
-// GLOBALNE TEKSTY (Nagłówki, Prompty, Komunikaty)
-// =====================================================================
-
 pub enum Prompt {
-    HeaderEnter,
-    HeaderJobAdd,
-    HeaderJobAddCustom,
-    HeaderJobsManager,
-    HeaderStyle,
-    HeaderOutput,
-    EnterDepth,
-    NoJobsWarning,
-    SuccessJobAdd,
-    JobAlreadyAtTop,
-    JobAlreadyAtBottom,
-    SuccessJobDeleted,
-    JobTitlePrefix,
+    HeaderMain,
+    BtnLang,
+    BtnQuickStart,
+    BtnPaths,
+    BtnView,
+    BtnOutput,
+    BtnFilters,
+    BtnRun,
+    BtnExit,
+    InputPatterns,
     ExitBye,
-    Canceled,
+    WarnNoPatterns,
+    // Prompty dla podmenu (wersje dwujęzyczne w jednej linii dla szybkości)
+    SubBasePath,
+    SubIgnoreCase,
+    SubSelectView,
+    SubSelectSort,
+    SubNoRoot,
+    SubOutPaths,
+    SubOutCode,
+    SubBy,
+    SubOnMatch,
+    SubOnMismatch,
+    SubInfo,
 }
 
 impl Translatable for Prompt {
     fn trans(&self) -> Txt {
         match self {
-            Prompt::HeaderEnter => Txt {
-                pol: "📦 j-Cis/cargo-plot [POL]",
-                eng: "📦 j-Cis/cargo-plot [ENG]",
+            Prompt::HeaderMain => Txt {
+                pol: "📦 cargo-plot [POL] - Interaktywny Kreator",
+                eng: "📦 cargo-plot [ENG] - Interactive Builder",
             },
-            Prompt::HeaderJobAdd => Txt {
-                pol: "Dodawanie zadania",
-                eng: "Adding a job",
+            Prompt::BtnLang => Txt {
+                pol: "🌍 Zmień język / Change language",
+                eng: "🌍 Zmień język / Change language",
             },
-            Prompt::HeaderJobAddCustom => Txt {
-                pol: "Definiowanie zadania",
-                eng: "Customizing job",
+            Prompt::BtnQuickStart => Txt {
+                pol: "🚀 SZYBKI START (Podaj wzorce i uruchom)",
+                eng: "🚀 QUICK START (Enter patterns and run)",
             },
-            Prompt::HeaderJobsManager => Txt {
-                pol: "Menadżer zadań",
-                eng: "Jobs manager",
+            Prompt::BtnPaths => Txt {
+                pol: "🛠️  Ścieżki i Wzorce",
+                eng: "🛠️  Paths and Patterns",
             },
-            Prompt::HeaderStyle => Txt {
-                pol: "Stylizacja struktury",
-                eng: "Paths structure styling",
+            Prompt::BtnView => Txt {
+                pol: "👁️  Widok i Sortowanie",
+                eng: "👁️  View and Sorting",
             },
-            Prompt::HeaderOutput => Txt {
-                pol: "Zapisywanie wyniku",
-                eng: "Saving output",
+            Prompt::BtnOutput => Txt {
+                pol: "💾 Zapis plików",
+                eng: "💾 Output and Saving",
             },
-            Prompt::EnterDepth => Txt {
-                pol: "Podaj głębokość:",
-                eng: "Enter depth:",
+            Prompt::BtnFilters => Txt {
+                pol: "⚙️  Filtry i Opcje",
+                eng: "⚙️  Filters and Options",
             },
-            Prompt::NoJobsWarning => Txt {
-                pol: "Brak zadań w kolejce!",
-                eng: "No jobs in the queue!",
+            Prompt::BtnRun => Txt {
+                pol: "▶️  URUCHOM SKANOWANIE",
+                eng: "▶️  RUN SCANNER",
             },
-            Prompt::SuccessJobAdd => Txt {
-                pol: "Dodano zadanie do kolejki!",
-                eng: "Job added to queue!",
+            Prompt::BtnExit => Txt {
+                pol: "❌ WYJŚCIE",
+                eng: "❌ EXIT",
             },
-            Prompt::JobAlreadyAtTop => Txt {
-                pol: "Zadanie jest już na samej górze!",
-                eng: "Job is already at the top!",
-            },
-            Prompt::JobAlreadyAtBottom => Txt {
-                pol: "Zadanie jest już na samym dole!",
-                eng: "Job is already at the bottom!",
-            },
-            Prompt::SuccessJobDeleted => Txt {
-                pol: "Usunięto zadanie.",
-                eng: "Job deleted.",
-            },
-            Prompt::JobTitlePrefix => Txt {
-                pol: "Zadanie: ",
-                eng: "Job: ",
+            Prompt::InputPatterns => Txt {
+                pol: "Podaj wzorce (oddzielone przecinkiem, np. *.rs, Cargo.toml):",
+                eng: "Enter patterns (comma separated, e.g. *.rs, Cargo.toml):",
             },
             Prompt::ExitBye => Txt {
                 pol: "Do widzenia!",
                 eng: "Goodbye!",
             },
-            Prompt::Canceled => Txt {
-                pol: "Anulowano",
-                eng: "Canceled",
+            Prompt::WarnNoPatterns => Txt {
+                pol: "Brak wzorców! Podaj przynajmniej jeden.",
+                eng: "Missing patterns! Provide at least one.",
             },
+
+            // Podmenu
+            Prompt::SubBasePath => Txt {
+                pol: "Ścieżka bazowa / Base path:",
+                eng: "Ścieżka bazowa / Base path:",
+            },
+            Prompt::SubIgnoreCase => Txt {
+                pol: "Ignorować wielkość liter? / Ignore case?",
+                eng: "Ignorować wielkość liter? / Ignore case?",
+            },
+            Prompt::SubSelectView => Txt {
+                pol: "Wybierz widok / Select view:",
+                eng: "Wybierz widok / Select view:",
+            },
+            Prompt::SubSelectSort => Txt {
+                pol: "Wybierz sortowanie / Select sorting:",
+                eng: "Wybierz sortowanie / Select sorting:",
+            },
+            Prompt::SubNoRoot => Txt {
+                pol: "Ukryć główny folder? / Hide root dir?",
+                eng: "Ukryć główny folder? / Hide root dir?",
+            },
+            Prompt::SubOutPaths => Txt {
+                pol: "Plik na ścieżki (puste=Brak, AUTO=domyślny) / Paths output file:",
+                eng: "Plik na ścieżki (puste=Brak, AUTO=domyślny) / Paths output file:",
+            },
+            Prompt::SubOutCode => Txt {
+                pol: "Plik na kod (puste=Brak, AUTO=domyślny) / Code output file:",
+                eng: "Plik na kod (puste=Brak, AUTO=domyślny) / Code output file:",
+            },
+            Prompt::SubBy => Txt {
+                pol: "Dodać stopkę na dole pliku? / Add info footer?",
+                eng: "Dodać stopkę na dole pliku? / Add info footer?",
+            },
+            Prompt::SubOnMatch => Txt {
+                pol: "Pokaż dopasowane? / Show matched?",
+                eng: "Pokaż dopasowane? / Show matched?",
+            },
+            Prompt::SubOnMismatch => Txt {
+                pol: "Pokaż odrzucone? / Show rejected?",
+                eng: "Pokaż odrzucone? / Show rejected?",
+            },
+            Prompt::SubInfo => Txt {
+                pol: "Pokaż statystyki? / Show info stats?",
+                eng: "Pokaż statystyki? / Show info stats?",
+            },
+        }
+    }
+
+    fn theme(&self, text: String) -> String {
+        match self {
+            Prompt::BtnQuickStart => style(text).on_blue().white().bold().to_string(),
+            Prompt::BtnRun => style(text).on_green().black().bold().to_string(),
+            Prompt::BtnLang => style(text).cyan().to_string(),
+            Prompt::BtnExit => style(text).red().to_string(),
+            Prompt::HeaderMain => style(text).on_white().black().bold().to_string(),
+            _ => text,
         }
     }
 }
 
-// =====================================================================
-// KONTEKST TŁUMACZA (Translator)
-// =====================================================================
-
 pub struct T {
     lang: Lang,
 }
+
 impl T {
     pub fn new(lang: Lang) -> Self {
         Self { lang }
     }
-
-    fn get_text<I: Translatable>(&self, item: &I) -> String {
+    pub fn fmt<I: Translatable>(&self, item: I) -> String {
         let txt = item.trans();
         let text = match self.lang {
-            Lang::POL => txt.pol,
-            Lang::ENG => txt.eng,
+            Lang::Pl => txt.pol,
+            Lang::En => txt.eng,
         };
-        pad(text)
+        item.theme(pad(text))
     }
-
-    // Zmiana nazwy na `fmt`!
-    pub fn fmt<I: Translatable>(&self, item: I) -> String {
-        let base_text = self.get_text(&item);
-        item.theme(base_text)
-    }
-
     pub fn raw<I: Translatable>(&self, item: I) -> String {
-        self.get_text(&item)
+        let txt = item.trans();
+        match self.lang {
+            Lang::Pl => txt.pol.to_string(),
+            Lang::En => txt.eng.to_string(),
+        }
     }
 }

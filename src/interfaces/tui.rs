@@ -5,11 +5,9 @@ pub mod i18n;
 pub mod menu;
 pub mod state;
 
-use state::StateTui;
-
 pub fn run_tui() {
-    let mut s = StateTui::new();
-    cliclack::intro(" 📖 https://crates.io/crates/cargo-plot").unwrap();
-
-    menu::enter::menu_enter(&mut s);
+    let mut s = state::StateTui::new();
+    cliclack::clear_screen().unwrap();
+    //cliclack::intro(" 📖 https://crates.io/crates/cargo-plot").unwrap();
+    menu::menu_main(&mut s);
 }

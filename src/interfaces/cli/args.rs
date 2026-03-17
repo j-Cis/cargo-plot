@@ -14,7 +14,7 @@ pub enum CargoCli {
 }
 
 /// [POL]: Nasze docelowe argumenty CLI. Zauważ, że teraz to jest `Args`, a nie `Parser`.
-#[derive(Args, Debug)]
+#[derive(Args, Debug, Clone)]
 #[command(author, version, about = "Zaawansowany skaner struktury plików", long_about = None)]
 pub struct CliArgs {
     /// [ENG]: Input path to scan.
@@ -79,14 +79,14 @@ pub struct CliArgs {
     pub lang: Option<Lang>,
 }
 
-#[derive(Debug, Clone, Copy, ValueEnum, PartialEq)]
+#[derive(Debug, Clone, Copy, ValueEnum, PartialEq, Eq)]
 pub enum CliViewMode {
     Tree,
     List,
     Grid,
 }
 
-#[derive(Debug, Clone, Copy, ValueEnum)]
+#[derive(Debug, Clone, Copy, ValueEnum, PartialEq, Eq)]
 pub enum CliSortStrategy {
     None,
     Az,

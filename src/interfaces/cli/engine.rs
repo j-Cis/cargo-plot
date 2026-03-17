@@ -6,11 +6,13 @@ use cargo_plot::core::path_store::PathContext;
 use cargo_plot::core::path_view::ViewMode;
 use cargo_plot::core::save::SaveFile;
 use cargo_plot::execute::{self, SortStrategy};
+use cargo_plot::i18n::I18n;
 // use cargo_plot::theme::for_path_list::get_icon_for_path;
 
 /// [ENG]: The execution engine (Cockpit).
 /// [POL]: Silnik wykonawczy (Kokpit).
 pub fn run(args: CliArgs) {
+    let i18n = I18n::new(args.lang);
     let is_case_sensitive = !args.ignore_case;
     let sort_strategy: SortStrategy = args.sort.into();
     let view_mode: ViewMode = args.view.into();
@@ -30,6 +32,7 @@ pub fn run(args: CliArgs) {
         view_mode,
         args.no_root,
         args.info,
+        &i18n,
         |_| {}, //  Closure są puste, bo renderujemy PO zebraniu statystyk
         |_| {},
         // |file_stat| {
@@ -65,11 +68,11 @@ pub fn run(args: CliArgs) {
         let tag = TimeTag::now();
         let internal_tag = if args.by { "" } else { &tag };
 
-        let by_content = if args.by {
-            BySection::generate(&tag)
-        } else {
-            String::new()
-        };
+        // let by_content = if args.by {
+        //     BySection::generate(&tag)
+        // } else {
+        //     String::new()
+        // };
 
         let output_str_txt = stats.render_output(view_mode, show_mode, args.info, false);
 
@@ -102,12 +105,22 @@ pub fn run(args: CliArgs) {
 
         if let Some(val) = &args.out_path {
             let filepath = resolve_filepath(val, "paths");
-            SaveFile::paths(&output_str_txt, &filepath, internal_tag, &by_content);
+            let by_content = if args.by {
+                BySection::generate(&tag, "paths", &i18n)
+            } else {
+                String::new()
+            };
+            SaveFile::paths(&output_str_txt, &filepath, internal_tag, &by_content, &i18n);
         }
 
         if let Some(val) = &args.out_code {
             let filepath = resolve_filepath(val, "cache");
             if let Ok(ctx) = PathContext::resolve(&args.enter_path) {
+                let by_content = if args.by {
+                    BySection::generate(&tag, "codes", &i18n)
+                } else {
+                    String::new()
+                };
                 SaveFile::codes(
                     &output_str_txt,
                     &stats.m_matched.paths,
@@ -115,6 +128,7 @@ pub fn run(args: CliArgs) {
                     &filepath,
                     internal_tag,
                     &by_content,
+                    &i18n,
                 );
             }
         }
@@ -123,14 +137,9 @@ pub fn run(args: CliArgs) {
     // 3. PODSUMOWANIE
     if args.info {
         println!("---------------------------------------");
-        println!(
-            "📊 Podsumowanie: Dopasowano {} z {} ścieżek.",
-            stats.m_size_matched, stats.total
-        );
-        println!(
-            "📊 Podsumowanie: Odrzucono {} z {} ścieżek.",
-            stats.x_size_mismatched, stats.total
-        );
+        // ⚡ PODMIENIONO NA WYWOŁANIA Z I18N
+        println!("{}", i18n.cli_summary_matched(stats.m_size_matched, stats.total));
+        println!("{}", i18n.cli_summary_rejected(stats.x_size_mismatched, stats.total));
     } else {
         println!("---------------------------------------");
     }

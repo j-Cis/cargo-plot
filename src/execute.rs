@@ -18,6 +18,7 @@ pub fn execute<OnMatch, OnMismatch>(
     view_mode: ViewMode,
     no_root: bool,
     print_info: bool,
+    i18n: &crate::i18n::I18n,
     mut on_match: OnMatch,
     mut on_mismatch: OnMismatch,
 ) -> MatchStats
@@ -37,13 +38,19 @@ where
 
     // 2. Logowanie stanu początkowego
     if print_info {
-        println!("📂 Baza terminala (Absolutna): {}", path_ctx.base_absolute);
-        println!("📂 Cel skanowania (Absolutna): {}", path_ctx.entry_absolute);
-        println!("📂 Cel skanowania (Relatywna): {}", path_ctx.entry_relative);
+        println!("{}", i18n.cli_base_abs(&path_ctx.base_absolute));
+        println!("{}", i18n.cli_target_abs(&path_ctx.entry_absolute));
+        println!("{}", i18n.cli_target_rel(&path_ctx.entry_relative));
         println!("---------------------------------------");
-        println!("🔠 Wrażliwość na litery: {}", is_case_sensitive);
-        println!("🔍 Wzorce (RAW): {:?}", pattern_ctx.raw);
-        println!("⚙️ Wzorce (TOK): {:?}", pattern_ctx.tok);
+        println!("{}", i18n.cli_case_sensitive(is_case_sensitive));
+        println!(
+            "{}",
+            i18n.cli_patterns_raw(&format!("{:?}", pattern_ctx.raw))
+        );
+        println!(
+            "{}",
+            i18n.cli_patterns_tok(&format!("{:?}", pattern_ctx.tok))
+        );
         println!("---------------------------------------");
     } else {
         println!("---------------------------------------");

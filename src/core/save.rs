@@ -1,3 +1,4 @@
+use super::super::i18n::I18n;
 use crate::theme::for_path_tree::get_file_type;
 use std::fs;
 use std::path::Path;
@@ -6,30 +7,39 @@ pub struct SaveFile;
 
 impl SaveFile {
     /// Wspólna logika zapisu do pliku (DRY): tworzenie folderów i zapis IO.
-    fn write_to_disk(filepath: &str, content: &str, log_name: &str) {
+    fn write_to_disk(filepath: &str, content: &str, log_name: &str, i18n: &I18n) {
         let path = Path::new(filepath);
 
-        // Upewnienie się, że foldery nadrzędne istnieją
         if let Some(parent) = path.parent()
             && !parent.as_os_str().is_empty()
             && !parent.exists()
             && let Err(e) = fs::create_dir_all(parent)
         {
-            eprintln!("❌ Błąd: Nie można utworzyć katalogu {:?} ({})", parent, e);
+            eprintln!(
+                "{}",
+                i18n.dir_create_err(&parent.to_string_lossy(), &e.to_string())
+            );
             return;
         }
 
-        // Zapis pliku
         match fs::write(path, content) {
-            Ok(_) => println!("💾 Pomyślnie zapisano {} do pliku: {}", log_name, filepath),
-            Err(e) => eprintln!("❌ Błąd zapisu {} do pliku {}: {}", log_name, filepath, e),
+            Ok(_) => println!("{}", i18n.save_success(log_name, filepath)),
+            Err(e) => eprintln!("{}", i18n.save_err(log_name, filepath, &e.to_string())),
         }
     }
-
     /// Formatowanie i zapis samego widoku struktury (ścieżek)
-    pub fn paths(content: &str, filepath: &str, tag: &str, by_section: &str) {
+    pub fn paths(content: &str, filepath: &str, tag: &str, by_section: &str, i18n: &I18n) {
         let markdown_content = format!("```plaintext\n{}\n```\n\n{}{}", content, tag, by_section);
-        Self::write_to_disk(filepath, &markdown_content, "ścieżki");
+        Self::write_to_disk(
+            filepath,
+            &markdown_content,
+            if i18n.lang == crate::i18n::Lang::Pl {
+                "ścieżki"
+            } else {
+                "paths"
+            },
+            i18n,
+        );
     }
 
     /// Formatowanie i zapis pełnego cache (drzewo + zawartość plików)
@@ -40,6 +50,7 @@ impl SaveFile {
         filepath: &str,
         tag: &str,
         by_section: &str,
+        i18n: &I18n,
     ) {
         let mut content = String::new();
 
@@ -66,8 +77,10 @@ impl SaveFile {
 
             if is_blacklisted_extension(&ext) {
                 content.push_str(&format!(
-                    "### {:03}: `{}`\n\n> *(Plik binarny/graficzny - pominięto)*\n\n",
-                    counter, p_str
+                    "### {:03}: `{}`\n\n{}\n\n",
+                    counter,
+                    p_str,
+                    i18n.skip_binary()
                 ));
                 counter += 1;
                 continue;
@@ -82,18 +95,27 @@ impl SaveFile {
                 }
                 Err(_) => {
                     content.push_str(&format!(
-                        "### {:03}: `{}`\n\n> *(Błąd odczytu / plik nie jest UTF-8)*\n\n",
-                        counter, p_str
+                        "### {:03}: `{}`\n\n{}\n\n",
+                        counter,
+                        p_str,
+                        i18n.read_err()
                     ));
                 }
             }
             counter += 1;
         }
 
-        // Znacznik na końcu
         content.push_str(&format!("\n\n{}{}", tag, by_section));
-
-        Self::write_to_disk(filepath, &content, "kod (cache)");
+        Self::write_to_disk(
+            filepath,
+            &content,
+            if i18n.lang == crate::i18n::Lang::Pl {
+                "kod (cache)"
+            } else {
+                "code (cache)"
+            },
+            i18n,
+        );
     }
 }
 

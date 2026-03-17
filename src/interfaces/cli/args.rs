@@ -1,5 +1,6 @@
 use cargo_plot::core::path_matcher::SortStrategy;
 use cargo_plot::core::path_view::ViewMode;
+use cargo_plot::i18n::Lang;
 use clap::{Args, Parser, ValueEnum};
 
 /// [POL]: Główny wrapper dla wtyczki Cargo.
@@ -72,6 +73,10 @@ pub struct CliArgs {
     /// [POL]: Wyświetla dodatkowe informacje, statystyki i nagłówki (tryb gadatliwy).
     #[arg(short = 'i', long = "info", default_value_t = false)]
     pub info: bool,
+
+    /// [POL]: Wymusza język interfejsu (pl / en). Domyślnie pobiera z systemu.
+    #[arg(long, value_enum)]
+    pub lang: Option<Lang>,
 }
 
 #[derive(Debug, Clone, Copy, ValueEnum, PartialEq)]

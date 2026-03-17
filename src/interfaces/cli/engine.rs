@@ -4,6 +4,7 @@ use cargo_plot::core::path_view::ViewMode;
 use cargo_plot::execute::{self, SortStrategy};
 use cargo_plot::addon::TimeTag;
 use cargo_plot::core::path_store::PathContext;
+use cargo_plot::core::save::SaveFile;
 // use cargo_plot::theme::for_path_list::get_icon_for_path;
 
 /// [ENG]: The execution engine (Cockpit).
@@ -89,17 +90,18 @@ pub fn run(args: CliArgs) {
 
         if let Some(val) = &args.out_path {
             let filepath = resolve_filepath(val, "paths");
-            cargo_plot::output::save_path::save(&output_str_txt, &filepath);
+            SaveFile::paths(&output_str_txt, &filepath,&tag);
         }
 
         if let Some(val) = &args.out_code {
             let filepath = resolve_filepath(val, "cache");
             if let Ok(ctx) = PathContext::resolve(&args.enter_path) {
-                cargo_plot::output::save_code::save(
+                SaveFile::codes(
                     &output_str_txt, 
                     &stats.m_matched.paths, 
                     &ctx.entry_absolute, 
-                    &filepath
+                    &filepath, 
+                    &tag
                 );
             }
         }

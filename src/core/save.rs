@@ -51,10 +51,16 @@ impl SaveFile {
             String::new()
         };
         let internal_tag = if add_by { "" } else { tag }; // Zapobiega dublowaniu tagu
-        let file_name = Path::new(filepath).file_name().unwrap_or_default().to_string_lossy();
-        
+        let file_name = Path::new(filepath)
+            .file_name()
+            .unwrap_or_default()
+            .to_string_lossy();
+
         // ⚡ DODAJE NAGŁÓWEK H1 NA POCZĄTKU
-        let markdown_content = format!("# {}\n\n```plaintext\n{}\n```\n\n{}{}", file_name, content, internal_tag, by_section);
+        let markdown_content = format!(
+            "# {}\n\n```plaintext\n{}\n```\n\n{}{}",
+            file_name, content, internal_tag, by_section
+        );
 
         Self::write_to_disk(
             filepath,
@@ -84,11 +90,14 @@ impl SaveFile {
             String::new()
         };
         let internal_tag = if add_by { "" } else { tag }; // Zapobiega dublowaniu tagu
-        let file_name = Path::new(filepath).file_name().unwrap_or_default().to_string_lossy();
-        
+        let file_name = Path::new(filepath)
+            .file_name()
+            .unwrap_or_default()
+            .to_string_lossy();
+
         let mut content = String::new();
         content.push_str(&format!("# {}\n\n", file_name));
-        
+
         // Wstawiamy wygenerowane drzewo ścieżek
         content.push_str("```plaintext\n");
         content.push_str(tree_text);

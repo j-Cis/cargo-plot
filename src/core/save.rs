@@ -1,11 +1,27 @@
 use super::super::i18n::I18n;
 use crate::theme::for_path_tree::get_file_type;
+use std::env;
 use std::fs;
 use std::path::Path;
 
 pub struct SaveFile;
 
 impl SaveFile {
+    fn generate_by_section(tag: &str, typ: &str, i18n: &I18n) -> String {
+        let args: Vec<String> = env::args().collect();
+        let command = args.join(" ");
+
+        format!(
+            "\n\n---\n---\n\n{}\n\n{}\n\n```bash\n{}\n```\n\n{}\n\n{}\n\n{}\n\n---\n",
+            i18n.by_title(typ),
+            i18n.by_cmd(),
+            command,
+            i18n.by_instructions(),
+            i18n.by_link(),
+            i18n.by_version(tag)
+        )
+    }
+
     /// Wspólna logika zapisu do pliku (DRY): tworzenie folderów i zapis IO.
     fn write_to_disk(filepath: &str, content: &str, log_name: &str, i18n: &I18n) {
         let path = Path::new(filepath);
@@ -28,8 +44,17 @@ impl SaveFile {
         }
     }
     /// Formatowanie i zapis samego widoku struktury (ścieżek)
-    pub fn paths(content: &str, filepath: &str, tag: &str, by_section: &str, i18n: &I18n) {
-        let markdown_content = format!("```plaintext\n{}\n```\n\n{}{}", content, tag, by_section);
+    pub fn paths(content: &str, filepath: &str, tag: &str, add_by: bool, i18n: &I18n) {
+        let by_section = if add_by {
+            Self::generate_by_section(tag, "paths", i18n)
+        } else {
+            String::new()
+        };
+        let internal_tag = if add_by { "" } else { tag }; // Zapobiega dublowaniu tagu
+        let markdown_content = format!(
+            "```plaintext\n{}\n```\n\n{}{}",
+            content, internal_tag, by_section
+        );
         Self::write_to_disk(
             filepath,
             &markdown_content,
@@ -49,9 +74,15 @@ impl SaveFile {
         base_dir: &str,
         filepath: &str,
         tag: &str,
-        by_section: &str,
+        add_by: bool,
         i18n: &I18n,
     ) {
+        let by_section = if add_by {
+            Self::generate_by_section(tag, "codes", i18n)
+        } else {
+            String::new()
+        };
+        let internal_tag = if add_by { "" } else { tag }; // Zapobiega dublowaniu tagu
         let mut content = String::new();
 
         // Wstawiamy wygenerowane drzewo ścieżek
@@ -105,7 +136,7 @@ impl SaveFile {
             counter += 1;
         }
 
-        content.push_str(&format!("\n\n{}{}", tag, by_section));
+        content.push_str(&format!("\n\n{}{}", internal_tag, by_section));
         Self::write_to_disk(
             filepath,
             &content,

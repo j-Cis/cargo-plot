@@ -1,6 +1,5 @@
 use crate::interfaces::cli::args::CliArgs;
 use cargo_plot::addon::TimeTag;
-use cargo_plot::core::by::BySection;
 use cargo_plot::core::path_matcher::stats::ShowMode;
 use cargo_plot::core::path_store::PathContext;
 use cargo_plot::core::path_view::ViewMode;
@@ -66,14 +65,6 @@ pub fn run(args: CliArgs) {
 
     if has_out_paths || has_out_codes {
         let tag = TimeTag::now();
-        let internal_tag = if args.by { "" } else { &tag };
-
-        // let by_content = if args.by {
-        //     BySection::generate(&tag)
-        // } else {
-        //     String::new()
-        // };
-
         let output_str_txt = stats.render_output(view_mode, show_mode, args.info, false);
 
         // Closure do automatycznego generowania ścieżki
@@ -105,29 +96,21 @@ pub fn run(args: CliArgs) {
 
         if let Some(val) = &args.out_path {
             let filepath = resolve_filepath(val, "paths");
-            let by_content = if args.by {
-                BySection::generate(&tag, "paths", &i18n)
-            } else {
-                String::new()
-            };
-            SaveFile::paths(&output_str_txt, &filepath, internal_tag, &by_content, &i18n);
+            // ⚡ CZYSTE WYWOŁANIE: podajemy args.by
+            SaveFile::paths(&output_str_txt, &filepath, &tag, args.by, &i18n);
         }
 
         if let Some(val) = &args.out_code {
             let filepath = resolve_filepath(val, "cache");
             if let Ok(ctx) = PathContext::resolve(&args.enter_path) {
-                let by_content = if args.by {
-                    BySection::generate(&tag, "codes", &i18n)
-                } else {
-                    String::new()
-                };
+                // ⚡ CZYSTE WYWOŁANIE: podajemy args.by
                 SaveFile::codes(
                     &output_str_txt,
                     &stats.m_matched.paths,
                     &ctx.entry_absolute,
                     &filepath,
-                    internal_tag,
-                    &by_content,
+                    &tag,
+                    args.by,
                     &i18n,
                 );
             }
@@ -138,8 +121,14 @@ pub fn run(args: CliArgs) {
     if args.info {
         println!("---------------------------------------");
         // ⚡ PODMIENIONO NA WYWOŁANIA Z I18N
-        println!("{}", i18n.cli_summary_matched(stats.m_size_matched, stats.total));
-        println!("{}", i18n.cli_summary_rejected(stats.x_size_mismatched, stats.total));
+        println!(
+            "{}",
+            i18n.cli_summary_matched(stats.m_size_matched, stats.total)
+        );
+        println!(
+            "{}",
+            i18n.cli_summary_rejected(stats.x_size_mismatched, stats.total)
+        );
     } else {
         println!("---------------------------------------");
     }

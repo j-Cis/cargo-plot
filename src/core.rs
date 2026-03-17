@@ -1,3 +1,4 @@
+pub mod by;
 pub mod file_stats;
 pub mod path_matcher;
 pub mod path_store;

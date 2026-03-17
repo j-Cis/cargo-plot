@@ -10,13 +10,13 @@ impl SaveFile {
         let path = Path::new(filepath);
 
         // Upewnienie się, że foldery nadrzędne istnieją
-        if let Some(parent) = path.parent() {
-            if !parent.as_os_str().is_empty() && !parent.exists() {
-                if let Err(e) = fs::create_dir_all(parent) {
-                    eprintln!("❌ Błąd: Nie można utworzyć katalogu {:?} ({})", parent, e);
-                    return;
-                }
-            }
+        if let Some(parent) = path.parent()
+            && !parent.as_os_str().is_empty()
+            && !parent.exists()
+            && let Err(e) = fs::create_dir_all(parent)
+        {
+            eprintln!("❌ Błąd: Nie można utworzyć katalogu {:?} ({})", parent, e);
+            return;
         }
 
         // Zapis pliku
@@ -27,13 +27,20 @@ impl SaveFile {
     }
 
     /// Formatowanie i zapis samego widoku struktury (ścieżek)
-    pub fn paths(content: &str, filepath: &str, tag: &str) {
-        let markdown_content = format!("```plaintext\n{}\n```\n\n{}", content, tag);
+    pub fn paths(content: &str, filepath: &str, tag: &str, by_section: &str) {
+        let markdown_content = format!("```plaintext\n{}\n```\n\n{}{}", content, tag, by_section);
         Self::write_to_disk(filepath, &markdown_content, "ścieżki");
     }
 
     /// Formatowanie i zapis pełnego cache (drzewo + zawartość plików)
-    pub fn codes(tree_text: &str, paths: &[String], base_dir: &str, filepath: &str, tag: &str) {
+    pub fn codes(
+        tree_text: &str,
+        paths: &[String],
+        base_dir: &str,
+        filepath: &str,
+        tag: &str,
+        by_section: &str,
+    ) {
         let mut content = String::new();
 
         // Wstawiamy wygenerowane drzewo ścieżek
@@ -84,7 +91,7 @@ impl SaveFile {
         }
 
         // Znacznik na końcu
-        content.push_str(&format!("\n\n{}", tag));
+        content.push_str(&format!("\n\n{}{}", tag, by_section));
 
         Self::write_to_disk(filepath, &content, "kod (cache)");
     }

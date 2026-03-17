@@ -55,6 +55,11 @@ pub struct CliArgs {
     #[arg(short = 'c', long = "out-cache", num_args = 0..=1, default_missing_value = "AUTO")]
     pub out_code: Option<String>,
 
+    // ⚡ FLAGA BY (STOPKA)
+    /// [POL]: Dodaje sekcję informacyjną z wywołaną komendą na dole pliku.
+    #[arg(short = 'b', long = "by", default_value_t = false)]
+    pub by: bool,
+
     /// [ENG]: Ignore case.
     /// [POL]: Ignoruj wielkość liter.
     #[arg(long = "ignore-case")]

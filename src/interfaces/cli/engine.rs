@@ -1,5 +1,6 @@
 use crate::interfaces::cli::args::CliArgs;
 use cargo_plot::addon::TimeTag;
+use cargo_plot::core::by::BySection;
 use cargo_plot::core::path_matcher::stats::ShowMode;
 use cargo_plot::core::path_store::PathContext;
 use cargo_plot::core::path_view::ViewMode;
@@ -62,6 +63,14 @@ pub fn run(args: CliArgs) {
 
     if has_out_paths || has_out_codes {
         let tag = TimeTag::now();
+        let internal_tag = if args.by { "" } else { &tag };
+
+        let by_content = if args.by {
+            BySection::generate(&tag)
+        } else {
+            String::new()
+        };
+
         let output_str_txt = stats.render_output(view_mode, show_mode, args.info, false);
 
         // Closure do automatycznego generowania ścieżki
@@ -83,7 +92,6 @@ pub fn run(args: CliArgs) {
                     format!(".{}", ext)
                 };
                 let stem_str = if stem.is_empty() { prefix } else { &stem };
-
                 if parent_str.is_empty() {
                     format!("{}_{}{}", stem_str, tag, ext_str)
                 } else {
@@ -94,7 +102,7 @@ pub fn run(args: CliArgs) {
 
         if let Some(val) = &args.out_path {
             let filepath = resolve_filepath(val, "paths");
-            SaveFile::paths(&output_str_txt, &filepath, &tag);
+            SaveFile::paths(&output_str_txt, &filepath, internal_tag, &by_content);
         }
 
         if let Some(val) = &args.out_code {
@@ -105,7 +113,8 @@ pub fn run(args: CliArgs) {
                     &stats.m_matched.paths,
                     &ctx.entry_absolute,
                     &filepath,
-                    &tag,
+                    internal_tag,
+                    &by_content,
                 );
             }
         }

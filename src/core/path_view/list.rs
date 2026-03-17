@@ -3,13 +3,13 @@ use crate::core::file_stats::weight::{self, WeightConfig};
 use crate::core::path_matcher::SortStrategy;
 use crate::theme::for_path_list::get_icon_for_path;
 use colored::Colorize;
-/// [PL]: Zarządca wyświetlania wyników w formie płaskiej listy.
+/// [POL]: Zarządca wyświetlania wyników w formie płaskiej listy.
 pub struct PathList {
     items: Vec<FileNode>,
 }
 
 impl PathList {
-    /// [PL]: Buduje listę na podstawie zbioru ścieżek i statystyk.
+    /// [POL]: Buduje listę na podstawie zbioru ścieżek i statystyk.
     pub fn build(
         paths_strings: &[String],
         base_dir: &str,
@@ -43,7 +43,7 @@ impl PathList {
         Self { items }
     }
 
-    /// [PL]: Renderuje listę dla terminala (z kolorami i ikonami).
+    /// [POL]: Renderuje listę dla terminala (z kolorami i ikonami).
     pub fn render_cli(&self, _is_match: bool) -> String {
         let mut out = String::new();
         // let tag = if is_match { "✅ MATCH: ".green() } else { "❌ REJECT:".red() };

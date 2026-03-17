@@ -1,7 +1,7 @@
 use crate::core::path_matcher::SortStrategy;
 use std::path::PathBuf;
 
-/// [PL]: Reprezentuje pojedynczy węzeł w drzewie systemu plików.
+/// [POL]: Reprezentuje pojedynczy węzeł w drzewie systemu plików.
 #[derive(Debug, Clone)]
 pub struct FileNode {
     pub name: String,
@@ -14,7 +14,7 @@ pub struct FileNode {
 }
 
 impl FileNode {
-    /// [PL]: Sortuje listę węzłów w miejscu zgodnie z wybraną strategią.
+    /// [POL]: Sortuje listę węzłów w miejscu zgodnie z wybraną strategią.
     pub fn sort_slice(nodes: &mut [FileNode], strategy: SortStrategy) {
         if strategy == SortStrategy::None {
             return;
@@ -58,7 +58,7 @@ impl FileNode {
         });
     }
 
-    /// [PL]: Wyciąga rdzeń nazwy do grupowania (np. "main.rs" -> "main").
+    /// [POL]: Wyciąga rdzeń nazwy do grupowania (np. "main.rs" -> "main").
     fn get_merge_key(name: &str) -> &str {
         if let Some(idx) = name.rfind('.')
             && idx > 0

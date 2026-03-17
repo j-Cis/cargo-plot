@@ -4,8 +4,8 @@ use cargo_plot::core::path_view::ViewMode;
 use cargo_plot::execute::{self, SortStrategy};
 // use cargo_plot::theme::for_path_list::get_icon_for_path;
 
-/// [EN]: The execution engine (Cockpit).
-/// [PL]: Silnik wykonawczy (Kokpit).
+/// [ENG]: The execution engine (Cockpit).
+/// [POL]: Silnik wykonawczy (Kokpit).
 pub fn run(args: CliArgs) {
     let is_case_sensitive = !args.ignore_case;
     let sort_strategy: SortStrategy = args.sort.into();
@@ -25,6 +25,7 @@ pub fn run(args: CliArgs) {
         show_mode,
         view_mode,
         args.no_root,
+        args.info,
         |_| {}, //  Closure są puste, bo renderujemy PO zebraniu statystyk
         |_| {},
         // |file_stat| {
@@ -50,16 +51,20 @@ pub fn run(args: CliArgs) {
     );
 
     // 2. RENDEROWANIE WYNIKÓW
-    print!("{}", stats.render_output(view_mode, show_mode));
+    print!("{}", stats.render_output(view_mode, show_mode, args.info));
 
     // 3. PODSUMOWANIE
-    println!("----------");
-    println!(
-        "📊 Podsumowanie: Dopasowano {} z {} ścieżek.",
-        stats.m_size_matched, stats.total
-    );
-    println!(
-        "📊 Podsumowanie: Odrzucono {} z {} ścieżek.",
-        stats.x_size_mismatched, stats.total
-    );
+    if args.info {
+        println!("---------------------------------------");
+        println!(
+            "📊 Podsumowanie: Dopasowano {} z {} ścieżek.",
+            stats.m_size_matched, stats.total
+        );
+        println!(
+            "📊 Podsumowanie: Odrzucono {} z {} ścieżek.",
+            stats.x_size_mismatched, stats.total
+        );
+    } else {
+        println!("---------------------------------------");
+    }
 }

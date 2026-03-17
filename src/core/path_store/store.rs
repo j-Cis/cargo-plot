@@ -48,8 +48,8 @@ impl PathStore {
         Self { list }
     }
 
-    // [EN]: Creates a temporary pool of references for the matcher.
-    // [PL]: Tworzy tymczasową pulę referencji (paths_pool) dla matchera.
+    // [ENG]: Creates a temporary pool of references for the matcher.
+    // [POL]: Tworzy tymczasową pulę referencji (paths_pool) dla matchera.
     pub fn get_index(&self) -> HashSet<&str> {
         self.list.iter().map(|s| s.as_str()).collect()
     }

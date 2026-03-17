@@ -17,6 +17,7 @@ pub fn execute<OnMatch, OnMismatch>(
     show_mode: ShowMode,
     view_mode: ViewMode,
     no_root: bool,
+    print_info: bool,
     mut on_match: OnMatch,
     mut on_mismatch: OnMismatch,
 ) -> MatchStats
@@ -35,23 +36,27 @@ where
     });
 
     // 2. Logowanie stanu początkowego
-    println!("📂 Baza terminala (Absolutna): {}", path_ctx.base_absolute);
-    println!("📂 Cel skanowania (Absolutna): {}", path_ctx.entry_absolute);
-    println!("📂 Cel skanowania (Relatywna): {}", path_ctx.entry_relative);
-    println!("---------------------------------------");
-    println!("🔠 Wrażliwość na litery: {}", is_case_sensitive);
-    println!("🔍 Wzorce (RAW): {:?}", pattern_ctx.raw);
-    println!("⚙️ Wzorce (TOK): {:?}", pattern_ctx.tok);
-    println!("---------------------------------------");
+    if print_info {
+        println!("📂 Baza terminala (Absolutna): {}", path_ctx.base_absolute);
+        println!("📂 Cel skanowania (Absolutna): {}", path_ctx.entry_absolute);
+        println!("📂 Cel skanowania (Relatywna): {}", path_ctx.entry_relative);
+        println!("---------------------------------------");
+        println!("🔠 Wrażliwość na litery: {}", is_case_sensitive);
+        println!("🔍 Wzorce (RAW): {:?}", pattern_ctx.raw);
+        println!("⚙️ Wzorce (TOK): {:?}", pattern_ctx.tok);
+        println!("---------------------------------------");
+    } else {
+        println!("---------------------------------------");
+    }
 
     // 3. Budowa silników dopasowujących (Generał)
     let matchers =
         PathMatchers::new(&pattern_ctx.tok, is_case_sensitive).expect("Błąd kompilacji wzorców");
 
     // 4. Skanowanie dysku (Getter)
-    // [PL]: Ładujemy dane do rejestru z rdzenia
+    // [POL]: Ładujemy dane do rejestru z rdzenia
     let paths_store = PathStore::scan(&path_ctx.entry_absolute);
-    // [PL]: Wyciągamy PULĘ ŚCIEŻEK (Encyklopedię)
+    // [POL]: Wyciągamy PULĘ ŚCIEŻEK (Encyklopedię)
     let paths_set = paths_store.get_index();
 
     let entry_abs = path_ctx.entry_absolute.clone();

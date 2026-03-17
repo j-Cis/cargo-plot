@@ -7,8 +7,8 @@ use clap::{Args, Parser, ValueEnum};
 #[derive(Parser, Debug)]
 #[command(name = "cargo", bin_name = "cargo")]
 pub enum CargoCli {
-    /// [EN]: Cargo plot subcommand.
-    /// [PL]: Podkomenda cargo plot.
+    /// [ENG]: Cargo plot subcommand.
+    /// [POL]: Podkomenda cargo plot.
     Plot(CliArgs),
 }
 
@@ -16,33 +16,18 @@ pub enum CargoCli {
 #[derive(Args, Debug)]
 #[command(author, version, about = "Zaawansowany skaner struktury plików", long_about = None)]
 pub struct CliArgs {
-    /// [EN]: Input path to scan.
-    /// [PL]: Ścieżka wejściowa do skanowania.
+    /// [ENG]: Input path to scan.
+    /// [POL]: Ścieżka wejściowa do skanowania.
     #[arg(short = 'd', long = "dir", default_value = ".")]
     pub enter_path: String,
 
-    /// [EN]: Match patterns.
-    /// [PL]: Wzorce dopasowań.
+    /// [ENG]: Match patterns.
+    /// [POL]: Wzorce dopasowań.
     #[arg(short = 'p', long = "pat", required = true)]
     pub patterns: Vec<String>,
 
-    /// [EN]: Display only matched paths.
-    /// [PL]: Wyświetlaj tylko dopasowane ścieżki.
-    #[arg(short = 'm', long = "on-match")]
-    pub include: bool,
-
-    /// [EN]: Display only rejected paths.
-    /// [PL]: Wyświetlaj tylko odrzucone ścieżki.
-    #[arg(short = 'x', long = "on-mismatch")]
-    pub exclude: bool,
-
-    /// [EN]: Ignore case.
-    /// [PL]: Ignoruj wielkość liter.
-    #[arg(long = "ignore-case")]
-    pub ignore_case: bool,
-
-    /// [EN]: Results sorting strategy.
-    /// [PL]: Strategia sortowania wyników.
+    /// [ENG]: Results sorting strategy.
+    /// [POL]: Strategia sortowania wyników.
     #[arg(short = 's', long = "sort", value_enum, default_value_t = CliSortStrategy::AzFileMerge)]
     pub sort: CliSortStrategy,
 
@@ -50,9 +35,28 @@ pub struct CliArgs {
     #[arg(short = 'v', long = "view", value_enum, default_value_t = CliViewMode::Tree)]
     pub view: CliViewMode,
 
+    /// [ENG]: Display only matched paths.
+    /// [POL]: Wyświetlaj tylko dopasowane ścieżki.
+    #[arg(short = 'm', long = "on-match")]
+    pub include: bool,
+
+    /// [ENG]: Display only rejected paths.
+    /// [POL]: Wyświetlaj tylko odrzucone ścieżki.
+    #[arg(short = 'x', long = "on-mismatch")]
+    pub exclude: bool,
+
+    /// [ENG]: Ignore case.
+    /// [POL]: Ignoruj wielkość liter.
+    #[arg(long = "ignore-case")]
+    pub ignore_case: bool,    
+
     /// [POL]: Ukrywa główny folder (root) w widoku drzewa.
     #[arg(long = "treeview-no-root", default_value_t = false)]
     pub no_root: bool,
+
+    /// [POL]: Wyświetla dodatkowe informacje, statystyki i nagłówki (tryb gadatliwy).
+    #[arg(short = 'i', long = "info", default_value_t = false)]
+    pub info: bool,
 }
 
 #[derive(Debug, Clone, Copy, ValueEnum, PartialEq)]

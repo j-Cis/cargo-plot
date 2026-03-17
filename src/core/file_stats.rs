@@ -4,7 +4,7 @@ pub mod weight;
 
 use self::weight::get_path_weight;
 
-/// [PL]: Struktura przechowująca metadane (statystyki) pliku lub folderu.
+/// [POL]: Struktura przechowująca metadane (statystyki) pliku lub folderu.
 #[derive(Debug, Clone)]
 pub struct FileStats {
     pub path: String,      // Oryginalna ścieżka relatywna (np. "src/main.rs")
@@ -17,7 +17,7 @@ pub struct FileStats {
 }
 
 impl FileStats {
-    /// [PL]: Pobiera statystyki pliku bezpośrednio z dysku.
+    /// [POL]: Pobiera statystyki pliku bezpośrednio z dysku.
     pub fn fetch(path: &str, entry_absolute: &str) -> Self {
         let absolute = Path::new(entry_absolute).join(path);
 

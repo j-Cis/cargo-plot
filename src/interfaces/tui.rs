@@ -1,5 +1,5 @@
-// [EN]: Interactive Terminal User Interface (TUI) module registry.
-// [PL]: Rejestr modułu interaktywnego interfejsu tekstowego (TUI).
+// [ENG]: Interactive Terminal User Interface (TUI) module registry.
+// [POL]: Rejestr modułu interaktywnego interfejsu tekstowego (TUI).
 
 pub mod i18n;
 pub mod menu;

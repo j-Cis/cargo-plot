@@ -1,5 +1,5 @@
-// [EN]: Logic for calculating and formatting file and directory weights.
-// [PL]: Logika obliczania i formatowania wag plików oraz folderów.
+// [ENG]: Logic for calculating and formatting file and directory weights.
+// [POL]: Logika obliczania i formatowania wag plików oraz folderów.
 
 use std::fs;
 use std::path::Path;
@@ -33,7 +33,7 @@ impl Default for WeightConfig {
     }
 }
 
-/// [PL]: Pobiera wagę ścieżki (plik lub folder rekurencyjnie).
+/// [POL]: Pobiera wagę ścieżki (plik lub folder rekurencyjnie).
 pub fn get_path_weight(path: &Path, sum_included_only: bool) -> u64 {
     let metadata = match fs::metadata(path) {
         Ok(m) => m,
@@ -51,7 +51,7 @@ pub fn get_path_weight(path: &Path, sum_included_only: bool) -> u64 {
     0
 }
 
-/// [PL]: Prywatny pomocnik do liczenia rozmiaru folderu na dysku.
+/// [POL]: Prywatny pomocnik do liczenia rozmiaru folderu na dysku.
 fn get_dir_size(path: &Path) -> u64 {
     fs::read_dir(path)
         .map(|entries| {
@@ -70,7 +70,7 @@ fn get_dir_size(path: &Path) -> u64 {
         .unwrap_or(0)
 }
 
-/// [PL]: Formatuje bajty na czytelny ciąg znaków (np. [kB 12.34]).
+/// [POL]: Formatuje bajty na czytelny ciąg znaków (np. [kB 12.34]).
 pub fn format_weight(bytes: u64, is_dir: bool, config: &WeightConfig) -> String {
     if config.system == UnitSystem::None {
         return String::new();

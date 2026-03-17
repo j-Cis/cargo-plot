@@ -45,6 +45,16 @@ pub struct CliArgs {
     #[arg(short = 'x', long = "on-mismatch")]
     pub exclude: bool,
 
+    // ⚡ FLAGA ZAPISU ŚCIEŻEK (MARKDOWN)
+    /// [POL]: Opcjonalna ścieżka do pliku, w którym zostanie zapisany wynik.
+    #[arg(short = 'o', long = "out-paths", num_args = 0..=1, default_missing_value = "AUTO")]
+    pub out_path: Option<String>,
+
+    // ⚡ NOWA FLAGA ZAPISU KODU (MARKDOWN)
+    /// [POL]: Opcjonalna ścieżka do pliku z kodem (cache). Samo -c wygeneruje domyślną ścieżkę w ./other/
+    #[arg(short = 'c', long = "out-cache", num_args = 0..=1, default_missing_value = "AUTO")]
+    pub out_code: Option<String>,
+
     /// [ENG]: Ignore case.
     /// [POL]: Ignoruj wielkość liter.
     #[arg(long = "ignore-case")]

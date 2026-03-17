@@ -133,6 +133,12 @@ impl PathGrid {
         self.plot(&self.roots, "", true, max_width)
     }
 
+    #[must_use]
+    pub fn render_txt(&self) -> String {
+        let max_width = self.calc_max_width(&self.roots, 0);
+        self.plot(&self.roots, "", false, max_width)
+    }
+
     fn calc_max_width(&self, nodes: &[FileNode], indent_len: usize) -> usize {
         let mut max = 0;
         for (i, node) in nodes.iter().enumerate() {

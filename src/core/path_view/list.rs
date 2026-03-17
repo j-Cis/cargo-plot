@@ -63,4 +63,15 @@ impl PathList {
         }
         out
     }
+
+    #[must_use]
+    pub fn render_txt(&self) -> String {
+        let mut out = String::new();
+        for item in &self.items {
+            // Brak formatowania ANSI
+            let line = format!("{} {} {}\n", item.weight_str, item.icon, item.name);
+            out.push_str(&line);
+        }
+        out
+    }
 }

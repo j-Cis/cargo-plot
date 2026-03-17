@@ -1,10 +1,10 @@
 use crate::interfaces::cli::args::CliArgs;
-use cargo_plot::core::path_matcher::stats::ShowMode;
-use cargo_plot::core::path_view::ViewMode;
-use cargo_plot::execute::{self, SortStrategy};
 use cargo_plot::addon::TimeTag;
+use cargo_plot::core::path_matcher::stats::ShowMode;
 use cargo_plot::core::path_store::PathContext;
+use cargo_plot::core::path_view::ViewMode;
 use cargo_plot::core::save::SaveFile;
+use cargo_plot::execute::{self, SortStrategy};
 // use cargo_plot::theme::for_path_list::get_icon_for_path;
 
 /// [ENG]: The execution engine (Cockpit).
@@ -77,7 +77,11 @@ pub fn run(args: CliArgs) {
                 let parent = path.parent().unwrap_or_else(|| std::path::Path::new(""));
 
                 let parent_str = parent.to_string_lossy().replace('\\', "/");
-                let ext_str = if ext.is_empty() { String::new() } else { format!(".{}", ext) };
+                let ext_str = if ext.is_empty() {
+                    String::new()
+                } else {
+                    format!(".{}", ext)
+                };
                 let stem_str = if stem.is_empty() { prefix } else { &stem };
 
                 if parent_str.is_empty() {
@@ -90,18 +94,18 @@ pub fn run(args: CliArgs) {
 
         if let Some(val) = &args.out_path {
             let filepath = resolve_filepath(val, "paths");
-            SaveFile::paths(&output_str_txt, &filepath,&tag);
+            SaveFile::paths(&output_str_txt, &filepath, &tag);
         }
 
         if let Some(val) = &args.out_code {
             let filepath = resolve_filepath(val, "cache");
             if let Ok(ctx) = PathContext::resolve(&args.enter_path) {
                 SaveFile::codes(
-                    &output_str_txt, 
-                    &stats.m_matched.paths, 
-                    &ctx.entry_absolute, 
-                    &filepath, 
-                    &tag
+                    &output_str_txt,
+                    &stats.m_matched.paths,
+                    &ctx.entry_absolute,
+                    &filepath,
+                    &tag,
                 );
             }
         }

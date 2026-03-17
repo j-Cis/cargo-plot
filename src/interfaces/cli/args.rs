@@ -58,7 +58,7 @@ pub struct CliArgs {
     /// [ENG]: Ignore case.
     /// [POL]: Ignoruj wielkość liter.
     #[arg(long = "ignore-case")]
-    pub ignore_case: bool,    
+    pub ignore_case: bool,
 
     /// [POL]: Ukrywa główny folder (root) w widoku drzewa.
     #[arg(long = "treeview-no-root", default_value_t = false)]

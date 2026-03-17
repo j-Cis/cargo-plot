@@ -1,6 +1,6 @@
+use crate::theme::for_path_tree::get_file_type;
 use std::fs;
 use std::path::Path;
-use crate::theme::for_path_tree::get_file_type;
 
 pub struct SaveFile;
 
@@ -35,7 +35,7 @@ impl SaveFile {
     /// Formatowanie i zapis pełnego cache (drzewo + zawartość plików)
     pub fn codes(tree_text: &str, paths: &[String], base_dir: &str, filepath: &str, tag: &str) {
         let mut content = String::new();
-        
+
         // Wstawiamy wygenerowane drzewo ścieżek
         content.push_str("```plaintext\n");
         content.push_str(tree_text);
@@ -54,7 +54,7 @@ impl SaveFile {
                 .unwrap_or_default()
                 .to_string_lossy()
                 .to_lowercase();
-            
+
             let lang = get_file_type(&ext).md_lang;
 
             if is_blacklisted_extension(&ext) {

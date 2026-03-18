@@ -2,11 +2,14 @@ use super::i18n::{Prompt, T};
 use super::state::StateTui;
 use crate::interfaces::cli::args::{CliSortStrategy, CliViewMode};
 use crate::interfaces::cli::engine;
+use clap::Parser;
+use crate::interfaces::cli::args::CargoCli;
 
 #[derive(Clone, PartialEq, Eq)]
 enum Action {
     Lang,
     QuickStart,
+    CliMode,
     Paths,
     View,
     Output,
@@ -65,6 +68,7 @@ pub fn menu_main(s: &mut StateTui) {
             .initial_value(last_action.clone())
             .item(Action::Lang, t.fmt(Prompt::BtnLang), "")
             .item(Action::QuickStart, t.fmt(Prompt::BtnQuickStart), "")
+            .item(Action::CliMode, t.fmt(Prompt::BtnCliMode), "")
             .item(Action::Paths, lbl_paths, "")
             .item(Action::View, lbl_view, "")
             .item(Action::Output, lbl_out, "")
@@ -87,6 +91,39 @@ pub fn menu_main(s: &mut StateTui) {
                     return;
                 }
             }
+            Ok(Action::CliMode) => {
+                let cmd: String = cliclack::input(t.raw(Prompt::InputCliCommand)).interact().unwrap_or_default();
+                if !cmd.trim().is_empty() {
+                    let mut parsed_split = split_cli_args(&cmd);
+                    
+                    // ⚡ Sprytne czyszczenie: wywalamy "cargo", "run", "--", "plot", "cargo-plot.exe" z początku
+                    while !parsed_split.is_empty() {
+                        let first = parsed_split[0].to_lowercase();
+                        if first == "cargo" || first == "run" || first == "--" || first == "plot" || first.contains("cargo-plot") {
+                            parsed_split.remove(0);
+                        } else {
+                            break;
+                        }
+                    }
+
+                    // Budujemy fałszywą listę argumentów dla clapa (żeby zgadzała się struktura)
+                    let mut cli_args = vec!["cargo".to_string(), "plot".to_string()];
+                    cli_args.extend(parsed_split);
+
+                    // ⚡ CLAP PARSUJE CIĄG ZNAKÓW I ZMIENIA STAN TUI!
+                    match CargoCli::try_parse_from(cli_args) {
+                        Ok(CargoCli::Plot(parsed_args)) => {
+                            s.args = parsed_args;
+                            cliclack::log::success(t.raw(Prompt::SuccessCliParse)).unwrap();
+                        }
+                        Err(e) => {
+                            // Wrzucamy błąd clapa na ekran, żeby użytkownik wiedział, co zepsuł we flagach
+                            cliclack::log::error(format!("{}", e)).unwrap();
+                        }
+                    }
+                }
+                // Pozostajemy w pętli, aby interfejs odświeżył się z nowymi wartościami
+            },
             Ok(Action::Paths) => {
                 last_action = Action::Paths;
                 handle_paths(s, &t);
@@ -252,4 +289,39 @@ fn split_patterns(input: &str) -> Vec<String> {
         result.push(current.trim().to_string());
     }
     result
+}
+
+fn split_cli_args(input: &str) -> Vec<String> {
+    let mut args = Vec::new();
+    let mut current = String::new();
+    let mut in_quotes = false;
+    let mut quote_char = ' ';
+
+    for c in input.chars() {
+        if in_quotes {
+            if c == quote_char {
+                in_quotes = false;
+            } else {
+                current.push(c);
+            }
+        } else {
+            match c {
+                '"' | '\'' => {
+                    in_quotes = true;
+                    quote_char = c;
+                }
+                ' ' => {
+                    if !current.is_empty() {
+                        args.push(current.clone());
+                        current.clear();
+                    }
+                }
+                _ => current.push(c),
+            }
+        }
+    }
+    if !current.is_empty() {
+        args.push(current);
+    }
+    args
 }

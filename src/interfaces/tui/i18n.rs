@@ -42,6 +42,9 @@ pub enum Prompt {
     SubOnMatch,
     SubOnMismatch,
     SubInfo,
+    BtnCliMode,
+    InputCliCommand,
+    SuccessCliParse,
 }
 
 impl Translatable for Prompt {
@@ -141,6 +144,9 @@ impl Translatable for Prompt {
                 pol: "Pokaż statystyki? / Show info stats?",
                 eng: "Pokaż statystyki? / Show info stats?",
             },
+            Prompt::BtnCliMode => Txt { pol: "⌨️  Wklej komendę (Raw CLI)", eng: "⌨️  Paste command (Raw CLI)" },
+            Prompt::InputCliCommand => Txt { pol: "Wklej flagi lub całą komendę (np. -d ./ -m):", eng: "Paste flags or full command (e.g. -d ./ -m):" },
+            Prompt::SuccessCliParse => Txt { pol: "Wczytano konfigurację!", eng: "Configuration loaded!" },
         }
     }
 
@@ -151,6 +157,7 @@ impl Translatable for Prompt {
             Prompt::BtnLang => style(text).cyan().to_string(),
             Prompt::BtnExit => style(text).red().to_string(),
             Prompt::HeaderMain => style(text).on_white().black().bold().to_string(),
+            Prompt::BtnCliMode => style(text).on_black().yellow().bold().to_string(),
             _ => text,
         }
     }

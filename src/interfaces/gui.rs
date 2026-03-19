@@ -11,27 +11,44 @@ pub enum Tab { Settings, Paths, Code }
 #[derive(PartialEq)]
 pub enum PathsTab { Match, Mismatch }
 
+#[derive(Default, Clone)]
+pub struct TreeStats {
+    pub file_count: usize,
+    pub total_weight: u64,
+    pub text_count: usize,
+    pub text_weight: u64,
+    pub bin_count: usize,
+    pub bin_weight: u64,
+}
+
 pub struct CargoPlotApp {
     pub args: CliArgs,
     pub active_tab: Tab,
     pub active_paths_tab: PathsTab,
     pub new_pattern_input: String,
+    pub out_path_input: String,
     pub generated_paths_m: String,  // ⚡ Bufor tylko dla MATCH
     pub generated_paths_x: String,  // ⚡ Bufor tylko dla MISMATCH
     pub generated_code: String,  // ⚡ Bufor na wygenerowany kod
+    pub stats_m: TreeStats,      // ⚡ NOWOŚĆ: Statystyki Match
+    pub stats_x: TreeStats,      // ⚡ NOWOŚĆ: Statystyki Mismatch
     pub ui_scale: f32,
 }
 
 impl CargoPlotApp {
     pub fn new(args: CliArgs) -> Self {
+      let default_out = args.out_path.clone().unwrap_or_default();
         Self {
             args,
             active_tab: Tab::Settings,
             active_paths_tab: PathsTab::Match,
             new_pattern_input: String::new(),
+            out_path_input: default_out, // Inicjalizacja ścieżki
             generated_paths_m: String::new(), 
             generated_paths_x: String::new(),
             generated_code: String::new(),
+            stats_m: TreeStats::default(),
+            stats_x: TreeStats::default(),
             ui_scale: 1.0,
         }
     }

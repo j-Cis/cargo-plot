@@ -98,9 +98,17 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
             egui::ComboBox::from_label(if is_pl { "Sortowanie" } else { "Sorting" })
                 .selected_text(format!("{:?}", app.args.sort))
                 .show_ui(ui, |ui| {
+                    // ⚡ PEŁNA LISTA SORTOWAŃ
                     ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzFileMerge, "AzFileMerge");
+                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::ZaFileMerge, "ZaFileMerge");
+                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzDirMerge, "AzDirMerge");
+                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::ZaDirMerge, "ZaDirMerge");
+                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzFile, "AzFile");
+                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::ZaFile, "ZaFile");
                     ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzDir, "AzDir");
+                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::ZaDir, "ZaDir");
                     ui.selectable_value(&mut app.args.sort, CliSortStrategy::Az, "Az");
+                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::Za, "Za");
                     ui.selectable_value(&mut app.args.sort, CliSortStrategy::None, "None");
                 });
 
@@ -117,6 +125,26 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
             ui.add_space(15.0);
             
             ui.checkbox(&mut app.args.no_root, if is_pl { "Ukryj ROOT w drzewie" } else { "Hide ROOT in tree" });
+        });
+
+        // ⚡ NOWOŚĆ: ŚCIEŻKA WYNIKOWA (Output path)
+        ui.add_space(10.0);
+        ui.horizontal(|ui| {
+            ui.label(if is_pl { "💾 Ścieżka zapisu (Output):" } else { "💾 Output path:" });
+            if ui.text_edit_singleline(&mut app.out_path_input).changed() {
+                app.args.out_path = if app.out_path_input.trim().is_empty() {
+                    None
+                } else {
+                    Some(app.out_path_input.trim().to_string())
+                };
+            }
+            if ui.button(if is_pl { "Wybierz folder..." } else { "Browse folder..." }).clicked() {
+                if let Some(folder) = rfd::FileDialog::new().pick_folder() {
+                    let path = folder.to_string_lossy().replace('\\', "/");
+                    app.out_path_input = path.clone();
+                    app.args.out_path = Some(path);
+                }
+            }
         });
 
         ui.add_space(30.0);

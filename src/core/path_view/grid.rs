@@ -116,7 +116,7 @@ impl PathGrid {
                 name: r_name.to_string(),
                 path: PathBuf::from(r_name),
                 is_dir: true,
-                icon: DIR_ICON.to_string(),
+                icon: if no_emoji { String::new() } else { DIR_ICON.to_string() },
                 weight_str: empty_weight,
                 weight_bytes: 0,
                 children: top_nodes,

@@ -25,6 +25,8 @@ impl StateTui {
                 ignore_case: false,
                 no_root: false,
                 info: true, // Domyślnie włączamy statystyki (-i)
+                gui: false,
+                no_emoji: false,
                 lang: Some(lang),
             },
         }

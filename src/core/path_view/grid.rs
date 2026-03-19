@@ -20,6 +20,7 @@ impl PathGrid {
         sort_strategy: SortStrategy,
         weight_cfg: &WeightConfig,
         root_name: Option<&str>,
+        no_emoji: bool,
     ) -> Self {
         // Dokładnie taka sama logika budowania struktury węzłów jak w PathTree::build
         let base_path_obj = Path::new(base_dir);
@@ -38,13 +39,16 @@ impl PathGrid {
             paths_map: &BTreeMap<PathBuf, Vec<PathBuf>>,
             base_path: &Path,
             sort_strategy: SortStrategy,
-            weight_cfg: &WeightConfig,
+            weight_cfg: &WeightConfig,            
+            no_emoji: bool,
         ) -> FileNode {
             let name = path
                 .file_name()
                 .map_or_else(|| "/".to_string(), |n| n.to_string_lossy().to_string());
             let is_dir = path.is_dir() || path.to_string_lossy().ends_with('/');
-            let icon = if is_dir {
+            let icon = if no_emoji {
+                String::new()
+            } else if is_dir {
                 DIR_ICON.to_string()
             } else if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
                 get_file_type(ext).icon.to_string()
@@ -60,7 +64,7 @@ impl PathGrid {
             if let Some(child_paths) = paths_map.get(path) {
                 let mut child_nodes: Vec<FileNode> = child_paths
                     .iter()
-                    .map(|c| build_node(c, paths_map, base_path, sort_strategy, weight_cfg))
+                    .map(|c| build_node(c, paths_map, base_path, sort_strategy, weight_cfg, no_emoji))
                     .collect();
 
                 FileNode::sort_slice(&mut child_nodes, sort_strategy);
@@ -96,7 +100,7 @@ impl PathGrid {
 
         let mut top_nodes: Vec<FileNode> = roots_paths
             .into_iter()
-            .map(|r| build_node(&r, &tree_map, base_path_obj, sort_strategy, weight_cfg))
+            .map(|r| build_node(&r, &tree_map, base_path_obj, sort_strategy, weight_cfg, no_emoji))
             .collect();
 
         FileNode::sort_slice(&mut top_nodes, sort_strategy);

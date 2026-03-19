@@ -31,6 +31,7 @@ pub fn run(args: CliArgs) {
         view_mode,
         args.no_root,
         args.info,
+        args.no_emoji,
         &i18n,
         |_| {}, //  Closure są puste, bo renderujemy PO zebraniu statystyk
         |_| {},

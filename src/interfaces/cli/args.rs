@@ -24,7 +24,7 @@ pub struct CliArgs {
 
     /// [ENG]: Match patterns.
     /// [POL]: Wzorce dopasowań.
-    #[arg(short = 'p', long = "pat", required = true)]
+    #[arg(short = 'p', long = "pat", required_unless_present = "gui")]
     pub patterns: Vec<String>,
 
     /// [ENG]: Results sorting strategy.
@@ -74,6 +74,14 @@ pub struct CliArgs {
     #[arg(short = 'i', long = "info", default_value_t = false)]
     pub info: bool,
 
+    /// [POL]: Uruchamia aplikację natychmiast w trybie graficznym (GUI).
+    #[arg(short = 'g', long = "gui", default_value_t = false)]
+    pub gui: bool,
+
+    /// [POL]: Wyłącza renderowanie ikon/emoji (przydatne w czystych terminalach lub GUI).
+    #[arg(long = "no-emoji", default_value_t = false)]
+    pub no_emoji: bool,
+    
     /// [POL]: Wymusza język interfejsu (pl / en). Domyślnie pobiera z systemu.
     #[arg(long, value_enum)]
     pub lang: Option<Lang>,

@@ -25,5 +25,11 @@ pub fn run_cli() {
 
     // [ENG]: Transfer control to our execution engine.
     // [POL]: Przekazanie kontroli do naszego silnika wykonawczego.
-    engine::run(flags);
+    if flags.gui {
+        // Jeśli podano -g, od razu ładujemy okienko ze sparsowaną konfiguracją
+        crate::interfaces::gui::run_gui(flags);
+    } else {
+        // Jeśli nie, uruchamiamy standardowy silnik generujący raport w terminalu
+        engine::run(flags);
+    }
 }

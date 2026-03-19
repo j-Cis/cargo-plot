@@ -1,6 +1,5 @@
 use super::super::i18n::I18n;
 use crate::theme::for_path_tree::get_file_type;
-use std::env;
 use std::fs;
 use std::path::Path;
 
@@ -8,8 +7,30 @@ pub struct SaveFile;
 
 impl SaveFile {
     fn generate_by_section(tag: &str, typ: &str, i18n: &I18n) -> String {
-        let args: Vec<String> = env::args().collect();
-        let command = args.join(" ");
+        let raw_args: Vec<String> = std::env::args().collect();
+        let mut formatted_args = Vec::new();
+
+        // 1. Obsługa początku komendy (estetyka: zamiana ścieżki na "cargo plot")
+        formatted_args.push("cargo".to_string());
+
+        // Jeśli nie wywołaliśmy tego przez cargo (np. bezpośrednio binarkę),
+        // a w argumentach nie ma jeszcze "plot", dodajmy go dla czytelności raportu.
+        if !raw_args.iter().any(|a| a == "plot") {
+            formatted_args.push("plot".to_string());
+        }
+
+        // 2. Przetwarzanie reszty argumentów (pomijamy arg[0], bo to ścieżka do binarki)
+        for arg in raw_args.into_iter().skip(1) {
+            if arg.starts_with('-') || arg == "plot" || arg == "--" {
+                // Flagi i słowa kluczowe zostawiamy gołe
+                formatted_args.push(arg);
+            } else {
+                // Ścieżki, wartości i wzorce owijamy w cudzysłowy
+                formatted_args.push(format!("\"{}\"", arg.replace('\"', "\\\"")));
+            }
+        }
+
+        let command = formatted_args.join(" ");
 
         format!(
             "\n\n---\n---\n\n{}\n\n{}\n\n```bash\n{}\n```\n\n{}\n\n{}\n\n{}\n\n---\n",

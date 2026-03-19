@@ -18,6 +18,7 @@ pub fn execute<OnMatch, OnMismatch>(
     view_mode: ViewMode,
     no_root: bool,
     print_info: bool,
+    no_emoji: bool,
     i18n: &crate::i18n::I18n,
     mut on_match: OnMatch,
     mut on_mismatch: OnMismatch,
@@ -109,6 +110,7 @@ where
                     sort_strategy,
                     &weight_cfg,
                     root_name,
+                    no_emoji,
                 ));
             }
             if do_exclude {
@@ -118,6 +120,7 @@ where
                     sort_strategy,
                     &weight_cfg,
                     root_name,
+                    no_emoji,
                 ));
             }
         }
@@ -129,6 +132,7 @@ where
                     sort_strategy,
                     &weight_cfg,
                     root_name,
+                    no_emoji,
                 ));
             }
             if do_exclude {
@@ -138,6 +142,7 @@ where
                     sort_strategy,
                     &weight_cfg,
                     root_name,
+                    no_emoji,
                 ));
             }
         }
@@ -148,6 +153,7 @@ where
                     &path_ctx.entry_absolute,
                     sort_strategy,
                     &weight_cfg,
+                    no_emoji,
                 ));
             }
             if do_exclude {
@@ -156,6 +162,7 @@ where
                     &path_ctx.entry_absolute,
                     sort_strategy,
                     &weight_cfg,
+                    no_emoji,
                 ));
             }
         }

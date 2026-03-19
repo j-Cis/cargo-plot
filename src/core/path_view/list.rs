@@ -15,6 +15,7 @@ impl PathList {
         base_dir: &str,
         sort_strategy: SortStrategy,
         weight_cfg: &WeightConfig,
+        no_emoji: bool,
     ) -> Self {
         // Wykorzystujemy istniejącą logikę węzłów, ale bez rekurencji (płaska lista)
         let mut items: Vec<FileNode> = paths_strings
@@ -30,7 +31,7 @@ impl PathList {
                     name: p_str.clone(),
                     path: absolute,
                     is_dir,
-                    icon: get_icon_for_path(p_str).to_string(),
+                    icon: if no_emoji { String::new() } else { get_icon_for_path(p_str).to_string() },
                     weight_str,
                     weight_bytes,
                     children: vec![], // Lista nie ma dzieci

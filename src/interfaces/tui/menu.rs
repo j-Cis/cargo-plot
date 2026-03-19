@@ -1,9 +1,10 @@
 use super::i18n::{Prompt, T};
 use super::state::StateTui;
+use crate::interfaces::cli::args::CargoCli;
 use crate::interfaces::cli::args::{CliSortStrategy, CliViewMode};
 use crate::interfaces::cli::engine;
 use clap::Parser;
-use crate::interfaces::cli::args::CargoCli;
+use console::style;
 
 #[derive(Clone, PartialEq, Eq)]
 enum Action {
@@ -14,7 +15,9 @@ enum Action {
     View,
     Output,
     Filters,
+    Help,
     Run,
+    Gui,
     Exit,
 }
 
@@ -22,6 +25,7 @@ pub fn menu_main(s: &mut StateTui) {
     let mut last_action = Action::Paths;
 
     loop {
+        
         let t = T::new(s.lang);
         let header = t.fmt(Prompt::HeaderMain);
 
@@ -64,6 +68,7 @@ pub fn menu_main(s: &mut StateTui) {
         );
 
         // ⚡ BUDOWA MENU
+        let links_hint = style("crates.io/crates/cargo-plot  |  github.com/j-Cis/cargo-plot").dim().to_string();
         let action_result = cliclack::select(header)
             .initial_value(last_action.clone())
             .item(Action::Lang, t.fmt(Prompt::BtnLang), "")
@@ -73,8 +78,10 @@ pub fn menu_main(s: &mut StateTui) {
             .item(Action::View, lbl_view, "")
             .item(Action::Output, lbl_out, "")
             .item(Action::Filters, lbl_filt, "")
+            .item(Action::Help, t.fmt(Prompt::BtnHelp), "")
             .item(Action::Run, t.fmt(Prompt::BtnRun), "")
-            .item(Action::Exit, t.fmt(Prompt::BtnExit), "")
+            .item(Action::Gui, t.fmt(Prompt::BtnGui), "")
+            .item(Action::Exit, t.fmt(Prompt::BtnExit), links_hint)
             .interact();
 
         // ⚡ OBSŁUGA AKCJI
@@ -92,38 +99,50 @@ pub fn menu_main(s: &mut StateTui) {
                 }
             }
             Ok(Action::CliMode) => {
-                let cmd: String = cliclack::input(t.raw(Prompt::InputCliCommand)).interact().unwrap_or_default();
+                let cmd: String = cliclack::input(t.raw(Prompt::InputCliCommand))
+                    .interact()
+                    .unwrap_or_default();
+
                 if !cmd.trim().is_empty() {
-                    let mut parsed_split = split_cli_args(&cmd);
-                    
-                    // ⚡ Sprytne czyszczenie: wywalamy "cargo", "run", "--", "plot", "cargo-plot.exe" z początku
-                    while !parsed_split.is_empty() {
-                        let first = parsed_split[0].to_lowercase();
-                        if first == "cargo" || first == "run" || first == "--" || first == "plot" || first.contains("cargo-plot") {
-                            parsed_split.remove(0);
-                        } else {
-                            break;
+                    // ⚡ Shlex idealnie tnie stringa jak bash, a jeśli ktoś zgubi cudzysłów, wyłapie błąd
+                    if let Some(mut parsed_split) = shlex::split(&cmd) {
+                        // Czyścimy początek (wywalamy "cargo", "run", "--", "plot")
+                        while !parsed_split.is_empty() {
+                            let first = parsed_split[0].to_lowercase();
+                            if first == "cargo"
+                                || first == "run"
+                                || first == "--"
+                                || first == "plot"
+                                || first.contains("cargo-plot")
+                            {
+                                parsed_split.remove(0);
+                            } else {
+                                break;
+                            }
                         }
-                    }
 
-                    // Budujemy fałszywą listę argumentów dla clapa (żeby zgadzała się struktura)
-                    let mut cli_args = vec!["cargo".to_string(), "plot".to_string()];
-                    cli_args.extend(parsed_split);
+                        // Podajemy do parsera Clap
+                        let mut cli_args = vec!["cargo".to_string(), "plot".to_string()];
+                        cli_args.extend(parsed_split);
 
-                    // ⚡ CLAP PARSUJE CIĄG ZNAKÓW I ZMIENIA STAN TUI!
-                    match CargoCli::try_parse_from(cli_args) {
-                        Ok(CargoCli::Plot(parsed_args)) => {
-                            s.args = parsed_args;
-                            cliclack::log::success(t.raw(Prompt::SuccessCliParse)).unwrap();
+                        match CargoCli::try_parse_from(cli_args) {
+                            Ok(CargoCli::Plot(parsed_args)) => {
+                                s.args = parsed_args;
+                                cliclack::log::success(t.raw(Prompt::SuccessCliParse)).unwrap();
+                            }
+                            Err(e) => {
+                                cliclack::log::error(format!("{}", e)).unwrap();
+                            }
                         }
-                        Err(e) => {
-                            // Wrzucamy błąd clapa na ekran, żeby użytkownik wiedział, co zepsuł we flagach
-                            cliclack::log::error(format!("{}", e)).unwrap();
-                        }
+                    } else {
+                        // Obsługa błędu ze strony shlex
+                        cliclack::log::error(
+                            "Błąd parsowania komendy! Prawdopodobnie nie domknięto cudzysłowu.",
+                        )
+                        .unwrap();
                     }
                 }
-                // Pozostajemy w pętli, aby interfejs odświeżył się z nowymi wartościami
-            },
+            }
             Ok(Action::Paths) => {
                 last_action = Action::Paths;
                 handle_paths(s, &t);
@@ -140,6 +159,28 @@ pub fn menu_main(s: &mut StateTui) {
                 last_action = Action::Filters;
                 handle_filters(s, &t);
             }
+            Ok(Action::Help) => {
+                let help_choice = cliclack::select(t.raw(Prompt::SubHelpHeader))
+                    .item(1, t.raw(Prompt::HelpPatternsBtn), "")
+                    .item(2, t.raw(Prompt::HelpFlagsBtn), "")
+                    .item(0, t.raw(Prompt::BtnExit), "")
+                    .interact()
+                    .unwrap_or(0);
+                
+                if help_choice == 1 {
+                    cliclack::note("📖 WZORCE / PATTERNS", t.raw(Prompt::HelpTextPatterns)).unwrap();
+                    let _: String = cliclack::input(t.raw(Prompt::HelpPause))
+                        .required(false) // ⚡ TO POZWALA NA PUSTY ENTER
+                        .interact()
+                        .unwrap_or_default();
+                } else if help_choice == 2 {
+                    cliclack::note("⚙️ FLAGI / FLAGS", t.raw(Prompt::HelpTextFlags)).unwrap();
+                    let _: String = cliclack::input(t.raw(Prompt::HelpPause))
+                        .required(false) // ⚡ TO POZWALA NA PUSTY ENTER
+                        .interact()
+                        .unwrap_or_default();
+                }
+            },
             Ok(Action::Run) => {
                 if s.args.patterns.is_empty() {
                     cliclack::log::warning(t.raw(Prompt::WarnNoPatterns)).unwrap();
@@ -149,12 +190,23 @@ pub fn menu_main(s: &mut StateTui) {
                 engine::run(s.args.clone());
                 return;
             }
+            Ok(Action::Gui) => {
+                // Wyświetlamy komunikat na pożegnanie z terminalem
+                cliclack::outro(t.fmt(Prompt::BtnGui)).unwrap();
+                
+                // Odpalamy nasze nowe okienko, przekazując mu całą zebraną konfigurację
+                crate::interfaces::gui::run_gui(s.args.clone());
+                
+                // Zamykamy pętlę TUI - pałeczkę przejmuje egui!
+                return; 
+            }
             Ok(Action::Exit) | Err(_) => {
                 cliclack::outro(t.raw(Prompt::ExitBye)).unwrap();
                 return;
             }
         }
         cliclack::clear_screen().unwrap();
+        
     }
 }
 
@@ -291,6 +343,7 @@ fn split_patterns(input: &str) -> Vec<String> {
     result
 }
 
+/*/
 fn split_cli_args(input: &str) -> Vec<String> {
     let mut args = Vec::new();
     let mut current = String::new();
@@ -325,3 +378,4 @@ fn split_cli_args(input: &str) -> Vec<String> {
     }
     args
 }
+    */

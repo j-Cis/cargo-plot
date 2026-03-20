@@ -31,7 +31,11 @@ impl PathList {
                     name: p_str.clone(),
                     path: absolute,
                     is_dir,
-                    icon: if no_emoji { String::new() } else { get_icon_for_path(p_str).to_string() },
+                    icon: if no_emoji {
+                        String::new()
+                    } else {
+                        get_icon_for_path(p_str).to_string()
+                    },
                     weight_str,
                     weight_bytes,
                     children: vec![], // Lista nie ma dzieci

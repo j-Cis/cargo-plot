@@ -21,9 +21,9 @@ pub fn run(args: CliArgs) {
     // [ENG]: 🎚️ Determines the display mode based on include (-m) and exclude (-x) flags.
     // [POL]: 🎚️ Ustala tryb wyświetlania na podstawie flag włączania (-m) i wykluczania (-x).
     let show_mode = match (args.include, args.exclude) {
-        (true, false) => ShowMode::Include, 
-        (false, true) => ShowMode::Exclude, 
-        _ => ShowMode::Context,             
+        (true, false) => ShowMode::Include,
+        (false, true) => ShowMode::Exclude,
+        _ => ShowMode::Context,
     };
 
     // [ENG]: 🚀 Executes the core matching logic.
@@ -39,7 +39,7 @@ pub fn run(args: CliArgs) {
         args.info,
         args.no_emoji,
         &i18n,
-        |_| {}, 
+        |_| {},
         |_| {},
     );
 
@@ -52,7 +52,7 @@ pub fn run(args: CliArgs) {
     // [POL]: 💾 Obsługuje zapis do plików, jeśli aktywne są flagi adresu lub archiwum.
     if args.save_address || args.save_archive {
         let tag = TimeTag::now();
-        
+
         // [ENG]: 📄 Renders plain text for Markdown output.
         // [POL]: 📄 Renderuje czysty tekst dla wyjścia w formacie Markdown.
         let output_str_txt_m = stats.render_output(view_mode, ShowMode::Include, args.info, false);
@@ -62,13 +62,15 @@ pub fn run(args: CliArgs) {
         // [POL]: 📂 Rozwiązuje ścieżkę katalogu wyjściowego.
         let resolve_dir = |val: &Option<String>| -> String {
             match val {
-                Some(v) if v == "AUTO" => "./other/".to_string(), 
+                Some(v) if v == "AUTO" => "./other/".to_string(),
                 Some(v) => {
                     let mut p = v.replace('\\', "/");
-                    if !p.ends_with('/') { p.push('/'); }
+                    if !p.ends_with('/') {
+                        p.push('/');
+                    }
                     p
                 }
-                None => "./".to_string(), 
+                None => "./".to_string(),
             }
         };
 
@@ -79,11 +81,25 @@ pub fn run(args: CliArgs) {
         if args.save_address {
             if args.include || (!args.include && !args.exclude) {
                 let filepath = format!("{}plot-address_{}_M.md", output_dir, tag);
-                SaveFile::paths(&output_str_txt_m, &filepath, &tag, args.by, &i18n, &cmd_string);
+                SaveFile::paths(
+                    &output_str_txt_m,
+                    &filepath,
+                    &tag,
+                    args.by,
+                    &i18n,
+                    &cmd_string,
+                );
             }
             if args.exclude || (!args.include && !args.exclude) {
                 let filepath = format!("{}plot-address_{}_X.md", output_dir, tag);
-                SaveFile::paths(&output_str_txt_x, &filepath, &tag, args.by, &i18n, &cmd_string);
+                SaveFile::paths(
+                    &output_str_txt_x,
+                    &filepath,
+                    &tag,
+                    args.by,
+                    &i18n,
+                    &cmd_string,
+                );
             }
         }
 
@@ -94,27 +110,27 @@ pub fn run(args: CliArgs) {
                 if args.include || (!args.include && !args.exclude) {
                     let filepath = format!("{}plot-archive_{}_M.md", output_dir, tag);
                     SaveFile::codes(
-                        &output_str_txt_m, 
-                        &stats.m_matched.paths, 
-                        &ctx.entry_absolute, 
-                        &filepath, 
-                        &tag, 
-                        args.by, 
-                        &i18n, 
-                        &cmd_string
+                        &output_str_txt_m,
+                        &stats.m_matched.paths,
+                        &ctx.entry_absolute,
+                        &filepath,
+                        &tag,
+                        args.by,
+                        &i18n,
+                        &cmd_string,
                     );
                 }
                 if args.exclude || (!args.include && !args.exclude) {
                     let filepath = format!("{}plot-archive_{}_X.md", output_dir, tag);
                     SaveFile::codes(
-                        &output_str_txt_x, 
-                        &stats.x_mismatched.paths, 
-                        &ctx.entry_absolute, 
-                        &filepath, 
-                        &tag, 
-                        args.by, 
-                        &i18n, 
-                        &cmd_string
+                        &output_str_txt_x,
+                        &stats.x_mismatched.paths,
+                        &ctx.entry_absolute,
+                        &filepath,
+                        &tag,
+                        args.by,
+                        &i18n,
+                        &cmd_string,
                     );
                 }
             }

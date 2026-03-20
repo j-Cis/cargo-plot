@@ -193,9 +193,15 @@ impl CliArgs {
             cmd.push(format!("\"{}\"", self.patterns.join(",")));
         }
 
-        if self.include { cmd.push("-m".to_string()); }
-        if self.exclude { cmd.push("-x".to_string()); }
-        if self.ignore_case { cmd.push("-c".to_string()); }
+        if self.include {
+            cmd.push("-m".to_string());
+        }
+        if self.exclude {
+            cmd.push("-x".to_string());
+        }
+        if self.ignore_case {
+            cmd.push("-c".to_string());
+        }
 
         if self.sort != CliSortStrategy::AzFileMerge {
             let sort_str = match self.sort {
@@ -225,19 +231,33 @@ impl CliArgs {
             cmd.push(view_str.to_string());
         }
 
-        if self.save_address { cmd.push("--save-address".to_string()); }
-        if self.save_archive { cmd.push("--save-archive".to_string()); }
-        if self.by { cmd.push("-b".to_string()); }
-        if self.no_root { cmd.push("--treeview-no-root".to_string()); }
-        if self.info { cmd.push("-i".to_string()); }
-        if self.no_emoji { cmd.push("--no-emoji".to_string()); }
-        if self.all { cmd.push("-a".to_string()); }
-        
+        if self.save_address {
+            cmd.push("--save-address".to_string());
+        }
+        if self.save_archive {
+            cmd.push("--save-archive".to_string());
+        }
+        if self.by {
+            cmd.push("-b".to_string());
+        }
+        if self.no_root {
+            cmd.push("--treeview-no-root".to_string());
+        }
+        if self.info {
+            cmd.push("-i".to_string());
+        }
+        if self.no_emoji {
+            cmd.push("--no-emoji".to_string());
+        }
+        if self.all {
+            cmd.push("-a".to_string());
+        }
+
         if self.unit != CliUnitSystem::Bin {
             cmd.push("-u".to_string());
             cmd.push("dec".to_string());
         }
-        
+
         if let Some(l) = &self.lang {
             cmd.push("--lang".to_string());
             match l {

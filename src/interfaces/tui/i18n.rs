@@ -46,9 +46,13 @@ pub enum Prompt {
     BtnCliMode,
     InputCliCommand,
     SuccessCliParse,
-    BtnHelp, 
-    HelpPause, 
-    SubHelpHeader, HelpPatternsBtn, HelpFlagsBtn, HelpTextPatterns, HelpTextFlags, 
+    BtnHelp,
+    HelpPause,
+    SubHelpHeader,
+    HelpPatternsBtn,
+    HelpFlagsBtn,
+    HelpTextPatterns,
+    HelpTextFlags,
     BtnGui,
 }
 
@@ -165,21 +169,21 @@ impl Translatable for Prompt {
                 pol: "Wczytano konfigurację!",
                 eng: "Configuration loaded!",
             },
-            Prompt::BtnHelp => Txt { 
-                pol: "❓ Pomoc (Wzorce i Flagi)", 
-                eng: "❓ Help (Patterns & Flags)" 
+            Prompt::BtnHelp => Txt {
+                pol: "❓ Pomoc (Wzorce i Flagi)",
+                eng: "❓ Help (Patterns & Flags)",
             },
             Prompt::SubHelpHeader => Txt {
                 pol: "Wybierz temat pomocy:",
-                eng: "Choose help topic:"
+                eng: "Choose help topic:",
             },
             Prompt::HelpPatternsBtn => Txt {
                 pol: "Składnia Wzorców",
-                eng: "Patterns Syntax"
+                eng: "Patterns Syntax",
             },
             Prompt::HelpFlagsBtn => Txt {
                 pol: "Opis Flag i Opcji",
-                eng: "Flags & Options Description"
+                eng: "Flags & Options Description",
             },
             Prompt::HelpTextPatterns => Txt {
                 pol: "=== WZORCE DOPASOWAŃ ===
@@ -194,7 +198,7 @@ $       - Sierota: dopasowuje TYLKO, gdy brakuje pary plik/folder
 === PRZYKŁADY ===
 *.rs               -> Pokaż wszystkie pliki .rs
 !@tui{.rs,/}+      -> Wyklucz plik tui.rs oraz folder tui/ z całą zawartością (+)",
-                
+
                 eng: "=== PATTERN SYNTAX ===
 * - Any characters (e.g. *.rs)
 ** - Any dir depth (e.g. src/**/*.rs)
@@ -206,7 +210,7 @@ $       - Orphan: matches ONLY when file/dir pair is missing
 
 === EXAMPLES ===
 *.rs               -> Show all .rs files
-!@tui{.rs,/}+      -> Exclude tui.rs file and tui/ dir with all its contents (+)"
+!@tui{.rs,/}+      -> Exclude tui.rs file and tui/ dir with all its contents (+)",
             },
             Prompt::HelpTextFlags => Txt {
                 pol: "=== FLAGI I OPCJE (W TUI JAKO PRZEŁĄCZNIKI) ===
@@ -222,7 +226,7 @@ $       - Orphan: matches ONLY when file/dir pair is missing
 -i, --info         : Pokaż statystyki skanowania (Dopasowano/Odrzucono)
 --ignore-case      : Ignoruj wielkość liter we wzorcach
 --treeview-no-root : Ukryj główny folder roboczy w widoku drzewa",
-                
+
                 eng: "=== FLAGS & OPTIONS (TOGGLES IN TUI) ===
 -d, --dir          : Base input path to scan (Default: ./)
 -p, --pat          : Match patterns (required, comma separated)
@@ -235,11 +239,11 @@ $       - Orphan: matches ONLY when file/dir pair is missing
 -b, --by           : Add info footer with command at the end of file
 -i, --info         : Show scan statistics (Matched/Rejected)
 --ignore-case      : Ignore case in patterns
---treeview-no-root : Hide main working directory in tree view"
+--treeview-no-root : Hide main working directory in tree view",
             },
-            Prompt::HelpPause => Txt { 
-                pol: "Naciśnij [Enter], aby wrócić do menu...", 
-                eng: "Press [Enter] to return to menu..." 
+            Prompt::HelpPause => Txt {
+                pol: "Naciśnij [Enter], aby wrócić do menu...",
+                eng: "Press [Enter] to return to menu...",
             },
             Prompt::BtnGui => Txt {
                 pol: "🖥️  Otwórz w oknie (GUI)",

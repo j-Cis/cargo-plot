@@ -2,5 +2,5 @@
 // [POL]: Warstwa interakcji z użytkownikiem (Porty i Adaptery).
 
 pub mod cli;
-pub mod tui;
 pub mod gui;
+pub mod tui;

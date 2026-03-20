@@ -1,56 +1,64 @@
-use eframe::egui;
-use crate::interfaces::gui::CargoPlotApp;
-use cargo_plot::i18n::Lang;
 use crate::interfaces::cli::args::{CliSortStrategy, CliViewMode};
+use crate::interfaces::gui::CargoPlotApp;
+use crate::interfaces::gui::i18n::{GuiI18n, GuiText as GT};
+use cargo_plot::i18n::Lang;
+use eframe::egui;
 
 pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
-    // Sprawdzamy, czy wybrany jest język polski (dla dynamicznych tłumaczeń w locie)
-    let is_pl = app.args.lang.unwrap_or(Lang::En) == Lang::Pl;
+    // [ENG]: Initialize the GUI translation engine based on current settings.
+    // [POL]: Inicjalizacja silnika tłumaczeń GUI na podstawie aktualnych ustawień.
+    let gt = GuiI18n::new(app.args.lang);
 
     egui::ScrollArea::vertical().show(ui, |ui| {
         ui.add_space(10.0);
 
-        // 1. WYBÓR JĘZYKA (Teraz dynamicznie aktualizuje resztę interfejsu!)
+        // [ENG]: 1. LANGUAGE SELECTION - Dynamically updates the entire UI.
+        // [POL]: 1. WYBÓR JĘZYKA - Dynamicznie aktualizuje cały interfejs.
         ui.horizontal(|ui| {
-            ui.label(if is_pl { "🌍 Język:" } else { "🌍 Language:" });
+            ui.label(gt.t(GT::LabelLang));
             ui.radio_value(&mut app.args.lang, Some(Lang::Pl), "Polski");
             ui.radio_value(&mut app.args.lang, Some(Lang::En), "English");
         });
         ui.separator();
         ui.add_space(10.0);
 
-        // 2. WYBÓR FOLDERU (Z działającym przyciskiem okna systemowego)
+        // [ENG]: 2. SCAN FOLDER SELECTION - Uses native system dialog.
+        // [POL]: 2. WYBÓR FOLDERU SKANOWANIA - Używa natywnego okna systemowego.
         ui.horizontal(|ui| {
-            ui.label(if is_pl { "📂 Ścieżka skanowania:" } else { "📂 Scan path:" });
+            ui.label(gt.t(GT::LabelScanPath));
             ui.text_edit_singleline(&mut app.args.enter_path);
-            
-            // ⚡ NATYWNE OKNO WYBORU FOLDERU
-            if ui.button(if is_pl { "Wybierz..." } else { "Browse..." }).clicked()
-                && let Some(folder) = rfd::FileDialog::new().pick_folder() {
-                    // Aktualizujemy ścieżkę i ujednolicamy ukośniki
-                    app.args.enter_path = folder.to_string_lossy().replace('\\', "/");
-                }
+
+            if ui.button(gt.t(GT::BtnBrowse)).clicked()
+                && let Some(folder) = rfd::FileDialog::new().pick_folder()
+            {
+                app.args.enter_path = folder.to_string_lossy().replace('\\', "/");
+            }
         });
         ui.add_space(10.0);
         ui.separator();
 
-
-        // ⚡ NOWOŚĆ: ŚCIEŻKA WYNIKOWA (Output path)
+        // [ENG]: 3. OUTPUT FOLDER SELECTION - Common path for paths and archive saves.
+        // [POL]: 3. WYBÓR FOLDERU WYNIKOWEGO - Wspólna ścieżka dla zapisu ścieżek i archiwum.
         ui.add_space(10.0);
         ui.horizontal(|ui| {
-            ui.label(if is_pl { "💾 Folder zapisu (Output):" } else { "💾 Output folder:" });
-            
-            // Używamy `out_path_input` z gui.rs jako wspólnego bufora tekstowego
+            ui.label(gt.t(GT::LabelOutFolder));
+
             if ui.text_edit_singleline(&mut app.out_path_input).changed() {
                 let trimmed = app.out_path_input.trim();
-                app.args.dir_out = if trimmed.is_empty() { None } else { Some(trimmed.to_string()) };
+                app.args.dir_out = if trimmed.is_empty() {
+                    None
+                } else {
+                    Some(trimmed.to_string())
+                };
             }
-            
-            if ui.button(if is_pl { "Wybierz folder..." } else { "Browse folder..." }).clicked() {
+
+            if ui.button(gt.t(GT::BtnBrowse)).clicked() {
                 if let Some(folder) = rfd::FileDialog::new().pick_folder() {
                     let mut path = folder.to_string_lossy().replace('\\', "/");
-                    if !path.ends_with('/') { path.push('/'); }
-                    
+                    if !path.ends_with('/') {
+                        path.push('/');
+                    }
+
                     app.out_path_input = path.clone();
                     app.args.dir_out = Some(path);
                 }
@@ -59,16 +67,32 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
         ui.add_space(10.0);
         ui.separator();
 
-        // 5. WIDOK I SORTOWANIE
+        // [ENG]: 4. VIEW AND SORTING - Controls the structure of the generated report.
+        // [POL]: 4. WIDOK I SORTOWANIE - Kontroluje strukturę generowanego raportu.
         ui.horizontal(|ui| {
-            egui::ComboBox::from_label(if is_pl { "Sortowanie" } else { "Sorting" })
+            egui::ComboBox::from_label(gt.t(GT::LabelSorting))
                 .selected_text(format!("{:?}", app.args.sort))
                 .show_ui(ui, |ui| {
-                    // ⚡ PEŁNA LISTA SORTOWAŃ
-                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzFileMerge, "AzFileMerge");
-                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::ZaFileMerge, "ZaFileMerge");
-                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzDirMerge, "AzDirMerge");
-                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::ZaDirMerge, "ZaDirMerge");
+                    ui.selectable_value(
+                        &mut app.args.sort,
+                        CliSortStrategy::AzFileMerge,
+                        "AzFileMerge",
+                    );
+                    ui.selectable_value(
+                        &mut app.args.sort,
+                        CliSortStrategy::ZaFileMerge,
+                        "ZaFileMerge",
+                    );
+                    ui.selectable_value(
+                        &mut app.args.sort,
+                        CliSortStrategy::AzDirMerge,
+                        "AzDirMerge",
+                    );
+                    ui.selectable_value(
+                        &mut app.args.sort,
+                        CliSortStrategy::ZaDirMerge,
+                        "ZaDirMerge",
+                    );
                     ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzFile, "AzFile");
                     ui.selectable_value(&mut app.args.sort, CliSortStrategy::ZaFile, "ZaFile");
                     ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzDir, "AzDir");
@@ -80,7 +104,7 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
 
             ui.add_space(15.0);
 
-            egui::ComboBox::from_label(if is_pl { "Tryb widoku" } else { "View mode" })
+            egui::ComboBox::from_label(gt.t(GT::LabelViewMode))
                 .selected_text(format!("{:?}", app.args.view))
                 .show_ui(ui, |ui| {
                     ui.selectable_value(&mut app.args.view, CliViewMode::Tree, "Tree");
@@ -89,39 +113,34 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
                 });
 
             ui.add_space(15.0);
-            
-            ui.checkbox(&mut app.args.no_root, if is_pl { "Ukryj ROOT w drzewie" } else { "Hide ROOT in tree" });
+            ui.checkbox(&mut app.args.no_root, gt.t(GT::LabelNoRoot));
         });
-        
+
         ui.add_space(20.0);
-        // 3. WZORCE DOPASOWAŃ (Z połączonymi opcjami z linii "X")
-        ui.heading(if is_pl { "🔍 Wzorce dopasowań (Patterns)" } else { "🔍 Match Patterns" });
-        
-        // Trzy opcje logiczne przytulone do wzorców
-        //ui.horizontal(|ui| {
-            
-            //ui.checkbox(&mut app.args.include, if is_pl { "✅ Pokaż dopasowane (m)" } else { "✅ Show matched (m)" });
-            //ui.checkbox(&mut app.args.exclude, if is_pl { "❌ Pokaż odrzucone (x)" } else { "❌ Show rejected (x)" });
-        //});
+
+        // [ENG]: 5. MATCH PATTERNS - Pattern management with real-time list interaction.
+        // [POL]: 5. WZORCE DOPASOWAŃ - Zarządzanie wzorcami z interaktywną listą.
+        ui.heading(gt.t(GT::HeadingPatterns));
         ui.add_space(5.0);
 
-        // Pole dodawania nowego wzorca
         ui.horizontal(|ui| {
-            ui.checkbox(&mut app.args.ignore_case, if is_pl { "🔠 Ignoruj wielkość liter" } else { "🔠 Ignore case" });
-            ui.label(if is_pl { "Nowy:" } else { "New:" });
+            ui.checkbox(&mut app.args.ignore_case, gt.t(GT::LabelIgnoreCase));
+            ui.label(gt.t(GT::LabelNewPattern));
             let response = ui.text_edit_singleline(&mut app.new_pattern_input);
-            let btn_clicked = ui.button(if is_pl { "➕ Dodaj wzorzec" } else { "➕ Add pattern" }).clicked();
-            
-            if (btn_clicked || (response.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)))) 
-                && !app.new_pattern_input.trim().is_empty() 
+            let btn_clicked = ui.button(gt.t(GT::BtnAddPattern)).clicked();
+
+            if (btn_clicked
+                || (response.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter))))
+                && !app.new_pattern_input.trim().is_empty()
             {
-                app.args.patterns.push(app.new_pattern_input.trim().to_string());
+                app.args
+                    .patterns
+                    .push(app.new_pattern_input.trim().to_string());
                 app.new_pattern_input.clear();
                 response.request_focus();
             }
         });
 
-        // 4. LISTA DODANYCH WZORCÓW
         ui.add_space(5.0);
         egui::Frame::group(ui.style()).show(ui, |ui| {
             ui.set_min_height(100.0);
@@ -132,35 +151,52 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
 
             for (i, pat) in app.args.patterns.iter().enumerate() {
                 ui.horizontal(|ui| {
-                    if ui.button("🗑").clicked() { remove = Some(i); }
-                    if ui.button("⬆").clicked() { move_up = Some(i); }
-                    if ui.button("⬇").clicked() { move_down = Some(i); }
+                    if ui.button("🗑").clicked() {
+                        remove = Some(i);
+                    }
+                    if ui.button("⬆").clicked() {
+                        move_up = Some(i);
+                    }
+                    if ui.button("⬇").clicked() {
+                        move_down = Some(i);
+                    }
                     ui.label(pat);
                 });
             }
 
-            if let Some(i) = remove { app.args.patterns.remove(i); }
-            if let Some(i) = move_up && i > 0 { app.args.patterns.swap(i, i - 1); }
-            if let Some(i) = move_down && i + 1 < app.args.patterns.len() { app.args.patterns.swap(i, i + 1); }
+            if let Some(i) = remove {
+                app.args.patterns.remove(i);
+            }
+            if let Some(i) = move_up
+                && i > 0
+            {
+                app.args.patterns.swap(i, i - 1);
+            }
+            if let Some(i) = move_down
+                && i + 1 < app.args.patterns.len()
+            {
+                app.args.patterns.swap(i, i + 1);
+            }
 
             if !app.args.patterns.is_empty() {
                 ui.separator();
-                if ui.button(if is_pl { "💣 Usuń wszystkie" } else { "💣 Clear all" }).clicked() {
+                if ui.button(gt.t(GT::BtnClearAll)).clicked() {
                     app.args.patterns.clear();
                 }
             } else {
-                let empty_msg = if is_pl { "Brak wzorców. Dodaj przynajmniej jeden!" } else { "No patterns. Add at least one!" };
-                ui.label(egui::RichText::new(empty_msg).italics().weak());
+                ui.label(
+                    egui::RichText::new(gt.t(GT::MsgNoPatterns))
+                        .italics()
+                        .weak(),
+                );
             }
         });
         ui.separator();
 
-        
-        
-
         ui.add_space(50.0);
-        
-        // 6. STOPKA
+
+        // [ENG]: 6. FOOTER - Versioning, links and installation instructions.
+        // [POL]: 6. STOPKA - Wersjonowanie, linki i instrukcje instalacji.
         ui.separator();
         ui.add_space(10.0);
         ui.horizontal(|ui| {
@@ -168,14 +204,17 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
             ui.separator();
             ui.hyperlink_to("Crates.io", "https://crates.io/crates/cargo-plot");
             ui.separator();
-            ui.hyperlink_to(if is_pl { "Pobierz binarkę (GitHub)" } else { "Download binary (GitHub)" }, "https://github.com/j-Cis/cargo-plot/releases");
+            ui.hyperlink_to(
+                gt.t(GT::FooterDownload),
+                "https://github.com/j-Cis/cargo-plot/releases",
+            );
         });
         ui.add_space(5.0);
         ui.horizontal(|ui| {
-            ui.label(egui::RichText::new(if is_pl { "Instalacja:" } else { "Install:" }).weak());
+            ui.label(egui::RichText::new(gt.t(GT::FooterInstall)).weak());
             ui.code("cargo install cargo-plot");
             ui.separator();
-            ui.label(egui::RichText::new(if is_pl { "Usuwanie:" } else { "Uninstall:" }).weak());
+            ui.label(egui::RichText::new(gt.t(GT::FooterUninstall)).weak());
             ui.code("cargo uninstall cargo-plot");
         });
         ui.add_space(10.0);

@@ -25,7 +25,6 @@ pub fn menu_main(s: &mut StateTui) {
     let mut last_action = Action::Paths;
 
     loop {
-        
         let t = T::new(s.lang);
         let header = t.fmt(Prompt::HeaderMain);
 
@@ -52,7 +51,11 @@ pub fn menu_main(s: &mut StateTui) {
         let out_p = s.args.dir_out.as_deref().unwrap_or("AUTO");
         let lbl_out = format!(
             "{} (dir-out: {}, address: {}, archive: {}, by: {})",
-            t.fmt(Prompt::BtnOutput), out_p, s.args.save_address, s.args.save_archive, s.args.by
+            t.fmt(Prompt::BtnOutput),
+            out_p,
+            s.args.save_address,
+            s.args.save_archive,
+            s.args.by
         );
 
         let lbl_filt = format!(
@@ -64,7 +67,9 @@ pub fn menu_main(s: &mut StateTui) {
         );
 
         // ⚡ BUDOWA MENU
-        let links_hint = style("crates.io/crates/cargo-plot  |  github.com/j-Cis/cargo-plot").dim().to_string();
+        let links_hint = style("crates.io/crates/cargo-plot  |  github.com/j-Cis/cargo-plot")
+            .dim()
+            .to_string();
         let action_result = cliclack::select(header)
             .initial_value(last_action.clone())
             .item(Action::Lang, t.fmt(Prompt::BtnLang), "")
@@ -162,9 +167,10 @@ pub fn menu_main(s: &mut StateTui) {
                     .item(0, t.raw(Prompt::BtnExit), "")
                     .interact()
                     .unwrap_or(0);
-                
+
                 if help_choice == 1 {
-                    cliclack::note("📖 WZORCE / PATTERNS", t.raw(Prompt::HelpTextPatterns)).unwrap();
+                    cliclack::note("📖 WZORCE / PATTERNS", t.raw(Prompt::HelpTextPatterns))
+                        .unwrap();
                     let _: String = cliclack::input(t.raw(Prompt::HelpPause))
                         .required(false) // ⚡ TO POZWALA NA PUSTY ENTER
                         .interact()
@@ -176,7 +182,7 @@ pub fn menu_main(s: &mut StateTui) {
                         .interact()
                         .unwrap_or_default();
                 }
-            },
+            }
             Ok(Action::Run) => {
                 if s.args.patterns.is_empty() {
                     cliclack::log::warning(t.raw(Prompt::WarnNoPatterns)).unwrap();
@@ -189,12 +195,12 @@ pub fn menu_main(s: &mut StateTui) {
             Ok(Action::Gui) => {
                 // Wyświetlamy komunikat na pożegnanie z terminalem
                 cliclack::outro(t.fmt(Prompt::BtnGui)).unwrap();
-                
+
                 // Odpalamy nasze nowe okienko, przekazując mu całą zebraną konfigurację
                 crate::interfaces::gui::run_gui(s.args.clone());
-                
+
                 // Zamykamy pętlę TUI - pałeczkę przejmuje egui!
-                return; 
+                return;
             }
             Ok(Action::Exit) | Err(_) => {
                 cliclack::outro(t.raw(Prompt::ExitBye)).unwrap();
@@ -202,7 +208,6 @@ pub fn menu_main(s: &mut StateTui) {
             }
         }
         cliclack::clear_screen().unwrap();
-        
     }
 }
 
@@ -267,7 +272,11 @@ fn handle_output(s: &mut StateTui, t: &T) {
         .default_input(s.args.dir_out.as_deref().unwrap_or(""))
         .interact()
         .unwrap_or_default();
-    s.args.dir_out = if out_p.trim().is_empty() { None } else { Some(out_p.trim().to_string()) };
+    s.args.dir_out = if out_p.trim().is_empty() {
+        None
+    } else {
+        Some(out_p.trim().to_string())
+    };
 
     s.args.save_address = cliclack::confirm(t.raw(Prompt::SubSaveAddress))
         .initial_value(s.args.save_address)

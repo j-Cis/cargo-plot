@@ -39,7 +39,7 @@ impl PathGrid {
             paths_map: &BTreeMap<PathBuf, Vec<PathBuf>>,
             base_path: &Path,
             sort_strategy: SortStrategy,
-            weight_cfg: &WeightConfig,            
+            weight_cfg: &WeightConfig,
             no_emoji: bool,
         ) -> FileNode {
             let name = path
@@ -64,7 +64,9 @@ impl PathGrid {
             if let Some(child_paths) = paths_map.get(path) {
                 let mut child_nodes: Vec<FileNode> = child_paths
                     .iter()
-                    .map(|c| build_node(c, paths_map, base_path, sort_strategy, weight_cfg, no_emoji))
+                    .map(|c| {
+                        build_node(c, paths_map, base_path, sort_strategy, weight_cfg, no_emoji)
+                    })
                     .collect();
 
                 FileNode::sort_slice(&mut child_nodes, sort_strategy);
@@ -100,7 +102,16 @@ impl PathGrid {
 
         let mut top_nodes: Vec<FileNode> = roots_paths
             .into_iter()
-            .map(|r| build_node(&r, &tree_map, base_path_obj, sort_strategy, weight_cfg, no_emoji))
+            .map(|r| {
+                build_node(
+                    &r,
+                    &tree_map,
+                    base_path_obj,
+                    sort_strategy,
+                    weight_cfg,
+                    no_emoji,
+                )
+            })
             .collect();
 
         FileNode::sort_slice(&mut top_nodes, sort_strategy);
@@ -116,7 +127,11 @@ impl PathGrid {
                 name: r_name.to_string(),
                 path: PathBuf::from(r_name),
                 is_dir: true,
-                icon: if no_emoji { String::new() } else { DIR_ICON.to_string() },
+                icon: if no_emoji {
+                    String::new()
+                } else {
+                    DIR_ICON.to_string()
+                },
                 weight_str: empty_weight,
                 weight_bytes: 0,
                 children: top_nodes,

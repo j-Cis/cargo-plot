@@ -21,15 +21,24 @@ pub enum GuiText {
     BtnClearAll,
     BtnBrowse,
     MsgNoPatterns,
-    FooterVersion,
     FooterDownload,
     FooterInstall,
     FooterUninstall,
+    BtnGenerate,
+    LabelAddFooter,
+    BtnSaveMatch,
+    BtnSaveMismatch,
+    TabMatch,
+    TabMismatch,
+    BtnGenerateCode,
+    LabelSkipBinary,
 }
 
 impl GuiI18n {
     pub fn new(lang: Option<Lang>) -> Self {
-        Self { lang: lang.unwrap_or(Lang::En) }
+        Self {
+            lang: lang.unwrap_or(Lang::En),
+        }
     }
 
     pub fn t(&self, text: GuiText) -> &'static str {
@@ -48,10 +57,17 @@ impl GuiI18n {
                 GuiText::BtnClearAll => "💣 Usuń wszystkie",
                 GuiText::BtnBrowse => "Wybierz...",
                 GuiText::MsgNoPatterns => "Brak wzorców. Dodaj przynajmniej jeden!",
-                GuiText::FooterVersion => "Wersja raportu:",
                 GuiText::FooterDownload => "Pobierz binarkę (GitHub)",
                 GuiText::FooterInstall => "Instalacja:",
                 GuiText::FooterUninstall => "Usuwanie:",
+                GuiText::BtnGenerate => "🔄 Generuj / Regeneruj",
+                GuiText::LabelAddFooter => "Dodaj stopkę (--by)",
+                GuiText::BtnSaveMatch => "💾 Zapisz (-m)",
+                GuiText::BtnSaveMismatch => "💾 Zapisz (-x)",
+                GuiText::TabMatch => "✔ (-m) MATCH",
+                GuiText::TabMismatch => "✖ (-x) MISMATCH",
+                GuiText::BtnGenerateCode => "🔄 Generuj kod (Cache)",
+                GuiText::LabelSkipBinary => "> *(Pominięto plik binarny/graficzny)*",
             },
             Lang::En => match text {
                 GuiText::LabelLang => "🌍 Language:",
@@ -67,10 +83,17 @@ impl GuiI18n {
                 GuiText::BtnClearAll => "💣 Clear all",
                 GuiText::BtnBrowse => "Browse...",
                 GuiText::MsgNoPatterns => "No patterns. Add at least one!",
-                GuiText::FooterVersion => "Report version:",
                 GuiText::FooterDownload => "Download binary (GitHub)",
                 GuiText::FooterInstall => "Install:",
                 GuiText::FooterUninstall => "Uninstall:",
+                GuiText::BtnGenerate => "🔄 Generate / Regenerate",
+                GuiText::LabelAddFooter => "Add footer (--by)",
+                GuiText::BtnSaveMatch => "💾 Save (-m)",
+                GuiText::BtnSaveMismatch => "💾 Save (-x)",
+                GuiText::TabMatch => "✔ (-m) MATCH",
+                GuiText::TabMismatch => "✖ (-x) MISMATCH",
+                GuiText::BtnGenerateCode => "🔄 Generate code (Cache)",
+                GuiText::LabelSkipBinary => "> *(Binary/graphic file skipped)*",
             },
         }
     }

@@ -17,7 +17,7 @@ impl StateTui {
                 patterns: vec![],
                 sort: CliSortStrategy::AzFileMerge,
                 view: CliViewMode::Tree,
-                include: true, 
+                include: true,
                 exclude: false,
                 dir_out: None,
                 save_address: false,

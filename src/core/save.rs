@@ -72,7 +72,14 @@ impl SaveFile {
 
     /// Formatowanie i zapis pełnego cache (drzewo + zawartość plików)
     pub fn codes(
-        tree_text: &str, paths: &[String], base_dir: &str, filepath: &str, tag: &str, add_by: bool, i18n: &I18n, cmd: &str,
+        tree_text: &str,
+        paths: &[String],
+        base_dir: &str,
+        filepath: &str,
+        tag: &str,
+        add_by: bool,
+        i18n: &I18n,
+        cmd: &str,
     ) {
         let by_section = if add_by {
             Self::generate_by_section(tag, "codes", i18n, cmd)

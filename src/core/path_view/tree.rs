@@ -64,7 +64,9 @@ impl PathTree {
             if let Some(child_paths) = paths_map.get(path) {
                 let mut child_nodes: Vec<FileNode> = child_paths
                     .iter()
-                    .map(|c| build_node(c, paths_map, base_path, sort_strategy, weight_cfg, no_emoji))
+                    .map(|c| {
+                        build_node(c, paths_map, base_path, sort_strategy, weight_cfg, no_emoji)
+                    })
                     .collect();
 
                 FileNode::sort_slice(&mut child_nodes, sort_strategy);
@@ -101,7 +103,16 @@ impl PathTree {
 
         let mut top_nodes: Vec<FileNode> = roots_paths
             .into_iter()
-            .map(|r| build_node(&r, &tree_map, base_path_obj, sort_strategy, weight_cfg, no_emoji))
+            .map(|r| {
+                build_node(
+                    &r,
+                    &tree_map,
+                    base_path_obj,
+                    sort_strategy,
+                    weight_cfg,
+                    no_emoji,
+                )
+            })
             .collect();
 
         FileNode::sort_slice(&mut top_nodes, sort_strategy);
@@ -117,7 +128,11 @@ impl PathTree {
                 name: r_name.to_string(),
                 path: PathBuf::from(r_name),
                 is_dir: true,
-                icon: if no_emoji { String::new() } else { DIR_ICON.to_string() },
+                icon: if no_emoji {
+                    String::new()
+                } else {
+                    DIR_ICON.to_string()
+                },
                 weight_str: empty_weight,
                 weight_bytes: 0,
                 children: top_nodes,

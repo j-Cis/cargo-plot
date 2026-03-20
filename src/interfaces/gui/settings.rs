@@ -130,19 +130,26 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
         // ⚡ NOWOŚĆ: ŚCIEŻKA WYNIKOWA (Output path)
         ui.add_space(10.0);
         ui.horizontal(|ui| {
-            ui.label(if is_pl { "💾 Ścieżka zapisu (Output):" } else { "💾 Output path:" });
+            ui.label(if is_pl { "💾 Folder zapisu (Output):" } else { "💾 Output folder:" });
+            
+            // Używamy `out_path_input` z gui.rs jako wspólnego bufora tekstowego
             if ui.text_edit_singleline(&mut app.out_path_input).changed() {
-                app.args.out_path = if app.out_path_input.trim().is_empty() {
-                    None
-                } else {
-                    Some(app.out_path_input.trim().to_string())
-                };
+                let trimmed = app.out_path_input.trim();
+                let path_val = if trimmed.is_empty() { None } else { Some(trimmed.to_string()) };
+                // ⚡ Przypisujemy ten sam wpisany folder do obu flag w CLI
+                app.args.out_path = path_val.clone();
+                app.args.out_code = path_val;
             }
+            
             if ui.button(if is_pl { "Wybierz folder..." } else { "Browse folder..." }).clicked() {
                 if let Some(folder) = rfd::FileDialog::new().pick_folder() {
-                    let path = folder.to_string_lossy().replace('\\', "/");
+                    let mut path = folder.to_string_lossy().replace('\\', "/");
+                    if !path.ends_with('/') { path.push('/'); } // Gwarantujemy, że to zawsze będzie traktowane jak folder
+                    
                     app.out_path_input = path.clone();
-                    app.args.out_path = Some(path);
+                    // ⚡ Przypisujemy wybrany folder do obu flag
+                    app.args.out_path = Some(path.clone());
+                    app.args.out_code = Some(path);
                 }
             }
         });

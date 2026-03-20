@@ -13,7 +13,6 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
         if ui.button(if is_pl { "🔄 Generuj / Regeneruj" } else { "🔄 Generate" }).clicked() {
             let i18n = cargo_plot::i18n::I18n::new(app.args.lang);
             
-            // Skanujemy dysk tylko raz, wyciągając pełny kontekst
             let stats = execute::execute(
                 &app.args.enter_path,
                 &app.args.patterns,
@@ -28,49 +27,62 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
                 |_| {}, |_| {},
             );
             
-            // ⚡ Od razu zapisujemy oba wyniki do niezależnych buforów
             app.generated_paths_m = stats.render_output(app.args.view.into(), ShowMode::Include, false, false);
             app.generated_paths_x = stats.render_output(app.args.view.into(), ShowMode::Exclude, false, false);
         }
 
         ui.add_space(15.0);
-        ui.checkbox(&mut app.args.by, if is_pl { "Dodaj stopkę (--by) przy zapisie" } else { "Add footer (--by) on save" });
+        ui.checkbox(&mut app.args.by, if is_pl { "Dodaj stopkę (--by)" } else { "Add footer (--by)" });
         ui.add_space(15.0);
 
-        if ui.button(if is_pl { "💾 Zapisz do pliku" } else { "💾 Save to file" }).clicked() {
-            let tag = TimeTag::now();
-            let filepath = format!("./paths_{}.md", tag);
-            let i18n = cargo_plot::i18n::I18n::new(app.args.lang);
-            
-            // ⚡ Zapisujemy tylko ten bufor, na który użytkownik aktualnie patrzy!
-            let current_text = if app.active_paths_tab == PathsTab::Match {
-                &app.generated_paths_m
-            } else {
-                &app.generated_paths_x
-            };
+        // ⚡ Helper rozwiązujący folder zapisu ze zmiennej out_path
+        let resolve_dir = |val: &Option<String>| -> String {
+            match val {
+                Some(v) if v == "AUTO" => "./other/".to_string(), // Jeśli AUTO, wrzuć do ./other/
+                Some(v) => {
+                    let mut p = v.replace('\\', "/");
+                    if !p.ends_with('/') { p.push('/'); }
+                    p
+                }
+                None => "./".to_string(), // Domyślnie główny folder projektu
+            }
+        };
 
-            cargo_plot::core::save::SaveFile::paths(current_text, &filepath, &tag, app.args.by, &i18n);
+        // ⚡ ZAPIS DLA -m
+        if ui.button(if is_pl { "💾 Zapisz (-m)" } else { "💾 Save (-m)" }).clicked() {
+            let tag = TimeTag::now();
+            let filepath = format!("{}plot-address_{}_M.md", resolve_dir(&app.args.out_path), tag);
+            let i18n = cargo_plot::i18n::I18n::new(app.args.lang);
+            cargo_plot::core::save::SaveFile::paths(&app.generated_paths_m, &filepath, &tag, app.args.by, &i18n);
+        }
+
+        ui.add_space(5.0);
+
+        // ⚡ ZAPIS DLA -x
+        if ui.button(if is_pl { "💾 Zapisz (-x)" } else { "💾 Save (-x)" }).clicked() {
+            let tag = TimeTag::now();
+            let filepath = format!("{}plot-address_{}_X.md", resolve_dir(&app.args.out_path), tag);
+            let i18n = cargo_plot::i18n::I18n::new(app.args.lang);
+            cargo_plot::core::save::SaveFile::paths(&app.generated_paths_x, &filepath, &tag, app.args.by, &i18n);
         }
     });
 
     ui.separator();
 
-    // 2. DOLNA BELKA (ZAKŁADKI) - Przypinamy ją do dołu ekranu
+    // 2. DOLNA BELKA (ZAKŁADKI)
     egui::TopBottomPanel::bottom("paths_subtabs").show_inside(ui, |ui| {
         ui.add_space(8.0);
         ui.horizontal(|ui| {
             
-            // ⚡ ZMIENIAMY TŁO TYLKO DLA LEWEGO GUZIKA (MATCH)
             if app.active_paths_tab == PathsTab::Match {
-                ui.visuals_mut().selection.bg_fill = egui::Color32::from_rgb(255, 215, 0); // Złoty
+                ui.visuals_mut().selection.bg_fill = egui::Color32::from_rgb(255, 215, 0); 
             }
-            // Jeśli aktywny jest Mismatch, egui użyje swojego domyślnego, nienaruszonego tła!
             
             let m_text = egui::RichText::new("✔ (-m) MATCH")
-                .size(18.0).strong().color(egui::Color32::from_rgb(138, 90, 255)); // Fiolet
+                .size(18.0).strong().color(egui::Color32::from_rgb(138, 90, 255)); 
             
             let x_text = egui::RichText::new("✖ (-x) MISMATCH")
-                .size(18.0).strong().color(egui::Color32::from_rgb(255, 80, 100)); // Czerwień
+                .size(18.0).strong().color(egui::Color32::from_rgb(255, 80, 100)); 
 
             ui.selectable_value(&mut app.active_paths_tab, PathsTab::Match, m_text);
             ui.add_space(20.0);
@@ -79,13 +91,11 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
         ui.add_space(8.0);
     });
 
-    // 3. ŚRODKOWA PRZESTRZEŃ (NOTATNIK) - Wypełnia całą resztę miejsca między górą a dołem
+    // 3. NOTATNIK
     egui::CentralPanel::default().show_inside(ui, |ui| {
         egui::ScrollArea::both().show(ui, |ui| {
-            // ⚡ Wyłączamy łamanie wierszy - włącza się poziomy scroll!
             ui.style_mut().wrap_mode = Some(egui::TextWrapMode::Extend);
             
-            // Wybieramy odpowiedni bufor tekstowy do edycji i podglądu
             let text_buffer = match app.active_paths_tab {
                 PathsTab::Match => &mut app.generated_paths_m,
                 PathsTab::Mismatch => &mut app.generated_paths_x,
@@ -94,8 +104,7 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
             ui.add(
                 egui::TextEdit::multiline(text_buffer)
                     .font(egui::TextStyle::Monospace)
-                    .desired_width(f32::INFINITY) // Rozciąga na max szerokość
-                    // desired_rows() usunięte - teraz bierze całą wolną wysokość okna!
+                    .desired_width(f32::INFINITY)
             );
         });
     });

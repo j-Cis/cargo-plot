@@ -43,7 +43,7 @@ pub struct CargoPlotApp {
 
 impl CargoPlotApp {
     pub fn new(args: CliArgs) -> Self {
-        let default_out = args.out_path.clone().unwrap_or_default(); 
+        let default_out = args.dir_out.clone().unwrap_or_default();
         Self {
             args,
             active_tab: Tab::Settings,

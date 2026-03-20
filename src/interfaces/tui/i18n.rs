@@ -36,8 +36,9 @@ pub enum Prompt {
     SubSelectView,
     SubSelectSort,
     SubNoRoot,
-    SubOutPaths,
-    SubOutCode,
+    SubDirOut,
+    SubSaveAddress,
+    SubSaveArchive,
     SubBy,
     SubOnMatch,
     SubOnMismatch,
@@ -124,13 +125,17 @@ impl Translatable for Prompt {
                 pol: "Ukryć główny folder? / Hide root dir?",
                 eng: "Ukryć główny folder? / Hide root dir?",
             },
-            Prompt::SubOutPaths => Txt {
-                pol: "Plik na ścieżki (puste=Brak, AUTO=domyślny) / Paths output file:",
-                eng: "Plik na ścieżki (puste=Brak, AUTO=domyślny) / Paths output file:",
+            Prompt::SubDirOut => Txt {
+                pol: "Folder zapisu (--dir-out) [puste=CWD, AUTO=./other/]:",
+                eng: "Output folder (--dir-out) [empty=CWD, AUTO=./other/]:",
             },
-            Prompt::SubOutCode => Txt {
-                pol: "Plik na kod (puste=Brak, AUTO=domyślny) / Code output file:",
-                eng: "Plik na kod (puste=Brak, AUTO=domyślny) / Code output file:",
+            Prompt::SubSaveAddress => Txt {
+                pol: "Zapisywać listę ścieżek (--save-address)?",
+                eng: "Save paths list (--save-address)?",
+            },
+            Prompt::SubSaveArchive => Txt {
+                pol: "Zapisywać kody źródłowe (--save-archive)?",
+                eng: "Save source codes (--save-archive)?",
             },
             Prompt::SubBy => Txt {
                 pol: "Dodać stopkę na dole pliku? / Add info footer?",

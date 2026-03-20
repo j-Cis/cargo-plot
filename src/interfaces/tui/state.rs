@@ -17,11 +17,15 @@ impl StateTui {
                 patterns: vec![],
                 sort: CliSortStrategy::AzFileMerge,
                 view: CliViewMode::Tree,
-                include: true, // Domyślnie pokazujemy dopasowania (-m)
+                include: true, 
                 exclude: false,
-                out_path: None,
-                out_code: None,
+                dir_out: None,
+                save_address: false,
+                save_archive: false,
                 by: false,
+                tui: true,
+                unit: crate::interfaces::cli::args::CliUnitSystem::Bin,
+                all: false,
                 ignore_case: false,
                 no_root: false,
                 info: true, // Domyślnie włączamy statystyki (-i)

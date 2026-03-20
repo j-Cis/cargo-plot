@@ -6,22 +6,28 @@ use cargo_plot::core::path_view::ViewMode;
 use cargo_plot::core::save::SaveFile;
 use cargo_plot::execute::{self, SortStrategy};
 use cargo_plot::i18n::I18n;
-// use cargo_plot::theme::for_path_list::get_icon_for_path;
 
-/// [ENG]: The execution engine (Cockpit).
-/// [POL]: Silnik wykonawczy (Kokpit).
+// [ENG]: ⚙️ Main execution engine coordinating the scanning and rendering process.
+// [POL]: ⚙️ Główny silnik wykonawczy koordynujący proces skanowania i renderowania.
 pub fn run(args: CliArgs) {
+    // [ENG]: 📝 Reconstructs the command string for the footer.
+    // [POL]: 📝 Odtwarza ciąg komendy dla stopki.
+    let cmd_string = args.to_command_string();
     let i18n = I18n::new(args.lang);
     let is_case_sensitive = !args.ignore_case;
     let sort_strategy: SortStrategy = args.sort.into();
     let view_mode: ViewMode = args.view.into();
 
+    // [ENG]: 🎚️ Determines the display mode based on include (-m) and exclude (-x) flags.
+    // [POL]: 🎚️ Ustala tryb wyświetlania na podstawie flag włączania (-m) i wykluczania (-x).
     let show_mode = match (args.include, args.exclude) {
-        (true, false) => ShowMode::Include, // Tylko flaga -m
-        (false, true) => ShowMode::Exclude, // Tylko flaga -x
-        _ => ShowMode::Context,             // Brak flag (lub podane obie) = pokazujemy wszystko
+        (true, false) => ShowMode::Include, 
+        (false, true) => ShowMode::Exclude, 
+        _ => ShowMode::Context,             
     };
 
+    // [ENG]: 🚀 Executes the core matching logic.
+    // [POL]: 🚀 Wykonuje główną logikę dopasowywania.
     let stats = execute::execute(
         &args.enter_path,
         &args.patterns,
@@ -33,95 +39,92 @@ pub fn run(args: CliArgs) {
         args.info,
         args.no_emoji,
         &i18n,
-        |_| {}, //  Closure są puste, bo renderujemy PO zebraniu statystyk
+        |_| {}, 
         |_| {},
-        // |file_stat| {
-        //     if !args.treeview {
-        //         println!(
-        //             "✅ MATCH:  {} {} ({} B)",
-        //             get_icon_for_path(&file_stat.path),
-        //             file_stat.path,
-        //             file_stat.weight_bytes
-        //         );
-        //     }
-        // },
-        // |file_stat| {
-        //     if !args.treeview && show_exclude {
-        //         println!(
-        //             "❌ REJECT: {} {} ({} B)",
-        //             get_icon_for_path(&file_stat.path),
-        //             file_stat.path,
-        //             file_stat.weight_bytes
-        //         );
-        //     }
-        // },
     );
 
-    // 2. RENDEROWANIE WYNIKÓW
+    // [ENG]: 🖥️ Renders the output to the terminal with ANSI colors.
+    // [POL]: 🖥️ Renderuje wynik do terminala z użyciem kolorów ANSI.
     let output_str_cli = stats.render_output(view_mode, show_mode, args.info, true);
     print!("{}", output_str_cli);
 
-    let has_out_paths = args.out_path.is_some();
-    let has_out_codes = args.out_code.is_some();
-
-    if has_out_paths || has_out_codes {
+    // [ENG]: 💾 Handles file saving if address or archive flags are active.
+    // [POL]: 💾 Obsługuje zapis do plików, jeśli aktywne są flagi adresu lub archiwum.
+    if args.save_address || args.save_archive {
         let tag = TimeTag::now();
-        let output_str_txt = stats.render_output(view_mode, show_mode, args.info, false);
+        
+        // [ENG]: 📄 Renders plain text for Markdown output.
+        // [POL]: 📄 Renderuje czysty tekst dla wyjścia w formacie Markdown.
+        let output_str_txt_m = stats.render_output(view_mode, ShowMode::Include, args.info, false);
+        let output_str_txt_x = stats.render_output(view_mode, ShowMode::Exclude, args.info, false);
 
-        // Closure do automatycznego generowania ścieżki
-        let resolve_filepath = |val: &str, prefix: &str| -> String {
-            if val == "AUTO" {
-                format!("./other/{}_{}.md", prefix, tag)
-            } else if val.ends_with('/') || val.ends_with('\\') {
-                format!("{}{}_{}.md", val, prefix, tag)
-            } else {
-                let path = std::path::Path::new(val);
-                let stem = path.file_stem().unwrap_or_default().to_string_lossy();
-                let ext = path.extension().unwrap_or_default().to_string_lossy();
-                let parent = path.parent().unwrap_or_else(|| std::path::Path::new(""));
-
-                let parent_str = parent.to_string_lossy().replace('\\', "/");
-                let ext_str = if ext.is_empty() {
-                    String::new()
-                } else {
-                    format!(".{}", ext)
-                };
-                let stem_str = if stem.is_empty() { prefix } else { &stem };
-                if parent_str.is_empty() {
-                    format!("{}_{}{}", stem_str, tag, ext_str)
-                } else {
-                    format!("{}/{}_{}{}", parent_str, stem_str, tag, ext_str)
+        // [ENG]: 📂 Resolves the output directory path.
+        // [POL]: 📂 Rozwiązuje ścieżkę katalogu wyjściowego.
+        let resolve_dir = |val: &Option<String>| -> String {
+            match val {
+                Some(v) if v == "AUTO" => "./other/".to_string(), 
+                Some(v) => {
+                    let mut p = v.replace('\\', "/");
+                    if !p.ends_with('/') { p.push('/'); }
+                    p
                 }
+                None => "./".to_string(), 
             }
         };
 
-        if let Some(val) = &args.out_path {
-            let filepath = resolve_filepath(val, "paths");
-            // ⚡ CZYSTE WYWOŁANIE: podajemy args.by
-            SaveFile::paths(&output_str_txt, &filepath, &tag, args.by, &i18n);
+        let output_dir = resolve_dir(&args.dir_out);
+
+        // [ENG]: 📝 Saves the path structure (address).
+        // [POL]: 📝 Zapisuje strukturę ścieżek (adres).
+        if args.save_address {
+            if args.include || (!args.include && !args.exclude) {
+                let filepath = format!("{}plot-address_{}_M.md", output_dir, tag);
+                SaveFile::paths(&output_str_txt_m, &filepath, &tag, args.by, &i18n, &cmd_string);
+            }
+            if args.exclude || (!args.include && !args.exclude) {
+                let filepath = format!("{}plot-address_{}_X.md", output_dir, tag);
+                SaveFile::paths(&output_str_txt_x, &filepath, &tag, args.by, &i18n, &cmd_string);
+            }
         }
 
-        if let Some(val) = &args.out_code {
-            let filepath = resolve_filepath(val, "cache");
+        // [ENG]: 📦 Saves the full file contents (archive).
+        // [POL]: 📦 Zapisuje pełną zawartość plików (archiwum).
+        if args.save_archive {
             if let Ok(ctx) = PathContext::resolve(&args.enter_path) {
-                // ⚡ CZYSTE WYWOŁANIE: podajemy args.by
-                SaveFile::codes(
-                    &output_str_txt,
-                    &stats.m_matched.paths,
-                    &ctx.entry_absolute,
-                    &filepath,
-                    &tag,
-                    args.by,
-                    &i18n,
-                );
+                if args.include || (!args.include && !args.exclude) {
+                    let filepath = format!("{}plot-archive_{}_M.md", output_dir, tag);
+                    SaveFile::codes(
+                        &output_str_txt_m, 
+                        &stats.m_matched.paths, 
+                        &ctx.entry_absolute, 
+                        &filepath, 
+                        &tag, 
+                        args.by, 
+                        &i18n, 
+                        &cmd_string
+                    );
+                }
+                if args.exclude || (!args.include && !args.exclude) {
+                    let filepath = format!("{}plot-archive_{}_X.md", output_dir, tag);
+                    SaveFile::codes(
+                        &output_str_txt_x, 
+                        &stats.x_mismatched.paths, 
+                        &ctx.entry_absolute, 
+                        &filepath, 
+                        &tag, 
+                        args.by, 
+                        &i18n, 
+                        &cmd_string
+                    );
+                }
             }
         }
     }
 
-    // 3. PODSUMOWANIE
+    // [ENG]: 📊 Prints summary statistics if info flag is active.
+    // [POL]: 📊 Wyświetla statystyki podsumowujące, jeśli aktywna jest flaga info.
     if args.info {
         println!("---------------------------------------");
-        // ⚡ PODMIENIONO NA WYWOŁANIA Z I18N
         println!(
             "{}",
             i18n.cli_summary_matched(stats.m_size_matched, stats.total)

@@ -17,6 +17,7 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
             ui.radio_value(&mut app.args.lang, Some(Lang::En), "English");
         });
         ui.separator();
+        ui.add_space(10.0);
 
         // 2. WYBÓR FOLDERU (Z działającym przyciskiem okna systemowego)
         ui.horizontal(|ui| {
@@ -30,8 +31,69 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
                     app.args.enter_path = folder.to_string_lossy().replace('\\', "/");
                 }
         });
+        ui.add_space(10.0);
         ui.separator();
 
+
+        // ⚡ NOWOŚĆ: ŚCIEŻKA WYNIKOWA (Output path)
+        ui.add_space(10.0);
+        ui.horizontal(|ui| {
+            ui.label(if is_pl { "💾 Folder zapisu (Output):" } else { "💾 Output folder:" });
+            
+            // Używamy `out_path_input` z gui.rs jako wspólnego bufora tekstowego
+            if ui.text_edit_singleline(&mut app.out_path_input).changed() {
+                let trimmed = app.out_path_input.trim();
+                app.args.dir_out = if trimmed.is_empty() { None } else { Some(trimmed.to_string()) };
+            }
+            
+            if ui.button(if is_pl { "Wybierz folder..." } else { "Browse folder..." }).clicked() {
+                if let Some(folder) = rfd::FileDialog::new().pick_folder() {
+                    let mut path = folder.to_string_lossy().replace('\\', "/");
+                    if !path.ends_with('/') { path.push('/'); }
+                    
+                    app.out_path_input = path.clone();
+                    app.args.dir_out = Some(path);
+                }
+            }
+        });
+        ui.add_space(10.0);
+        ui.separator();
+
+        // 5. WIDOK I SORTOWANIE
+        ui.horizontal(|ui| {
+            egui::ComboBox::from_label(if is_pl { "Sortowanie" } else { "Sorting" })
+                .selected_text(format!("{:?}", app.args.sort))
+                .show_ui(ui, |ui| {
+                    // ⚡ PEŁNA LISTA SORTOWAŃ
+                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzFileMerge, "AzFileMerge");
+                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::ZaFileMerge, "ZaFileMerge");
+                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzDirMerge, "AzDirMerge");
+                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::ZaDirMerge, "ZaDirMerge");
+                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzFile, "AzFile");
+                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::ZaFile, "ZaFile");
+                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzDir, "AzDir");
+                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::ZaDir, "ZaDir");
+                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::Az, "Az");
+                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::Za, "Za");
+                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::None, "None");
+                });
+
+            ui.add_space(15.0);
+
+            egui::ComboBox::from_label(if is_pl { "Tryb widoku" } else { "View mode" })
+                .selected_text(format!("{:?}", app.args.view))
+                .show_ui(ui, |ui| {
+                    ui.selectable_value(&mut app.args.view, CliViewMode::Tree, "Tree");
+                    ui.selectable_value(&mut app.args.view, CliViewMode::List, "List");
+                    ui.selectable_value(&mut app.args.view, CliViewMode::Grid, "Grid");
+                });
+
+            ui.add_space(15.0);
+            
+            ui.checkbox(&mut app.args.no_root, if is_pl { "Ukryj ROOT w drzewie" } else { "Hide ROOT in tree" });
+        });
+        
+        ui.add_space(20.0);
         // 3. WZORCE DOPASOWAŃ (Z połączonymi opcjami z linii "X")
         ui.heading(if is_pl { "🔍 Wzorce dopasowań (Patterns)" } else { "🔍 Match Patterns" });
         
@@ -93,68 +155,10 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
         });
         ui.separator();
 
-        // 5. WIDOK I SORTOWANIE
-        ui.horizontal(|ui| {
-            egui::ComboBox::from_label(if is_pl { "Sortowanie" } else { "Sorting" })
-                .selected_text(format!("{:?}", app.args.sort))
-                .show_ui(ui, |ui| {
-                    // ⚡ PEŁNA LISTA SORTOWAŃ
-                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzFileMerge, "AzFileMerge");
-                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::ZaFileMerge, "ZaFileMerge");
-                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzDirMerge, "AzDirMerge");
-                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::ZaDirMerge, "ZaDirMerge");
-                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzFile, "AzFile");
-                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::ZaFile, "ZaFile");
-                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzDir, "AzDir");
-                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::ZaDir, "ZaDir");
-                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::Az, "Az");
-                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::Za, "Za");
-                    ui.selectable_value(&mut app.args.sort, CliSortStrategy::None, "None");
-                });
+        
+        
 
-            ui.add_space(15.0);
-
-            egui::ComboBox::from_label(if is_pl { "Tryb widoku" } else { "View mode" })
-                .selected_text(format!("{:?}", app.args.view))
-                .show_ui(ui, |ui| {
-                    ui.selectable_value(&mut app.args.view, CliViewMode::Tree, "Tree");
-                    ui.selectable_value(&mut app.args.view, CliViewMode::List, "List");
-                    ui.selectable_value(&mut app.args.view, CliViewMode::Grid, "Grid");
-                });
-
-            ui.add_space(15.0);
-            
-            ui.checkbox(&mut app.args.no_root, if is_pl { "Ukryj ROOT w drzewie" } else { "Hide ROOT in tree" });
-        });
-
-        // ⚡ NOWOŚĆ: ŚCIEŻKA WYNIKOWA (Output path)
-        ui.add_space(10.0);
-        ui.horizontal(|ui| {
-            ui.label(if is_pl { "💾 Folder zapisu (Output):" } else { "💾 Output folder:" });
-            
-            // Używamy `out_path_input` z gui.rs jako wspólnego bufora tekstowego
-            if ui.text_edit_singleline(&mut app.out_path_input).changed() {
-                let trimmed = app.out_path_input.trim();
-                let path_val = if trimmed.is_empty() { None } else { Some(trimmed.to_string()) };
-                // ⚡ Przypisujemy ten sam wpisany folder do obu flag w CLI
-                app.args.out_path = path_val.clone();
-                app.args.out_code = path_val;
-            }
-            
-            if ui.button(if is_pl { "Wybierz folder..." } else { "Browse folder..." }).clicked() {
-                if let Some(folder) = rfd::FileDialog::new().pick_folder() {
-                    let mut path = folder.to_string_lossy().replace('\\', "/");
-                    if !path.ends_with('/') { path.push('/'); } // Gwarantujemy, że to zawsze będzie traktowane jak folder
-                    
-                    app.out_path_input = path.clone();
-                    // ⚡ Przypisujemy wybrany folder do obu flag
-                    app.args.out_path = Some(path.clone());
-                    app.args.out_code = Some(path);
-                }
-            }
-        });
-
-        ui.add_space(30.0);
+        ui.add_space(50.0);
         
         // 6. STOPKA
         ui.separator();

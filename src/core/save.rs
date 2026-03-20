@@ -6,43 +6,18 @@ use std::path::Path;
 pub struct SaveFile;
 
 impl SaveFile {
-    fn generate_by_section(tag: &str, typ: &str, i18n: &I18n) -> String {
-        let raw_args: Vec<String> = std::env::args().collect();
-        let mut formatted_args = Vec::new();
-
-        // 1. Obsługa początku komendy (estetyka: zamiana ścieżki na "cargo plot")
-        formatted_args.push("cargo".to_string());
-
-        // Jeśli nie wywołaliśmy tego przez cargo (np. bezpośrednio binarkę),
-        // a w argumentach nie ma jeszcze "plot", dodajmy go dla czytelności raportu.
-        if !raw_args.iter().any(|a| a == "plot") {
-            formatted_args.push("plot".to_string());
-        }
-
-        // 2. Przetwarzanie reszty argumentów (pomijamy arg[0], bo to ścieżka do binarki)
-        for arg in raw_args.into_iter().skip(1) {
-            if arg.starts_with('-') || arg == "plot" || arg == "--" {
-                // Flagi i słowa kluczowe zostawiamy gołe
-                formatted_args.push(arg);
-            } else {
-                // Ścieżki, wartości i wzorce owijamy w cudzysłowy
-                formatted_args.push(format!("\"{}\"", arg.replace('\"', "\\\"")));
-            }
-        }
-
-        let command = formatted_args.join(" ");
-
+    // ⚡ Upubliczniamy funkcję, żeby kod w `code.rs` mógł wygenerować stopkę
+    pub fn generate_by_section(tag: &str, typ: &str, i18n: &I18n, cmd: &str) -> String {
         format!(
             "\n\n---\n---\n\n{}\n\n{}\n\n```bash\n{}\n```\n\n{}\n\n{}\n\n{}\n\n---\n",
             i18n.by_title(typ),
             i18n.by_cmd(),
-            command,
+            cmd, // ⚡ Używa czystej, przetworzonej komendy!
             i18n.by_instructions(),
             i18n.by_link(),
             i18n.by_version(tag)
         )
     }
-
     /// Wspólna logika zapisu do pliku (DRY): tworzenie folderów i zapis IO.
     fn write_to_disk(filepath: &str, content: &str, log_name: &str, i18n: &I18n) {
         let path = Path::new(filepath);
@@ -65,9 +40,9 @@ impl SaveFile {
         }
     }
     /// Formatowanie i zapis samego widoku struktury (ścieżek)
-    pub fn paths(content: &str, filepath: &str, tag: &str, add_by: bool, i18n: &I18n) {
+    pub fn paths(content: &str, filepath: &str, tag: &str, add_by: bool, i18n: &I18n, cmd: &str) {
         let by_section = if add_by {
-            Self::generate_by_section(tag, "paths", i18n)
+            Self::generate_by_section(tag, "paths", i18n, cmd)
         } else {
             String::new()
         };
@@ -97,16 +72,10 @@ impl SaveFile {
 
     /// Formatowanie i zapis pełnego cache (drzewo + zawartość plików)
     pub fn codes(
-        tree_text: &str,
-        paths: &[String],
-        base_dir: &str,
-        filepath: &str,
-        tag: &str,
-        add_by: bool,
-        i18n: &I18n,
+        tree_text: &str, paths: &[String], base_dir: &str, filepath: &str, tag: &str, add_by: bool, i18n: &I18n, cmd: &str,
     ) {
         let by_section = if add_by {
-            Self::generate_by_section(tag, "codes", i18n)
+            Self::generate_by_section(tag, "codes", i18n, cmd)
         } else {
             String::new()
         };

@@ -51,19 +51,20 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
         // ⚡ ZAPIS DLA -m
         if ui.button(if is_pl { "💾 Zapisz (-m)" } else { "💾 Save (-m)" }).clicked() {
             let tag = TimeTag::now();
-            let filepath = format!("{}plot-address_{}_M.md", resolve_dir(&app.args.out_path), tag);
+            let filepath = format!("{}plot-address_{}_M.md", resolve_dir(&app.args.dir_out), tag);
             let i18n = cargo_plot::i18n::I18n::new(app.args.lang);
-            cargo_plot::core::save::SaveFile::paths(&app.generated_paths_m, &filepath, &tag, app.args.by, &i18n);
+            let cmd_string = app.args.to_command_string(); // ⚡
+            cargo_plot::core::save::SaveFile::paths(&app.generated_paths_m, &filepath, &tag, app.args.by, &i18n, &cmd_string);
         }
 
         ui.add_space(5.0);
 
-        // ⚡ ZAPIS DLA -x
         if ui.button(if is_pl { "💾 Zapisz (-x)" } else { "💾 Save (-x)" }).clicked() {
             let tag = TimeTag::now();
-            let filepath = format!("{}plot-address_{}_X.md", resolve_dir(&app.args.out_path), tag);
+            let filepath = format!("{}plot-address_{}_X.md", resolve_dir(&app.args.dir_out), tag);
             let i18n = cargo_plot::i18n::I18n::new(app.args.lang);
-            cargo_plot::core::save::SaveFile::paths(&app.generated_paths_x, &filepath, &tag, app.args.by, &i18n);
+            let cmd_string = app.args.to_command_string(); // ⚡
+            cargo_plot::core::save::SaveFile::paths(&app.generated_paths_x, &filepath, &tag, app.args.by, &i18n, &cmd_string);
         }
     });
 

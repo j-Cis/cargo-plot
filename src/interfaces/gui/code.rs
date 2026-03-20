@@ -81,20 +81,29 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
         // ⚡ ZAPIS DLA -m
         if ui.button(if is_pl { "💾 Zapisz (-m)" } else { "💾 Save (-m)" }).clicked() {
             let tag = TimeTag::now();
-            let filepath = format!("{}plot-archive_{}_M.md", resolve_dir(&app.args.out_code), tag);
+            let filepath = format!("{}plot-archive_{}_M.md", resolve_dir(&app.args.dir_out), tag);
             let mut final_text = app.generated_code_m.clone();
-            if app.args.by { final_text.push_str(&format!("\n\n---\n**Wersja raportu:** {}\n---", tag)); }
+            
+            if app.args.by { 
+                let i18n = cargo_plot::i18n::I18n::new(app.args.lang);
+                let cmd_string = app.args.to_command_string();
+                final_text.push_str(&cargo_plot::core::save::SaveFile::generate_by_section(&tag, "codes", &i18n, &cmd_string)); 
+            }
             let _ = std::fs::write(&filepath, final_text);
         }
 
         ui.add_space(5.0);
 
-        // ⚡ ZAPIS DLA -x
         if ui.button(if is_pl { "💾 Zapisz (-x)" } else { "💾 Save (-x)" }).clicked() {
             let tag = TimeTag::now();
-            let filepath = format!("{}plot-archive_{}_X.md", resolve_dir(&app.args.out_code), tag);
+            let filepath = format!("{}plot-archive_{}_X.md", resolve_dir(&app.args.dir_out), tag);
             let mut final_text = app.generated_code_x.clone();
-            if app.args.by { final_text.push_str(&format!("\n\n---\n**Wersja raportu:** {}\n---", tag)); }
+            
+            if app.args.by { 
+                let i18n = cargo_plot::i18n::I18n::new(app.args.lang);
+                let cmd_string = app.args.to_command_string();
+                final_text.push_str(&cargo_plot::core::save::SaveFile::generate_by_section(&tag, "codes", &i18n, &cmd_string)); 
+            }
             let _ = std::fs::write(&filepath, final_text);
         }
     });

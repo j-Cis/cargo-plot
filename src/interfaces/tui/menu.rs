@@ -49,14 +49,10 @@ pub fn menu_main(s: &mut StateTui) {
             !s.args.no_root
         );
 
-        let out_p = s.args.out_path.as_deref().unwrap_or("NONE");
-        let out_c = s.args.out_code.as_deref().unwrap_or("NONE");
+        let out_p = s.args.dir_out.as_deref().unwrap_or("AUTO");
         let lbl_out = format!(
-            "{} (paths: {}, cache: {}, by: {})",
-            t.fmt(Prompt::BtnOutput),
-            out_p,
-            out_c,
-            s.args.by
+            "{} (dir-out: {}, address: {}, archive: {}, by: {})",
+            t.fmt(Prompt::BtnOutput), out_p, s.args.save_address, s.args.save_archive, s.args.by
         );
 
         let lbl_filt = format!(
@@ -267,25 +263,21 @@ fn handle_view(s: &mut StateTui, t: &T) {
 }
 
 fn handle_output(s: &mut StateTui, t: &T) {
-    let out_p: String = cliclack::input(t.raw(Prompt::SubOutPaths))
-        .default_input(s.args.out_path.as_deref().unwrap_or(""))
+    let out_p: String = cliclack::input(t.raw(Prompt::SubDirOut))
+        .default_input(s.args.dir_out.as_deref().unwrap_or(""))
         .interact()
         .unwrap_or_default();
-    s.args.out_path = if out_p.trim().is_empty() {
-        None
-    } else {
-        Some(out_p.trim().to_string())
-    };
+    s.args.dir_out = if out_p.trim().is_empty() { None } else { Some(out_p.trim().to_string()) };
 
-    let out_c: String = cliclack::input(t.raw(Prompt::SubOutCode))
-        .default_input(s.args.out_code.as_deref().unwrap_or(""))
+    s.args.save_address = cliclack::confirm(t.raw(Prompt::SubSaveAddress))
+        .initial_value(s.args.save_address)
         .interact()
-        .unwrap_or_default();
-    s.args.out_code = if out_c.trim().is_empty() {
-        None
-    } else {
-        Some(out_c.trim().to_string())
-    };
+        .unwrap_or(s.args.save_address);
+
+    s.args.save_archive = cliclack::confirm(t.raw(Prompt::SubSaveArchive))
+        .initial_value(s.args.save_archive)
+        .interact()
+        .unwrap_or(s.args.save_archive);
 
     s.args.by = cliclack::confirm(t.raw(Prompt::SubBy))
         .initial_value(s.args.by)

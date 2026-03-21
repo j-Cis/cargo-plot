@@ -1,23 +1,16 @@
-// Plik: src/main.rs
-use clap::Parser;
-use std::env;
+// [ENG]: Main entry point switching between interfaces.
+// [POL]: Główny punkt wejścia przełączający między interfejsami.
 
-mod cli;
-mod tui;
+#![allow(clippy::pedantic, clippy::struct_excessive_bools)]
+
+mod interfaces;
 
 fn main() {
-    // [QoL Fix]: Jeśli uruchomiono binarkę bez żadnych argumentów (np. czyste `cargo run`
-    // lub podwójne kliknięcie na cargo-plot.exe), pomijamy walidację Clapa i odpalamy TUI.
-    if env::args().len() <= 1 {
-        tui::run_tui();
-        return;
-    }
+    // [ENG]: Register an empty Ctrl+C handler to prevent abrupt termination.
+    // [POL]: Rejestrujemy pusty handler Ctrl+C, zapobiegając natychmiastowemu zabiciu programu.
+    ctrlc::set_handler(move || {}).expect("Błąd podczas ustawiania handlera Ctrl+C");
 
-    // Jeśli są argumenty, pozwalamy Clapowi je sparsować (wymaga słowa 'plot')
-    let cli::args::CargoCli::Plot(plot_args) = cli::args::CargoCli::parse();
-
-    match plot_args.command {
-        Some(cmd) => cli::run_command(cmd),
-        None => tui::run_tui(), // Zadziała np. dla `cargo run -- plot`
-    }
+    // [ENG]: Pass execution directly to the CLI parser and router.
+    // [POL]: Przekazanie wykonania bezpośrednio do parsera i routera CLI.
+    interfaces::cli::run_cli();
 }

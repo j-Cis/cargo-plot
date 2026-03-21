@@ -161,6 +161,8 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
 
                 ui.add_space(15.0);
                 ui.checkbox(&mut app.args.no_root, gt.t(GT::LabelNoRoot));
+                ui.add_space(15.0);
+                ui.checkbox(&mut app.args.all, "Fizyczna waga folderów (-a)");
             });
 
             ui.add_space(20.0);

@@ -44,6 +44,7 @@ pub fn get_path_weight(path: &Path, sum_included_only: bool) -> u64 {
         return metadata.len();
     }
 
+    // ⚡ Jeśli sum_included_only jest false (flaga -a), liczymy rekurencyjnie fizyczny rozmiar
     if metadata.is_dir() && !sum_included_only {
         return get_dir_size(path);
     }

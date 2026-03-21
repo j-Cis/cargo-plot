@@ -1,5 +1,6 @@
-use crate::interfaces::cli::args::CliArgs;
+use crate::interfaces::cli::args::{CliArgs, CliUnitSystem};
 use cargo_plot::addon::TimeTag;
+use cargo_plot::core::file_stats::weight::{WeightConfig, UnitSystem};
 use cargo_plot::core::path_matcher::stats::ShowMode;
 use cargo_plot::core::path_store::PathContext;
 use cargo_plot::core::path_view::ViewMode;
@@ -7,15 +8,27 @@ use cargo_plot::core::save::SaveFile;
 use cargo_plot::execute::{self, SortStrategy};
 use cargo_plot::i18n::I18n;
 
-// [ENG]: ⚙️ Main execution engine coordinating the scanning and rendering process.
-// [POL]: ⚙️ Główny silnik wykonawczy koordynujący proces skanowania i renderowania.
+/// [ENG]: ⚙️ Main execution engine coordinating the scanning and rendering process.
+/// [POL]: ⚙️ Główny silnik wykonawczy koordynujący proces skanowania i renderowania.
 pub fn run(args: CliArgs) {
-    // [ENG]: 📝 Reconstructs the command string for the footer.
-    // [POL]: 📝 Odtwarza ciąg komendy dla stopki.
+    // [ENG]: 📝 Initialize i18n and resolve basic flags.
+    // [POL]: 📝 Inicjalizacja i18n i rozwiązanie podstawowych flag.
     let i18n = I18n::new(args.lang);
     let is_case_sensitive = !args.ignore_case;
     let sort_strategy: SortStrategy = args.sort.into();
     let view_mode: ViewMode = args.view.into();
+
+    // [ENG]: ⚖️ Define weight calculation rules based on unit and 'all' flags.
+    // [POL]: ⚖️ Definicja reguł obliczania wagi na podstawie flag jednostki oraz 'all'.
+    let weight_cfg = WeightConfig {
+        system: match args.unit {
+            CliUnitSystem::Bin => UnitSystem::Binary,
+            CliUnitSystem::Dec => UnitSystem::Decimal,
+        },
+        // [POL]: Jeśli 'all' (-a) jest true, liczymy fizyczną wagę z dysku dla folderów.
+        dir_sum_included: !args.all, 
+        ..WeightConfig::default()
+    };
 
     // [ENG]: 🎚️ Determines the display mode based on include (-m) and exclude (-x) flags.
     // [POL]: 🎚️ Ustala tryb wyświetlania na podstawie flag włączania (-m) i wykluczania (-x).
@@ -25,8 +38,8 @@ pub fn run(args: CliArgs) {
         _ => ShowMode::Context,
     };
 
-    // [ENG]: 🚀 Executes the core matching logic.
-    // [POL]: 🚀 Wykonuje główną logikę dopasowywania.
+    // [ENG]: 🚀 Executes the core matching logic with prepared weight configuration.
+    // [POL]: 🚀 Wykonuje główną logikę dopasowywania z przygotowaną konfiguracją wagi.
     let stats = execute::execute(
         &args.enter_path,
         &args.patterns,
@@ -34,6 +47,7 @@ pub fn run(args: CliArgs) {
         sort_strategy,
         show_mode,
         view_mode,
+        weight_cfg, // ⚡ WSTRZYKNIĘTE
         args.no_root,
         args.info,
         args.no_emoji,
@@ -84,13 +98,11 @@ pub fn run(args: CliArgs) {
         // [POL]: 📝 Zapisuje strukturę ścieżek (adres).
         if args.save_address {
             if args.include || !args.exclude {
-                // (kod pozostaje bez zmian)
                 let filepath = format!("{}plot-address_{}_M.md", output_dir, tag);
                 let cmd_m = args.to_command_string(true, false, true, false);
                 SaveFile::paths(&output_str_txt_m, &filepath, &tag, args.by, &i18n, &cmd_m, &args.enter_path);
             }
             if args.exclude || !args.include {
-                // (kod pozostaje bez zmian)
                 let filepath = format!("{}plot-address_{}_X.md", output_dir, tag);
                 let cmd_x = args.to_command_string(false, true, true, false);
                 SaveFile::paths(&output_str_txt_x, &filepath, &tag, args.by, &i18n, &cmd_x, &args.enter_path);
@@ -101,13 +113,11 @@ pub fn run(args: CliArgs) {
         // [POL]: 📦 Zapisuje pełną zawartość plików (archiwum).
         if args.save_archive && let Ok(ctx) = PathContext::resolve(&args.enter_path) {
             if args.include || !args.exclude {
-                // (kod pozostaje bez zmian)
                 let filepath = format!("{}plot-archive_{}_M.md", output_dir, tag);
                 let cmd_m = args.to_command_string(true, false, false, true);
                 SaveFile::codes(&output_str_txt_m, &stats.m_matched.paths, &ctx.entry_absolute, &filepath, &tag, args.by, &i18n, &cmd_m, &args.enter_path);
             }
             if args.exclude || !args.include {
-                // (kod pozostaje bez zmian)
                 let filepath = format!("{}plot-archive_{}_X.md", output_dir, tag);
                 let cmd_x = args.to_command_string(false, true, false, true);
                 SaveFile::codes(&output_str_txt_x, &stats.x_mismatched.paths, &ctx.entry_absolute, &filepath, &tag, args.by, &i18n, &cmd_x, &args.enter_path);

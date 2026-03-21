@@ -2,6 +2,7 @@ pub mod code;
 pub mod i18n;
 pub mod paths;
 pub mod settings;
+pub mod shared;
 
 use crate::interfaces::cli::args::CliArgs;
 use eframe::egui;

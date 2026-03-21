@@ -35,12 +35,12 @@ pub struct CliArgs {
 
     /// [ENG]: ✔️ Treat patterns as match (include) rules.
     /// [POL]: ✔️ Traktuj wzorce jako zasady dopasowania (włącz).
-    #[arg(short = 'm', long = "pat-match")]
+    #[arg(short = 'm', long = "pat-match", required_unless_present_any = ["exclude", "gui", "tui"])]
     pub include: bool,
 
     /// [ENG]: ❌ Treat patterns as mismatch (exclude) rules.
     /// [POL]: ❌ Traktuj wzorce jako zasady odrzucenia (wyklucz).
-    #[arg(short = 'x', long = "pat-mismatch")]
+    #[arg(short = 'x', long = "pat-mismatch", required_unless_present_any = ["include", "gui", "tui"])]
     pub exclude: bool,
 
     /// [ENG]: 🔠 Ignore case sensitivity in patterns.
@@ -173,7 +173,7 @@ impl From<CliViewMode> for ViewMode {
 impl CliArgs {
     /// [ENG]: Reconstructs a clean terminal command string.
     /// [POL]: Odtwarza czystą komendę terminalową.
-    pub fn to_command_string(&self) -> String {
+    pub fn to_command_string(&self, is_m: bool, is_x: bool, is_address: bool, is_archive: bool) -> String {
         let mut cmd = vec!["cargo".to_string(), "plot".to_string()];
 
         if self.enter_path != "." && !self.enter_path.is_empty() {
@@ -185,23 +185,24 @@ impl CliArgs {
             cmd.push("-o".to_string());
             if dir != "AUTO" {
                 cmd.push(format!("\"{}\"", dir));
+            } else {
+                cmd.push("AUTO".to_string());
             }
         }
 
+        // ⚡ POPRAWKA 1: Wzorce -p są teraz iterowane i dodawane osobno
         if !self.patterns.is_empty() {
-            cmd.push("-p".to_string());
-            cmd.push(format!("\"{}\"", self.patterns.join(",")));
+            for pattern in &self.patterns {
+                cmd.push("-p".to_string());
+                cmd.push(format!("\"{}\"", pattern));
+            }
         }
 
-        if self.include {
-            cmd.push("-m".to_string());
-        }
-        if self.exclude {
-            cmd.push("-x".to_string());
-        }
-        if self.ignore_case {
-            cmd.push("-c".to_string());
-        }
+        // ⚡ GWARANCJA POPRAWNOŚCI: Komenda idealnie dopasowana do zapisywanego pliku
+        if is_m { cmd.push("-m".to_string()); }
+        if is_x { cmd.push("-x".to_string()); }
+        
+        if self.ignore_case { cmd.push("-c".to_string()); }
 
         if self.sort != CliSortStrategy::AzFileMerge {
             let sort_str = match self.sort {
@@ -231,33 +232,20 @@ impl CliArgs {
             cmd.push(view_str.to_string());
         }
 
-        if self.save_address {
-            cmd.push("--save-address".to_string());
-        }
-        if self.save_archive {
-            cmd.push("--save-archive".to_string());
-        }
-        if self.by {
-            cmd.push("-b".to_string());
-        }
-        if self.no_root {
-            cmd.push("--treeview-no-root".to_string());
-        }
-        if self.info {
-            cmd.push("-i".to_string());
-        }
-        if self.no_emoji {
-            cmd.push("--no-emoji".to_string());
-        }
-        if self.all {
-            cmd.push("-a".to_string());
-        }
-
+        // ⚡ GWARANCJA POPRAWNOŚCI: Wymuszamy flagi zapisu zależnie od tego, z jakiego miejsca generujemy raport
+        if self.save_address || is_address { cmd.push("--save-address".to_string()); }
+        if self.save_archive || is_archive { cmd.push("--save-archive".to_string()); }
+        if self.by { cmd.push("-b".to_string()); }
+        if self.no_root { cmd.push("--treeview-no-root".to_string()); }
+        if self.info { cmd.push("-i".to_string()); }
+        if self.no_emoji { cmd.push("--no-emoji".to_string()); }
+        if self.all { cmd.push("-a".to_string()); }
+        
         if self.unit != CliUnitSystem::Bin {
             cmd.push("-u".to_string());
             cmd.push("dec".to_string());
         }
-
+        
         if let Some(l) = &self.lang {
             cmd.push("--lang".to_string());
             match l {

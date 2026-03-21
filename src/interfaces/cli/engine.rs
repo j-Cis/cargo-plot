@@ -12,7 +12,6 @@ use cargo_plot::i18n::I18n;
 pub fn run(args: CliArgs) {
     // [ENG]: 📝 Reconstructs the command string for the footer.
     // [POL]: 📝 Odtwarza ciąg komendy dla stopki.
-    let cmd_string = args.to_command_string();
     let i18n = I18n::new(args.lang);
     let is_case_sensitive = !args.ignore_case;
     let sort_strategy: SortStrategy = args.sort.into();
@@ -58,48 +57,35 @@ pub fn run(args: CliArgs) {
         let output_str_txt_m = stats.render_output(view_mode, ShowMode::Include, args.info, false);
         let output_str_txt_x = stats.render_output(view_mode, ShowMode::Exclude, args.info, false);
 
-        // [ENG]: 📂 Resolves the output directory path.
-        // [POL]: 📂 Rozwiązuje ścieżkę katalogu wyjściowego.
-        let resolve_dir = |val: &Option<String>| -> String {
-            match val {
-                Some(v) if v == "AUTO" => "./other/".to_string(),
-                Some(v) => {
-                    let mut p = v.replace('\\', "/");
-                    if !p.ends_with('/') {
-                        p.push('/');
-                    }
-                    p
-                }
-                None => "./".to_string(),
+        // [ENG]: 📂 Resolves the output directory path to .cargo-plot/ by default.
+        // [POL]: 📂 Rozwiązuje ścieżkę katalogu wyjściowego (domyślnie na .cargo-plot/).
+        let resolve_dir = |val: &Option<String>, base_path: &str| -> String {
+            let is_auto = val.as_ref().map_or(true, |v| v.trim().is_empty() || v == "AUTO");
+            if is_auto {
+                let mut b = base_path.replace('\\', "/");
+                if !b.ends_with('/') { b.push('/'); }
+                format!("{}.cargo-plot/", b)
+            } else {
+                let mut p = val.as_ref().unwrap().replace('\\', "/");
+                if !p.ends_with('/') { p.push('/'); }
+                p
             }
         };
 
-        let output_dir = resolve_dir(&args.dir_out);
+        let output_dir = resolve_dir(&args.dir_out, &args.enter_path);
 
         // [ENG]: 📝 Saves the path structure (address).
         // [POL]: 📝 Zapisuje strukturę ścieżek (adres).
         if args.save_address {
             if args.include || (!args.include && !args.exclude) {
                 let filepath = format!("{}plot-address_{}_M.md", output_dir, tag);
-                SaveFile::paths(
-                    &output_str_txt_m,
-                    &filepath,
-                    &tag,
-                    args.by,
-                    &i18n,
-                    &cmd_string,
-                );
+                let cmd_m = args.to_command_string(true, false, true, false); // ⚡ address = true
+                SaveFile::paths(&output_str_txt_m, &filepath, &tag, args.by, &i18n, &cmd_m);
             }
             if args.exclude || (!args.include && !args.exclude) {
                 let filepath = format!("{}plot-address_{}_X.md", output_dir, tag);
-                SaveFile::paths(
-                    &output_str_txt_x,
-                    &filepath,
-                    &tag,
-                    args.by,
-                    &i18n,
-                    &cmd_string,
-                );
+                let cmd_x = args.to_command_string(false, true, true, false); // ⚡ address = true
+                SaveFile::paths(&output_str_txt_x, &filepath, &tag, args.by, &i18n, &cmd_x);
             }
         }
 
@@ -109,29 +95,13 @@ pub fn run(args: CliArgs) {
             if let Ok(ctx) = PathContext::resolve(&args.enter_path) {
                 if args.include || (!args.include && !args.exclude) {
                     let filepath = format!("{}plot-archive_{}_M.md", output_dir, tag);
-                    SaveFile::codes(
-                        &output_str_txt_m,
-                        &stats.m_matched.paths,
-                        &ctx.entry_absolute,
-                        &filepath,
-                        &tag,
-                        args.by,
-                        &i18n,
-                        &cmd_string,
-                    );
+                    let cmd_m = args.to_command_string(true, false, false, true); // ⚡ archive = true
+                    SaveFile::codes(&output_str_txt_m, &stats.m_matched.paths, &ctx.entry_absolute, &filepath, &tag, args.by, &i18n, &cmd_m);
                 }
                 if args.exclude || (!args.include && !args.exclude) {
                     let filepath = format!("{}plot-archive_{}_X.md", output_dir, tag);
-                    SaveFile::codes(
-                        &output_str_txt_x,
-                        &stats.x_mismatched.paths,
-                        &ctx.entry_absolute,
-                        &filepath,
-                        &tag,
-                        args.by,
-                        &i18n,
-                        &cmd_string,
-                    );
+                    let cmd_x = args.to_command_string(false, true, false, true); // ⚡ archive = true
+                    SaveFile::codes(&output_str_txt_x, &stats.x_mismatched.paths, &ctx.entry_absolute, &filepath, &tag, args.by, &i18n, &cmd_x);
                 }
             }
         }

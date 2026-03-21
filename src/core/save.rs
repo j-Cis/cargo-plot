@@ -13,7 +13,7 @@ impl SaveFile {
         f.push_str("> | Property | Value |\n");
         f.push_str("> | ---: | :--- |\n");
         f.push_str(&format!(
-            "> | **{}** | `cargo-plot v0.2.0-beta` |\n",
+            "> | **{}** | `cargo-plot v0.2.0` |\n",
             i18n.footer_tool()
         ));
         f.push_str(&format!(

@@ -19,7 +19,7 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
             ui.add_space(10.0);
 
             ui.horizontal(|ui| {
-                ui.label(egui::RichText::new("📦 cargo-plot v0.2.0-beta").strong());
+                ui.label(egui::RichText::new("📦 cargo-plot v0.2.0").strong());
                 ui.separator();
                 ui.hyperlink_to("Crates.io", "https://crates.io/crates/cargo-plot");
                 ui.separator();

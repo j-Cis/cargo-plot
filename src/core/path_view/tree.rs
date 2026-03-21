@@ -4,7 +4,7 @@ use std::path::{Path, PathBuf};
 
 // Importy z rodzeństwa i innych modułów core
 use super::node::FileNode;
-use crate::core::file_stats::weight::{self, UnitSystem, WeightConfig};
+use crate::core::file_stats::weight::{self, WeightConfig};
 use crate::core::path_matcher::SortStrategy;
 use crate::theme::for_path_tree::{DIR_ICON, FILE_ICON, TreeStyle, get_file_type};
 pub struct PathTree {
@@ -117,12 +117,20 @@ impl PathTree {
 
         FileNode::sort_slice(&mut top_nodes, sort_strategy);
 
+        // [ENG]: Logic for creating the final root node with proper weight calculation.
+        // [POL]: Logika tworzenia końcowego węzła głównego z poprawnym obliczeniem wagi.
         let final_roots = if let Some(r_name) = root_name {
-            let empty_weight = if weight_cfg.system != UnitSystem::None {
-                " ".repeat(7 + weight_cfg.precision)
+            // [ENG]: Calculate total weight for the root node.
+            // [POL]: Obliczenie całkowitej wagi dla węzła głównego.
+            let root_bytes = if weight_cfg.dir_sum_included {
+                // [POL]: Suma wag bezpośrednich dzieci (dopasowanych elementów).
+                top_nodes.iter().map(|n| n.weight_bytes).sum()
             } else {
-                String::new()
+                // [POL]: Fizyczna waga folderu wejściowego z dysku.
+                weight::get_path_weight(base_path_obj, false)
             };
+
+            let root_weight_str = weight::format_weight(root_bytes, true, weight_cfg);
 
             vec![FileNode {
                 name: r_name.to_string(),
@@ -133,8 +141,8 @@ impl PathTree {
                 } else {
                     DIR_ICON.to_string()
                 },
-                weight_str: empty_weight,
-                weight_bytes: 0,
+                weight_str: root_weight_str,
+                weight_bytes: root_bytes,
                 children: top_nodes,
             }]
         } else {

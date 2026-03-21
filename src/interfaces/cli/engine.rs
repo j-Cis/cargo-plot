@@ -1,6 +1,6 @@
 use crate::interfaces::cli::args::{CliArgs, CliUnitSystem};
 use cargo_plot::addon::TimeTag;
-use cargo_plot::core::file_stats::weight::{WeightConfig, UnitSystem};
+use cargo_plot::core::file_stats::weight::{UnitSystem, WeightConfig};
 use cargo_plot::core::path_matcher::stats::ShowMode;
 use cargo_plot::core::path_store::PathContext;
 use cargo_plot::core::path_view::ViewMode;
@@ -26,7 +26,7 @@ pub fn run(args: CliArgs) {
             CliUnitSystem::Dec => UnitSystem::Decimal,
         },
         // [POL]: Jeśli 'all' (-a) jest true, liczymy fizyczną wagę z dysku dla folderów.
-        dir_sum_included: !args.all, 
+        dir_sum_included: !args.all,
         ..WeightConfig::default()
     };
 
@@ -100,27 +100,65 @@ pub fn run(args: CliArgs) {
             if args.include || !args.exclude {
                 let filepath = format!("{}plot-address_{}_M.md", output_dir, tag);
                 let cmd_m = args.to_command_string(true, false, true, false);
-                SaveFile::paths(&output_str_txt_m, &filepath, &tag, args.by, &i18n, &cmd_m, &args.enter_path);
+                SaveFile::paths(
+                    &output_str_txt_m,
+                    &filepath,
+                    &tag,
+                    args.by,
+                    &i18n,
+                    &cmd_m,
+                    &args.enter_path,
+                );
             }
             if args.exclude || !args.include {
                 let filepath = format!("{}plot-address_{}_X.md", output_dir, tag);
                 let cmd_x = args.to_command_string(false, true, true, false);
-                SaveFile::paths(&output_str_txt_x, &filepath, &tag, args.by, &i18n, &cmd_x, &args.enter_path);
+                SaveFile::paths(
+                    &output_str_txt_x,
+                    &filepath,
+                    &tag,
+                    args.by,
+                    &i18n,
+                    &cmd_x,
+                    &args.enter_path,
+                );
             }
         }
 
         // [ENG]: 📦 Saves the full file contents (archive).
         // [POL]: 📦 Zapisuje pełną zawartość plików (archiwum).
-        if args.save_archive && let Ok(ctx) = PathContext::resolve(&args.enter_path) {
+        if args.save_archive
+            && let Ok(ctx) = PathContext::resolve(&args.enter_path)
+        {
             if args.include || !args.exclude {
                 let filepath = format!("{}plot-archive_{}_M.md", output_dir, tag);
                 let cmd_m = args.to_command_string(true, false, false, true);
-                SaveFile::codes(&output_str_txt_m, &stats.m_matched.paths, &ctx.entry_absolute, &filepath, &tag, args.by, &i18n, &cmd_m, &args.enter_path);
+                SaveFile::codes(
+                    &output_str_txt_m,
+                    &stats.m_matched.paths,
+                    &ctx.entry_absolute,
+                    &filepath,
+                    &tag,
+                    args.by,
+                    &i18n,
+                    &cmd_m,
+                    &args.enter_path,
+                );
             }
             if args.exclude || !args.include {
                 let filepath = format!("{}plot-archive_{}_X.md", output_dir, tag);
                 let cmd_x = args.to_command_string(false, true, false, true);
-                SaveFile::codes(&output_str_txt_x, &stats.x_mismatched.paths, &ctx.entry_absolute, &filepath, &tag, args.by, &i18n, &cmd_x, &args.enter_path);
+                SaveFile::codes(
+                    &output_str_txt_x,
+                    &stats.x_mismatched.paths,
+                    &ctx.entry_absolute,
+                    &filepath,
+                    &tag,
+                    args.by,
+                    &i18n,
+                    &cmd_x,
+                    &args.enter_path,
+                );
             }
         }
     }

@@ -44,8 +44,14 @@ where
         println!("{}", i18n.cli_target_rel(&path_ctx.entry_relative));
         println!("---------------------------------------");
         println!("{}", i18n.cli_case_sensitive(is_case_sensitive));
-        println!("{}", i18n.cli_patterns_raw(&format!("{:?}", pattern_ctx.raw)));
-        println!("{}", i18n.cli_patterns_tok(&format!("{:?}", pattern_ctx.tok)));
+        println!(
+            "{}",
+            i18n.cli_patterns_raw(&format!("{:?}", pattern_ctx.raw))
+        );
+        println!(
+            "{}",
+            i18n.cli_patterns_tok(&format!("{:?}", pattern_ctx.tok))
+        );
         println!("---------------------------------------");
     } else {
         println!("---------------------------------------");
@@ -53,7 +59,8 @@ where
 
     // [ENG]: 3. Build matchers.
     // [POL]: 3. Budowa silników dopasowujących.
-    let matchers = PathMatchers::new(&pattern_ctx.tok, is_case_sensitive).expect("Błąd kompilacji wzorców");
+    let matchers =
+        PathMatchers::new(&pattern_ctx.tok, is_case_sensitive).expect("Błąd kompilacji wzorców");
 
     // [ENG]: 4. Scan disk.
     // [POL]: 4. Skanowanie dysku.
@@ -78,22 +85,14 @@ where
         },
     );
 
-
-
-
-
-
-
-
-
-
-
     // [ENG]: 7. Build views using the provided weight configuration.
     // [POL]: 7. Budowa widoków przy użyciu dostarczonej konfiguracji wagi.
     let root_name = if no_root {
         None
     } else {
-        Path::new(&path_ctx.entry_absolute).file_name().and_then(|n| n.to_str())
+        Path::new(&path_ctx.entry_absolute)
+            .file_name()
+            .and_then(|n| n.to_str())
     };
 
     let do_include = show_mode == ShowMode::Include || show_mode == ShowMode::Context;
@@ -103,36 +102,64 @@ where
         ViewMode::Grid => {
             if do_include {
                 stats.m_matched.grid = Some(PathGrid::build(
-                    &stats.m_matched.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name, no_emoji,
+                    &stats.m_matched.paths,
+                    &path_ctx.entry_absolute,
+                    sort_strategy,
+                    &weight_cfg,
+                    root_name,
+                    no_emoji,
                 ));
             }
             if do_exclude {
                 stats.x_mismatched.grid = Some(PathGrid::build(
-                    &stats.x_mismatched.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name, no_emoji,
+                    &stats.x_mismatched.paths,
+                    &path_ctx.entry_absolute,
+                    sort_strategy,
+                    &weight_cfg,
+                    root_name,
+                    no_emoji,
                 ));
             }
         }
         ViewMode::Tree => {
             if do_include {
                 stats.m_matched.tree = Some(PathTree::build(
-                    &stats.m_matched.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name, no_emoji,
+                    &stats.m_matched.paths,
+                    &path_ctx.entry_absolute,
+                    sort_strategy,
+                    &weight_cfg,
+                    root_name,
+                    no_emoji,
                 ));
             }
             if do_exclude {
                 stats.x_mismatched.tree = Some(PathTree::build(
-                    &stats.x_mismatched.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, root_name, no_emoji,
+                    &stats.x_mismatched.paths,
+                    &path_ctx.entry_absolute,
+                    sort_strategy,
+                    &weight_cfg,
+                    root_name,
+                    no_emoji,
                 ));
             }
         }
         ViewMode::List => {
             if do_include {
                 stats.m_matched.list = Some(PathList::build(
-                    &stats.m_matched.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, no_emoji,
+                    &stats.m_matched.paths,
+                    &path_ctx.entry_absolute,
+                    sort_strategy,
+                    &weight_cfg,
+                    no_emoji,
                 ));
             }
             if do_exclude {
                 stats.x_mismatched.list = Some(PathList::build(
-                    &stats.x_mismatched.paths, &path_ctx.entry_absolute, sort_strategy, &weight_cfg, no_emoji,
+                    &stats.x_mismatched.paths,
+                    &path_ctx.entry_absolute,
+                    sort_strategy,
+                    &weight_cfg,
+                    no_emoji,
                 ));
             }
         }

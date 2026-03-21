@@ -1,17 +1,23 @@
-use eframe::egui;
 use crate::interfaces::gui::i18n::{GuiI18n, GuiText as GT};
+use eframe::egui;
 
 // [ENG]: Helper to resolve output directory from app arguments.
 // [POL]: Pomocnik do wyznaczania folderu zapisu z argumentów aplikacji.
 pub fn resolve_dir(val: &Option<String>, base_path: &str) -> String {
-    let is_auto = val.as_ref().map_or(true, |v| v.trim().is_empty() || v == "AUTO");
+    let is_auto = val
+        .as_ref()
+        .map_or(true, |v| v.trim().is_empty() || v == "AUTO");
     if is_auto {
         let mut b = base_path.replace('\\', "/");
-        if !b.ends_with('/') { b.push('/'); }
+        if !b.ends_with('/') {
+            b.push('/');
+        }
         format!("{}.cargo-plot/", b)
     } else {
         let mut p = val.as_ref().unwrap().replace('\\', "/");
-        if !p.ends_with('/') { p.push('/'); }
+        if !p.ends_with('/') {
+            p.push('/');
+        }
         p
     }
 }
@@ -29,12 +35,20 @@ pub fn draw_tabs(ui: &mut egui::Ui, gt: &GuiI18n, is_match: &mut bool) {
             m_color = egui::Color32::from_rgb(138, 90, 255);
             m_bg = egui::Color32::from_rgb(40, 40, 40);
         }
-        
+
         let m_btn = ui.add_sized(
-            [item_width, 40.0], 
-            egui::Button::new(egui::RichText::new(gt.t(GT::TabMatch)).size(16.0).strong().color(m_color)).fill(m_bg)
+            [item_width, 40.0],
+            egui::Button::new(
+                egui::RichText::new(gt.t(GT::TabMatch))
+                    .size(16.0)
+                    .strong()
+                    .color(m_color),
+            )
+            .fill(m_bg),
         );
-        if m_btn.clicked() { *is_match = true; }
+        if m_btn.clicked() {
+            *is_match = true;
+        }
 
         ui.add_space(8.0);
 
@@ -47,10 +61,18 @@ pub fn draw_tabs(ui: &mut egui::Ui, gt: &GuiI18n, is_match: &mut bool) {
         }
 
         let x_btn = ui.add_sized(
-            [item_width, 40.0], 
-            egui::Button::new(egui::RichText::new(gt.t(GT::TabMismatch)).size(16.0).strong().color(x_color)).fill(x_bg)
+            [item_width, 40.0],
+            egui::Button::new(
+                egui::RichText::new(gt.t(GT::TabMismatch))
+                    .size(16.0)
+                    .strong()
+                    .color(x_color),
+            )
+            .fill(x_bg),
         );
-        if x_btn.clicked() { *is_match = false; }
+        if x_btn.clicked() {
+            *is_match = false;
+        }
     });
 }
 
@@ -60,10 +82,14 @@ pub fn draw_footer(ui: &mut egui::Ui, panel_id: &'static str) {
     egui::TopBottomPanel::bottom(panel_id).show_inside(ui, |ui| {
         ui.add_space(5.0);
         ui.horizontal(|ui| {
-            ui.label("📝 Txt: 0 (0 B)"); ui.separator();
-            ui.label("📦 Bin: 0 (0 B)"); ui.separator();
-            ui.label("🚫 Err: 0 (0 B)"); ui.separator();
-            ui.label("🕳️ Empty: 0"); ui.separator();
+            ui.label("📝 Txt: 0 (0 B)");
+            ui.separator();
+            ui.label("📦 Bin: 0 (0 B)");
+            ui.separator();
+            ui.label("🚫 Err: 0 (0 B)");
+            ui.separator();
+            ui.label("🕳️ Empty: 0");
+            ui.separator();
             ui.label("🎯 Matched: 0 / 0");
         });
         ui.add_space(5.0);

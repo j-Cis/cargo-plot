@@ -68,40 +68,41 @@ impl I18n {
             Lang::En => "> *(Read error / file is not UTF-8)*",
         }
     }
-    pub fn by_title(&self, typ: &str) -> String {
+
+    pub fn footer_tool(&self) -> &str {
         match self.lang {
-            Lang::Pl => format!("## Command - Query ({typ})"),
-            Lang::En => format!("## Command - Query ({typ})"),
+            Lang::Pl => "Narzędzie",
+            _ => "Tool",
         }
     }
-    pub fn by_cmd(&self) -> &'static str {
+    pub fn footer_input(&self) -> &str {
         match self.lang {
-            Lang::Pl => "**Wywołana komenda:**",
-            Lang::En => "**Executed command:**",
+            Lang::Pl => "Folder",
+            _ => "Input",
         }
     }
-    pub fn by_instructions(&self) -> &'static str {
+    pub fn footer_cmd(&self) -> &str {
         match self.lang {
-            Lang::Pl => {
-                "**Krótka instrukcja flag:**\n- `-d, --dir <PATH>` : Ścieżka wejściowa do skanowania (domyślnie: `.`)\n- `-p, --pat <PATTERNS>...` : Wzorce dopasowań (wymagane)\n- `-s, --sort <STRATEGY>` : Strategia sortowania (np. `az-file-merge`)\n- `-v, --view <MODE>` : Widok wyników (`tree`, `list`, `grid`)\n- `-m, --on-match` : Pokaż tylko dopasowane ścieżki\n- `-x, --on-mismatch` : Pokaż tylko odrzucone ścieżki\n- `-o, --out-paths [PATH]` : Zapisz ścieżki do pliku (AUTO: `./other/`)\n- `-c, --out-cache [PATH]` : Zapisz kod do pliku (AUTO: `./other/`)\n- `-i, --info` : Tryb gadatliwy w terminalu\n- `-b, --by` : Dodaj sekcję informacyjną na końcu pliku\n- `--ignore-case` : Ignoruj wielkość liter we wzorcach\n- `--treeview-no-root` : Ukryj główny folder w widoku drzewa"
-            }
-            Lang::En => {
-                "**Short flags manual:**\n- `-d, --dir <PATH>` : Input path to scan (default: `.`)\n- `-p, --pat <PATTERNS>...` : Match patterns (required)\n- `-s, --sort <STRATEGY>` : Sorting strategy (e.g. `az-file-merge`)\n- `-v, --view <MODE>` : Results view (`tree`, `list`, `grid`)\n- `-m, --on-match` : Show only matched paths\n- `-x, --on-mismatch` : Show only rejected paths\n- `-o, --out-paths [PATH]` : Save paths to file (AUTO: `./other/`)\n- `-c, --out-cache [PATH]` : Save code to file (AUTO: `./other/`)\n- `-i, --info` : Verbose terminal mode\n- `-b, --by` : Add info section at end of file\n- `--ignore-case` : Ignore case in patterns\n- `--treeview-no-root` : Hide root directory in tree view"
-            }
+            Lang::Pl => "Komenda",
+            _ => "Command",
         }
     }
-    pub fn by_link(&self) -> &'static str {
+    pub fn footer_tag(&self) -> &str {
         match self.lang {
-            Lang::Pl => {
-                "[📊 Sprawdź `cargo-plot` na crates.io](https://crates.io/crates/cargo-plot)"
-            }
-            Lang::En => "[📊 Check `cargo-plot` on crates.io](https://crates.io/crates/cargo-plot)",
+            Lang::Pl => "Tag",
+            _ => "TimeTag",
         }
     }
-    pub fn by_version(&self, tag: &str) -> String {
+    pub fn footer_links(&self) -> &str {
         match self.lang {
-            Lang::Pl => format!("**Wersja raportu:** {tag}"),
-            Lang::En => format!("**Report version:** {tag}"),
+            Lang::Pl => "Linki",
+            _ => "Links",
+        }
+    }
+    pub fn footer_help(&self) -> &str {
+        match self.lang {
+            Lang::Pl => "Pomoc",
+            _ => "Help",
         }
     }
 
@@ -156,11 +157,4 @@ impl I18n {
             Lang::En => format!("📊 Summary: Rejected {} of {} paths.", count, total),
         }
     }
-
-    
-
-    // =====================================================================
-    // 4. TUI - INTERAKTYWNY PANEL
-    // =====================================================================
-    // (Zostawiamy tu miejsce na przyszłość)
 }

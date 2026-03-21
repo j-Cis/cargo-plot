@@ -17,15 +17,18 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
             ui.add_space(10.0);
             ui.separator();
             ui.add_space(10.0);
-            
+
             ui.horizontal(|ui| {
                 ui.label(egui::RichText::new("📦 cargo-plot v0.2.0-beta").strong());
                 ui.separator();
                 ui.hyperlink_to("Crates.io", "https://crates.io/crates/cargo-plot");
                 ui.separator();
-                ui.hyperlink_to(gt.t(GT::FooterDownload), "https://github.com/j-Cis/cargo-plot/releases");
+                ui.hyperlink_to(
+                    gt.t(GT::FooterDownload),
+                    "https://github.com/j-Cis/cargo-plot/releases",
+                );
             });
-            
+
             ui.add_space(5.0);
             ui.horizontal(|ui| {
                 ui.label(egui::RichText::new(gt.t(GT::FooterInstall)).weak());
@@ -61,7 +64,7 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
             egui::Grid::new("path_settings_grid")
                 .num_columns(2)
                 .spacing([10.0, 10.0])
-                .min_col_width(120.0) 
+                .min_col_width(120.0)
                 .show(ui, |ui| {
                     // Row 1: Scan path
                     ui.label(gt.t(GT::LabelScanPath));
@@ -71,7 +74,10 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
                         {
                             app.args.enter_path = folder.to_string_lossy().replace('\\', "/");
                         }
-                        ui.add_sized(ui.available_size(), egui::TextEdit::singleline(&mut app.args.enter_path));
+                        ui.add_sized(
+                            ui.available_size(),
+                            egui::TextEdit::singleline(&mut app.args.enter_path),
+                        );
                     });
                     ui.end_row();
 
@@ -81,16 +87,25 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
                         if ui.button(gt.t(GT::BtnBrowse)).clicked() {
                             if let Some(folder) = rfd::FileDialog::new().pick_folder() {
                                 let mut path = folder.to_string_lossy().replace('\\', "/");
-                                if !path.ends_with('/') { path.push('/'); }
+                                if !path.ends_with('/') {
+                                    path.push('/');
+                                }
                                 app.out_path_input = path.clone();
                                 app.args.dir_out = Some(path);
                             }
                         }
-                        
-                        let txt_response = ui.add_sized(ui.available_size(), egui::TextEdit::singleline(&mut app.out_path_input));
+
+                        let txt_response = ui.add_sized(
+                            ui.available_size(),
+                            egui::TextEdit::singleline(&mut app.out_path_input),
+                        );
                         if txt_response.changed() {
                             let trimmed = app.out_path_input.trim();
-                            app.args.dir_out = if trimmed.is_empty() { None } else { Some(trimmed.to_string()) };
+                            app.args.dir_out = if trimmed.is_empty() {
+                                None
+                            } else {
+                                Some(trimmed.to_string())
+                            };
                         }
                     });
                     ui.end_row();
@@ -106,10 +121,26 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
                 egui::ComboBox::from_label(gt.t(GT::LabelSorting))
                     .selected_text(format!("{:?}", app.args.sort))
                     .show_ui(ui, |ui| {
-                        ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzFileMerge, "AzFileMerge");
-                        ui.selectable_value(&mut app.args.sort, CliSortStrategy::ZaFileMerge, "ZaFileMerge");
-                        ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzDirMerge, "AzDirMerge");
-                        ui.selectable_value(&mut app.args.sort, CliSortStrategy::ZaDirMerge, "ZaDirMerge");
+                        ui.selectable_value(
+                            &mut app.args.sort,
+                            CliSortStrategy::AzFileMerge,
+                            "AzFileMerge",
+                        );
+                        ui.selectable_value(
+                            &mut app.args.sort,
+                            CliSortStrategy::ZaFileMerge,
+                            "ZaFileMerge",
+                        );
+                        ui.selectable_value(
+                            &mut app.args.sort,
+                            CliSortStrategy::AzDirMerge,
+                            "AzDirMerge",
+                        );
+                        ui.selectable_value(
+                            &mut app.args.sort,
+                            CliSortStrategy::ZaDirMerge,
+                            "ZaDirMerge",
+                        );
                         ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzFile, "AzFile");
                         ui.selectable_value(&mut app.args.sort, CliSortStrategy::ZaFile, "ZaFile");
                         ui.selectable_value(&mut app.args.sort, CliSortStrategy::AzDir, "AzDir");
@@ -143,12 +174,16 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
             ui.horizontal(|ui| {
                 ui.checkbox(&mut app.args.ignore_case, gt.t(GT::LabelIgnoreCase));
                 ui.label(gt.t(GT::LabelNewPattern));
-                
+
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                     let btn_clicked = ui.button(gt.t(GT::BtnAddPattern)).clicked();
-                    let response = ui.add_sized(ui.available_size(), egui::TextEdit::singleline(&mut app.new_pattern_input));
+                    let response = ui.add_sized(
+                        ui.available_size(),
+                        egui::TextEdit::singleline(&mut app.new_pattern_input),
+                    );
 
-                    if (btn_clicked || (response.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter))))
+                    if (btn_clicked
+                        || (response.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter))))
                         && !app.new_pattern_input.trim().is_empty()
                     {
                         let input = app.new_pattern_input.trim();
@@ -157,18 +192,18 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
                         if input.contains("-p ") || input.contains("--pat ") {
                             // Ujednolicamy znacznik flagi
                             let normalized = input.replace("--pat ", "-p ");
-                            
+
                             for part in normalized.split("-p ") {
                                 let mut trimmed = part.trim();
-                                
+
                                 // Ignorujemy śmieci takie jak komenda bazowa na początku
                                 if trimmed.starts_with("cargo") || trimmed.is_empty() {
                                     continue;
                                 }
 
                                 // Zdejmujemy cudzysłowy i odcinamy ewentualne inne flagi na końcu ciągu
-                                if (trimmed.starts_with('"') && trimmed.ends_with('"')) 
-                                    || (trimmed.starts_with('\'') && trimmed.ends_with('\'')) 
+                                if (trimmed.starts_with('"') && trimmed.ends_with('"'))
+                                    || (trimmed.starts_with('\'') && trimmed.ends_with('\''))
                                 {
                                     trimmed = &trimmed[1..trimmed.len() - 1]; // Idealne cudzysłowy po obu stronach
                                 } else if trimmed.starts_with('"') || trimmed.starts_with('\'') {
@@ -181,7 +216,7 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
                                     // Brak cudzysłowów, ucinamy do pierwszej spacji (inne flagi)
                                     trimmed = &trimmed[..space_idx];
                                 }
-                                
+
                                 if !trimmed.is_empty() {
                                     app.args.patterns.push(trimmed.to_string());
                                 }
@@ -201,7 +236,7 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
             egui::Frame::group(ui.style()).show(ui, |ui| {
                 ui.set_min_height(200.0);
                 // ⚡ Naprawa krawędzi: Wypełnia idealnie dostępną przestrzeń (z uwzględnieniem paddingu ramki)
-                ui.set_min_width(ui.available_width()); 
+                ui.set_min_width(ui.available_width());
 
                 let mut move_up = None;
                 let mut move_down = None;
@@ -209,16 +244,32 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
 
                 for (i, pat) in app.args.patterns.iter().enumerate() {
                     ui.horizontal(|ui| {
-                        if ui.button("🗑").clicked() { remove = Some(i); }
-                        if ui.button("⬆").clicked() { move_up = Some(i); }
-                        if ui.button("⬇").clicked() { move_down = Some(i); }
+                        if ui.button("🗑").clicked() {
+                            remove = Some(i);
+                        }
+                        if ui.button("⬆").clicked() {
+                            move_up = Some(i);
+                        }
+                        if ui.button("⬇").clicked() {
+                            move_down = Some(i);
+                        }
                         ui.label(pat);
                     });
                 }
 
-                if let Some(i) = remove { app.args.patterns.remove(i); }
-                if let Some(i) = move_up && i > 0 { app.args.patterns.swap(i, i - 1); }
-                if let Some(i) = move_down && i + 1 < app.args.patterns.len() { app.args.patterns.swap(i, i + 1); }
+                if let Some(i) = remove {
+                    app.args.patterns.remove(i);
+                }
+                if let Some(i) = move_up
+                    && i > 0
+                {
+                    app.args.patterns.swap(i, i - 1);
+                }
+                if let Some(i) = move_down
+                    && i + 1 < app.args.patterns.len()
+                {
+                    app.args.patterns.swap(i, i + 1);
+                }
 
                 if !app.args.patterns.is_empty() {
                     ui.separator();
@@ -226,11 +277,15 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
                         app.args.patterns.clear();
                     }
                 } else {
-                    ui.label(egui::RichText::new(gt.t(GT::MsgNoPatterns)).italics().weak());
+                    ui.label(
+                        egui::RichText::new(gt.t(GT::MsgNoPatterns))
+                            .italics()
+                            .weak(),
+                    );
                 }
             });
 
-            ui.add_space(20.0); 
+            ui.add_space(20.0);
         });
     });
 }

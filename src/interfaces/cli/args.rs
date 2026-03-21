@@ -173,7 +173,13 @@ impl From<CliViewMode> for ViewMode {
 impl CliArgs {
     /// [ENG]: Reconstructs a clean terminal command string.
     /// [POL]: Odtwarza czystą komendę terminalową.
-    pub fn to_command_string(&self, is_m: bool, is_x: bool, is_address: bool, is_archive: bool) -> String {
+    pub fn to_command_string(
+        &self,
+        is_m: bool,
+        is_x: bool,
+        is_address: bool,
+        is_archive: bool,
+    ) -> String {
         let mut cmd = vec!["cargo".to_string(), "plot".to_string()];
 
         if self.enter_path != "." && !self.enter_path.is_empty() {
@@ -199,10 +205,16 @@ impl CliArgs {
         }
 
         // ⚡ GWARANCJA POPRAWNOŚCI: Komenda idealnie dopasowana do zapisywanego pliku
-        if is_m { cmd.push("-m".to_string()); }
-        if is_x { cmd.push("-x".to_string()); }
-        
-        if self.ignore_case { cmd.push("-c".to_string()); }
+        if is_m {
+            cmd.push("-m".to_string());
+        }
+        if is_x {
+            cmd.push("-x".to_string());
+        }
+
+        if self.ignore_case {
+            cmd.push("-c".to_string());
+        }
 
         if self.sort != CliSortStrategy::AzFileMerge {
             let sort_str = match self.sort {
@@ -233,19 +245,33 @@ impl CliArgs {
         }
 
         // ⚡ GWARANCJA POPRAWNOŚCI: Wymuszamy flagi zapisu zależnie od tego, z jakiego miejsca generujemy raport
-        if self.save_address || is_address { cmd.push("--save-address".to_string()); }
-        if self.save_archive || is_archive { cmd.push("--save-archive".to_string()); }
-        if self.by { cmd.push("-b".to_string()); }
-        if self.no_root { cmd.push("--treeview-no-root".to_string()); }
-        if self.info { cmd.push("-i".to_string()); }
-        if self.no_emoji { cmd.push("--no-emoji".to_string()); }
-        if self.all { cmd.push("-a".to_string()); }
-        
+        if self.save_address || is_address {
+            cmd.push("--save-address".to_string());
+        }
+        if self.save_archive || is_archive {
+            cmd.push("--save-archive".to_string());
+        }
+        if self.by {
+            cmd.push("-b".to_string());
+        }
+        if self.no_root {
+            cmd.push("--treeview-no-root".to_string());
+        }
+        if self.info {
+            cmd.push("-i".to_string());
+        }
+        if self.no_emoji {
+            cmd.push("--no-emoji".to_string());
+        }
+        if self.all {
+            cmd.push("-a".to_string());
+        }
+
         if self.unit != CliUnitSystem::Bin {
             cmd.push("-u".to_string());
             cmd.push("dec".to_string());
         }
-        
+
         if let Some(l) = &self.lang {
             cmd.push("--lang".to_string());
             match l {

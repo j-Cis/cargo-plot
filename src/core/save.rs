@@ -6,18 +6,38 @@ use std::path::Path;
 pub struct SaveFile;
 
 impl SaveFile {
-    // ⚡ Upubliczniamy funkcję, żeby kod w `code.rs` mógł wygenerować stopkę
-    pub fn generate_by_section(tag: &str, typ: &str, i18n: &I18n, cmd: &str) -> String {
-        format!(
-            "\n\n---\n---\n\n{}\n\n{}\n\n```bash\n{}\n```\n\n{}\n\n{}\n\n{}\n\n---\n",
-            i18n.by_title(typ),
-            i18n.by_cmd(),
-            cmd, // ⚡ Używa czystej, przetworzonej komendy!
-            i18n.by_instructions(),
-            i18n.by_link(),
-            i18n.by_version(tag)
-        )
+    // ⚡ Nowa funkcja tabelarycznej stopki
+    pub fn generate_by_section(tag: &str, enter_path: &str, i18n: &I18n, cmd: &str) -> String {
+        let mut f = String::new();
+        f.push_str("\n\n---\n\n");
+        f.push_str("> | Property | Value |\n");
+        f.push_str("> | ---: | :--- |\n");
+        f.push_str(&format!(
+            "> | **{}** | `cargo-plot v0.2.0-beta` |\n",
+            i18n.footer_tool()
+        ));
+        f.push_str(&format!(
+            "> | **{}** | `{}` |\n",
+            i18n.footer_input(),
+            enter_path
+        ));
+        f.push_str(&format!("> | **{}** | `{}` |\n", i18n.footer_cmd(), cmd));
+        f.push_str(&format!("> | **{}** | `{}` |\n", i18n.footer_tag(), tag));
+
+        let links = "[Crates.io](https://crates.io/crates/cargo-plot) \\| [GitHub](https://github.com/j-Cis/cargo-plot/releases)";
+        f.push_str(&format!("> | **{}** | {} |\n", i18n.footer_links(), links));
+        f.push_str(&format!(
+            "> | **{}** | `cargo install cargo-plot` |\n",
+            i18n.footer_links()
+        ));
+        f.push_str(&format!(
+            "> | **{}** | `cargo plot --help` |\n",
+            i18n.footer_help()
+        ));
+        f.push_str("\n---\n");
+        f
     }
+
     /// Wspólna logika zapisu do pliku (DRY): tworzenie folderów i zapis IO.
     fn write_to_disk(filepath: &str, content: &str, log_name: &str, i18n: &I18n) {
         let path = Path::new(filepath);
@@ -39,20 +59,28 @@ impl SaveFile {
             Err(e) => eprintln!("{}", i18n.save_err(log_name, filepath, &e.to_string())),
         }
     }
+
     /// Formatowanie i zapis samego widoku struktury (ścieżek)
-    pub fn paths(content: &str, filepath: &str, tag: &str, add_by: bool, i18n: &I18n, cmd: &str) {
+    pub fn paths(
+        content: &str,
+        filepath: &str,
+        tag: &str,
+        add_by: bool,
+        i18n: &I18n,
+        cmd: &str,
+        enter_path: &str,
+    ) {
         let by_section = if add_by {
-            Self::generate_by_section(tag, "paths", i18n, cmd)
+            Self::generate_by_section(tag, enter_path, i18n, cmd)
         } else {
             String::new()
         };
-        let internal_tag = if add_by { "" } else { tag }; // Zapobiega dublowaniu tagu
+        let internal_tag = if add_by { "" } else { tag };
         let file_name = Path::new(filepath)
             .file_name()
             .unwrap_or_default()
             .to_string_lossy();
 
-        // ⚡ DODAJE NAGŁÓWEK H1 NA POCZĄTKU
         let markdown_content = format!(
             "# {}\n\n```plaintext\n{}\n```\n\n{}{}",
             file_name, content, internal_tag, by_section
@@ -80,13 +108,14 @@ impl SaveFile {
         add_by: bool,
         i18n: &I18n,
         cmd: &str,
+        enter_path: &str,
     ) {
         let by_section = if add_by {
-            Self::generate_by_section(tag, "codes", i18n, cmd)
+            Self::generate_by_section(tag, enter_path, i18n, cmd)
         } else {
             String::new()
         };
-        let internal_tag = if add_by { "" } else { tag }; // Zapobiega dublowaniu tagu
+        let internal_tag = if add_by { "" } else { tag };
         let file_name = Path::new(filepath)
             .file_name()
             .unwrap_or_default()

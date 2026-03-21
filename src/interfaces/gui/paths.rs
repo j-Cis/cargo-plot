@@ -1,6 +1,6 @@
 use crate::interfaces::gui::i18n::{GuiI18n, GuiText as GT};
+use crate::interfaces::gui::shared::{draw_editor, draw_footer, draw_tabs, resolve_dir};
 use crate::interfaces::gui::{CargoPlotApp, PathsTab};
-use crate::interfaces::gui::shared::{resolve_dir, draw_tabs, draw_footer, draw_editor};
 use cargo_plot::addon::TimeTag;
 use cargo_plot::core::path_matcher::stats::ShowMode;
 use cargo_plot::execute;
@@ -13,7 +13,11 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
     // [POL]: 1. GÓRNE ZAKŁADKI - Współdzielony układ 50/50.
     let mut is_match = app.active_paths_tab == PathsTab::Match;
     draw_tabs(ui, &gt, &mut is_match);
-    app.active_paths_tab = if is_match { PathsTab::Match } else { PathsTab::Mismatch };
+    app.active_paths_tab = if is_match {
+        PathsTab::Match
+    } else {
+        PathsTab::Mismatch
+    };
 
     ui.separator();
 
@@ -22,20 +26,35 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
     ui.horizontal(|ui| {
         if ui.button(gt.t(GT::BtnGenerate)).clicked() {
             let i18n = cargo_plot::i18n::I18n::new(app.args.lang);
-            
+
             // ⚡ OPTYMALIZACJA: Generujemy tylko to, czego w danej chwili potrzebujesz!
-            let show_mode = if is_match { ShowMode::Include } else { ShowMode::Exclude };
+            let show_mode = if is_match {
+                ShowMode::Include
+            } else {
+                ShowMode::Exclude
+            };
 
             let stats = execute::execute(
-                &app.args.enter_path, &app.args.patterns, !app.args.ignore_case, app.args.sort.into(),
+                &app.args.enter_path,
+                &app.args.patterns,
+                !app.args.ignore_case,
+                app.args.sort.into(),
                 show_mode, // ⚡ Oszczędzamy procesor, używając precyzyjnego trybu
-                app.args.view.into(), app.args.no_root, false, true, &i18n, |_| {}, |_| {},
+                app.args.view.into(),
+                app.args.no_root,
+                false,
+                true,
+                &i18n,
+                |_| {},
+                |_| {},
             );
 
             if is_match {
-                app.generated_paths_m = stats.render_output(app.args.view.into(), ShowMode::Include, false, false);
+                app.generated_paths_m =
+                    stats.render_output(app.args.view.into(), ShowMode::Include, false, false);
             } else {
-                app.generated_paths_x = stats.render_output(app.args.view.into(), ShowMode::Exclude, false, false);
+                app.generated_paths_x =
+                    stats.render_output(app.args.view.into(), ShowMode::Exclude, false, false);
             }
         }
 
@@ -47,18 +66,42 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
         if is_match {
             if ui.button(gt.t(GT::BtnSaveMatch)).clicked() {
                 let tag = TimeTag::now();
-                let filepath = format!("{}plot-address_{}_M.md", resolve_dir(&app.args.dir_out, &app.args.enter_path), tag);
+                let filepath = format!(
+                    "{}plot-address_{}_M.md",
+                    resolve_dir(&app.args.dir_out, &app.args.enter_path),
+                    tag
+                );
                 let i18n = cargo_plot::i18n::I18n::new(app.args.lang);
-                let cmd_string = app.args.to_command_string(true, false, true, false); 
-                cargo_plot::core::save::SaveFile::paths(&app.generated_paths_m, &filepath, &tag, app.args.by, &i18n, &cmd_string);
+                let cmd_string = app.args.to_command_string(true, false, true, false);
+                cargo_plot::core::save::SaveFile::paths(
+                    &app.generated_paths_m,
+                    &filepath,
+                    &tag,
+                    app.args.by,
+                    &i18n,
+                    &cmd_string,
+                    &app.args.enter_path,
+                );
             }
         } else {
             if ui.button(gt.t(GT::BtnSaveMismatch)).clicked() {
                 let tag = TimeTag::now();
-                let filepath = format!("{}plot-address_{}_X.md", resolve_dir(&app.args.dir_out, &app.args.enter_path), tag);
+                let filepath = format!(
+                    "{}plot-address_{}_X.md",
+                    resolve_dir(&app.args.dir_out, &app.args.enter_path),
+                    tag
+                );
                 let i18n = cargo_plot::i18n::I18n::new(app.args.lang);
-                let cmd_string = app.args.to_command_string(false, true, true, false); 
-                cargo_plot::core::save::SaveFile::paths(&app.generated_paths_x, &filepath, &tag, app.args.by, &i18n, &cmd_string);
+                let cmd_string = app.args.to_command_string(false, true, true, false);
+                cargo_plot::core::save::SaveFile::paths(
+                    &app.generated_paths_x,
+                    &filepath,
+                    &tag,
+                    app.args.by,
+                    &i18n,
+                    &cmd_string,
+                    &app.args.enter_path,
+                );
             }
         }
     });

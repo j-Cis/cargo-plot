@@ -60,14 +60,20 @@ pub fn run(args: CliArgs) {
         // [ENG]: 📂 Resolves the output directory path to .cargo-plot/ by default.
         // [POL]: 📂 Rozwiązuje ścieżkę katalogu wyjściowego (domyślnie na .cargo-plot/).
         let resolve_dir = |val: &Option<String>, base_path: &str| -> String {
-            let is_auto = val.as_ref().map_or(true, |v| v.trim().is_empty() || v == "AUTO");
+            let is_auto = val
+                .as_ref()
+                .map_or(true, |v| v.trim().is_empty() || v == "AUTO");
             if is_auto {
                 let mut b = base_path.replace('\\', "/");
-                if !b.ends_with('/') { b.push('/'); }
+                if !b.ends_with('/') {
+                    b.push('/');
+                }
                 format!("{}.cargo-plot/", b)
             } else {
                 let mut p = val.as_ref().unwrap().replace('\\', "/");
-                if !p.ends_with('/') { p.push('/'); }
+                if !p.ends_with('/') {
+                    p.push('/');
+                }
                 p
             }
         };
@@ -79,13 +85,29 @@ pub fn run(args: CliArgs) {
         if args.save_address {
             if args.include || (!args.include && !args.exclude) {
                 let filepath = format!("{}plot-address_{}_M.md", output_dir, tag);
-                let cmd_m = args.to_command_string(true, false, true, false); // ⚡ address = true
-                SaveFile::paths(&output_str_txt_m, &filepath, &tag, args.by, &i18n, &cmd_m);
+                let cmd_m = args.to_command_string(true, false, true, false);
+                SaveFile::paths(
+                    &output_str_txt_m,
+                    &filepath,
+                    &tag,
+                    args.by,
+                    &i18n,
+                    &cmd_m,
+                    &args.enter_path,
+                );
             }
             if args.exclude || (!args.include && !args.exclude) {
                 let filepath = format!("{}plot-address_{}_X.md", output_dir, tag);
-                let cmd_x = args.to_command_string(false, true, true, false); // ⚡ address = true
-                SaveFile::paths(&output_str_txt_x, &filepath, &tag, args.by, &i18n, &cmd_x);
+                let cmd_x = args.to_command_string(false, true, true, false);
+                SaveFile::paths(
+                    &output_str_txt_x,
+                    &filepath,
+                    &tag,
+                    args.by,
+                    &i18n,
+                    &cmd_x,
+                    &args.enter_path,
+                );
             }
         }
 
@@ -95,13 +117,33 @@ pub fn run(args: CliArgs) {
             if let Ok(ctx) = PathContext::resolve(&args.enter_path) {
                 if args.include || (!args.include && !args.exclude) {
                     let filepath = format!("{}plot-archive_{}_M.md", output_dir, tag);
-                    let cmd_m = args.to_command_string(true, false, false, true); // ⚡ archive = true
-                    SaveFile::codes(&output_str_txt_m, &stats.m_matched.paths, &ctx.entry_absolute, &filepath, &tag, args.by, &i18n, &cmd_m);
+                    let cmd_m = args.to_command_string(true, false, false, true);
+                    SaveFile::codes(
+                        &output_str_txt_m,
+                        &stats.m_matched.paths,
+                        &ctx.entry_absolute,
+                        &filepath,
+                        &tag,
+                        args.by,
+                        &i18n,
+                        &cmd_m,
+                        &args.enter_path,
+                    );
                 }
                 if args.exclude || (!args.include && !args.exclude) {
                     let filepath = format!("{}plot-archive_{}_X.md", output_dir, tag);
-                    let cmd_x = args.to_command_string(false, true, false, true); // ⚡ archive = true
-                    SaveFile::codes(&output_str_txt_x, &stats.x_mismatched.paths, &ctx.entry_absolute, &filepath, &tag, args.by, &i18n, &cmd_x);
+                    let cmd_x = args.to_command_string(false, true, false, true);
+                    SaveFile::codes(
+                        &output_str_txt_x,
+                        &stats.x_mismatched.paths,
+                        &ctx.entry_absolute,
+                        &filepath,
+                        &tag,
+                        args.by,
+                        &i18n,
+                        &cmd_x,
+                        &args.enter_path,
+                    );
                 }
             }
         }

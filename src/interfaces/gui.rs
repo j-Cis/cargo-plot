@@ -29,27 +29,30 @@ pub enum CodeTab {
 
 #[derive(Default, Clone)]
 pub struct TreeStats {
-    pub file_count: usize,
-    pub total_weight: u64,
-    pub text_count: usize,
-    pub text_weight: u64,
+    pub txt_count: usize,
+    pub txt_weight: u64,
     pub bin_count: usize,
     pub bin_weight: u64,
+    pub err_count: usize,
+    pub err_weight: u64,
+    pub empty_count: usize,
+    pub matched_count: usize,
+    pub total_count: usize,
 }
 
 pub struct CargoPlotApp {
     pub args: CliArgs,
     pub active_tab: Tab,
     pub active_paths_tab: PathsTab,
-    pub active_code_tab: CodeTab, // ⚡ Dodane pole: aktywna zakładka Kodu
+    pub active_code_tab: CodeTab, 
     pub new_pattern_input: String,
     pub out_path_input: String,
     pub generated_paths_m: String,
     pub generated_paths_x: String,
-    pub generated_code_m: String, // ⚡ Dodane pole: kod MATCH
-    pub generated_code_x: String, // ⚡ Dodane pole: kod MISMATCH
-    pub stats_m: TreeStats,
-    pub stats_x: TreeStats,
+    pub generated_code_m: String, 
+    pub generated_code_x: String, 
+    pub stats_m: TreeStats, 
+    pub stats_x: TreeStats, 
     pub ui_scale: f32,
 }
 

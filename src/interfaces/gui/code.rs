@@ -151,7 +151,9 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
 
     ui.separator();
 
-    draw_footer(ui, "code_stats_footer");
+    // ⚡ Przekazujemy odpowiednie statystyki zależnie od wybranej zakładki
+    let current_stats = if is_match { &app.stats_m } else { &app.stats_x };
+    draw_footer(ui, "code_stats_footer", current_stats);
 
     let text_buffer = match app.active_code_tab {
         CodeTab::Match => &mut app.generated_code_m,

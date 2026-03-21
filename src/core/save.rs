@@ -194,7 +194,7 @@ impl SaveFile {
 
 /// [EN]: Checks if a file extension is on the list of forbidden binary types.
 /// [PL]: Sprawdza, czy rozszerzenie pliku znajduje się na liście zabronionych typów binarnych.
-fn is_blacklisted_extension(ext: &str) -> bool {
+pub fn is_blacklisted_extension(ext: &str) -> bool {
     let e = ext.to_lowercase();
 
     matches!(

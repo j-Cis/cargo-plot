@@ -84,8 +84,8 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
                     // Row 2: Output folder
                     ui.label(gt.t(GT::LabelOutFolder));
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                        if ui.button(gt.t(GT::BtnBrowse)).clicked() {
-                            if let Some(folder) = rfd::FileDialog::new().pick_folder() {
+                        if ui.button(gt.t(GT::BtnBrowse)).clicked()
+                            && let Some(folder) = rfd::FileDialog::new().pick_folder() {
                                 let mut path = folder.to_string_lossy().replace('\\', "/");
                                 if !path.ends_with('/') {
                                     path.push('/');
@@ -93,7 +93,6 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
                                 app.out_path_input = path.clone();
                                 app.args.dir_out = Some(path);
                             }
-                        }
 
                         let txt_response = ui.add_sized(
                             ui.available_size(),

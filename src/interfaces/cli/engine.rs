@@ -62,7 +62,7 @@ pub fn run(args: CliArgs) {
         let resolve_dir = |val: &Option<String>, base_path: &str| -> String {
             let is_auto = val
                 .as_ref()
-                .map_or(true, |v| v.trim().is_empty() || v == "AUTO");
+                .is_none_or(|v| v.trim().is_empty() || v == "AUTO");
             if is_auto {
                 let mut b = base_path.replace('\\', "/");
                 if !b.ends_with('/') {
@@ -83,68 +83,34 @@ pub fn run(args: CliArgs) {
         // [ENG]: 📝 Saves the path structure (address).
         // [POL]: 📝 Zapisuje strukturę ścieżek (adres).
         if args.save_address {
-            if args.include || (!args.include && !args.exclude) {
+            if args.include || !args.exclude {
+                // (kod pozostaje bez zmian)
                 let filepath = format!("{}plot-address_{}_M.md", output_dir, tag);
                 let cmd_m = args.to_command_string(true, false, true, false);
-                SaveFile::paths(
-                    &output_str_txt_m,
-                    &filepath,
-                    &tag,
-                    args.by,
-                    &i18n,
-                    &cmd_m,
-                    &args.enter_path,
-                );
+                SaveFile::paths(&output_str_txt_m, &filepath, &tag, args.by, &i18n, &cmd_m, &args.enter_path);
             }
-            if args.exclude || (!args.include && !args.exclude) {
+            if args.exclude || !args.include {
+                // (kod pozostaje bez zmian)
                 let filepath = format!("{}plot-address_{}_X.md", output_dir, tag);
                 let cmd_x = args.to_command_string(false, true, true, false);
-                SaveFile::paths(
-                    &output_str_txt_x,
-                    &filepath,
-                    &tag,
-                    args.by,
-                    &i18n,
-                    &cmd_x,
-                    &args.enter_path,
-                );
+                SaveFile::paths(&output_str_txt_x, &filepath, &tag, args.by, &i18n, &cmd_x, &args.enter_path);
             }
         }
 
         // [ENG]: 📦 Saves the full file contents (archive).
         // [POL]: 📦 Zapisuje pełną zawartość plików (archiwum).
-        if args.save_archive {
-            if let Ok(ctx) = PathContext::resolve(&args.enter_path) {
-                if args.include || (!args.include && !args.exclude) {
-                    let filepath = format!("{}plot-archive_{}_M.md", output_dir, tag);
-                    let cmd_m = args.to_command_string(true, false, false, true);
-                    SaveFile::codes(
-                        &output_str_txt_m,
-                        &stats.m_matched.paths,
-                        &ctx.entry_absolute,
-                        &filepath,
-                        &tag,
-                        args.by,
-                        &i18n,
-                        &cmd_m,
-                        &args.enter_path,
-                    );
-                }
-                if args.exclude || (!args.include && !args.exclude) {
-                    let filepath = format!("{}plot-archive_{}_X.md", output_dir, tag);
-                    let cmd_x = args.to_command_string(false, true, false, true);
-                    SaveFile::codes(
-                        &output_str_txt_x,
-                        &stats.x_mismatched.paths,
-                        &ctx.entry_absolute,
-                        &filepath,
-                        &tag,
-                        args.by,
-                        &i18n,
-                        &cmd_x,
-                        &args.enter_path,
-                    );
-                }
+        if args.save_archive && let Ok(ctx) = PathContext::resolve(&args.enter_path) {
+            if args.include || !args.exclude {
+                // (kod pozostaje bez zmian)
+                let filepath = format!("{}plot-archive_{}_M.md", output_dir, tag);
+                let cmd_m = args.to_command_string(true, false, false, true);
+                SaveFile::codes(&output_str_txt_m, &stats.m_matched.paths, &ctx.entry_absolute, &filepath, &tag, args.by, &i18n, &cmd_m, &args.enter_path);
+            }
+            if args.exclude || !args.include {
+                // (kod pozostaje bez zmian)
+                let filepath = format!("{}plot-archive_{}_X.md", output_dir, tag);
+                let cmd_x = args.to_command_string(false, true, false, true);
+                SaveFile::codes(&output_str_txt_x, &stats.x_mismatched.paths, &ctx.entry_absolute, &filepath, &tag, args.by, &i18n, &cmd_x, &args.enter_path);
             }
         }
     }

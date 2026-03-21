@@ -5,6 +5,8 @@ use cargo_plot::addon::TimeTag;
 use cargo_plot::core::path_matcher::stats::ShowMode;
 use cargo_plot::execute;
 use eframe::egui;
+use cargo_plot::core::save::is_blacklisted_extension;
+use crate::interfaces::gui::TreeStats;
 
 pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
     let gt = GuiI18n::new(app.args.lang);
@@ -34,20 +36,42 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
                 ShowMode::Exclude
             };
 
+            let mut st_m = TreeStats::default();
+            let mut st_x = TreeStats::default();
+
             let stats = execute::execute(
-                &app.args.enter_path,
-                &app.args.patterns,
-                !app.args.ignore_case,
-                app.args.sort.into(),
-                show_mode, // ⚡ Oszczędzamy procesor, używając precyzyjnego trybu
-                app.args.view.into(),
-                app.args.no_root,
-                false,
-                true,
-                &i18n,
-                |_| {},
-                |_| {},
+                &app.args.enter_path, &app.args.patterns, !app.args.ignore_case, app.args.sort.into(),
+                show_mode, app.args.view.into(), app.args.no_root, false, true, &i18n,
+                |f_stats| { 
+                    if f_stats.weight_bytes == 0 { st_m.empty_count += 1; }
+                    if !f_stats.path.ends_with('/') {
+                        let ext = f_stats.absolute.extension().unwrap_or_default().to_string_lossy().to_lowercase();
+                        if is_blacklisted_extension(&ext) {
+                            st_m.bin_count += 1; st_m.bin_weight += f_stats.weight_bytes;
+                        } else {
+                            st_m.txt_count += 1; st_m.txt_weight += f_stats.weight_bytes;
+                        }
+                    }
+                },
+                |f_stats| { 
+                    if f_stats.weight_bytes == 0 { st_x.empty_count += 1; }
+                    if !f_stats.path.ends_with('/') {
+                        let ext = f_stats.absolute.extension().unwrap_or_default().to_string_lossy().to_lowercase();
+                        if is_blacklisted_extension(&ext) {
+                            st_x.bin_count += 1; st_x.bin_weight += f_stats.weight_bytes;
+                        } else {
+                            st_x.txt_count += 1; st_x.txt_weight += f_stats.weight_bytes;
+                        }
+                    }
+                },
             );
+
+            st_m.matched_count = stats.m_size_matched;
+            st_m.total_count = stats.total;
+            st_x.matched_count = stats.x_size_mismatched;
+            st_x.total_count = stats.total;
+
+            if is_match { app.stats_m = st_m; } else { app.stats_x = st_x; }
 
             if is_match {
                 app.generated_paths_m =
@@ -110,8 +134,9 @@ pub fn show(ui: &mut egui::Ui, app: &mut CargoPlotApp) {
 
     // [ENG]: 3. FOOTER - Shared statistics block.
     // [POL]: 3. STOPKA - Współdzielony blok statystyk.
-    draw_footer(ui, "paths_stats_footer");
-
+    let current_stats = if is_match { &app.stats_m } else { &app.stats_x };
+    draw_footer(ui, "paths_stats_footer", current_stats); 
+    
     // [ENG]: 4. MAIN EDITOR - Shared notepad UI.
     // [POL]: 4. GŁÓWNY EDYTOR - Współdzielony interfejs notatnika.
     let text_buffer = match app.active_paths_tab {

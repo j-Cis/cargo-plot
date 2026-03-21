@@ -6,7 +6,7 @@ use eframe::egui;
 pub fn resolve_dir(val: &Option<String>, base_path: &str) -> String {
     let is_auto = val
         .as_ref()
-        .map_or(true, |v| v.trim().is_empty() || v == "AUTO");
+        .is_none_or(|v| v.trim().is_empty() || v == "AUTO");
     if is_auto {
         let mut b = base_path.replace('\\', "/");
         if !b.ends_with('/') {
@@ -77,20 +77,29 @@ pub fn draw_tabs(ui: &mut egui::Ui, gt: &GuiI18n, is_match: &mut bool) {
 }
 
 // [ENG]: UI component: Statistics footer placeholder.
-// [POL]: Komponent UI: Stopka na przyszłe statystyki.
-pub fn draw_footer(ui: &mut egui::Ui, panel_id: &'static str) {
+// [POL]: Komponent UI: Stopka ze statystykami.
+pub fn draw_footer(ui: &mut egui::Ui, panel_id: &'static str, stats: &crate::interfaces::gui::TreeStats) {
+    let fmt_bytes = |b: u64| -> String {
+        let kb = b as f64 / 1024.0;
+        if kb < 1.0 { format!("{} B", b) }
+        else if kb < 1024.0 { format!("{:.1} KB", kb) }
+        else { format!("{:.2} MB", kb / 1024.0) }
+    };
+
     egui::TopBottomPanel::bottom(panel_id).show_inside(ui, |ui| {
         ui.add_space(5.0);
         ui.horizontal(|ui| {
-            ui.label("📝 Txt: 0 (0 B)");
-            ui.separator();
-            ui.label("📦 Bin: 0 (0 B)");
-            ui.separator();
-            ui.label("🚫 Err: 0 (0 B)");
-            ui.separator();
-            ui.label("🕳️ Empty: 0");
-            ui.separator();
-            ui.label("🎯 Matched: 0 / 0");
+            ui.label(format!("📝 Txt: {} ({})", stats.txt_count, fmt_bytes(stats.txt_weight))); ui.separator();
+            ui.label(format!("📦 Bin: {} ({})", stats.bin_count, fmt_bytes(stats.bin_weight))); ui.separator();
+            
+            if stats.err_count > 0 { // ⚡ Zaznacza się na czerwono, jeśli są błędy
+                ui.label(egui::RichText::new(format!("🚫 Err: {} ({})", stats.err_count, fmt_bytes(stats.err_weight))).color(egui::Color32::RED)); ui.separator();
+            } else {
+                ui.label("🚫 Err: 0 (0 B)"); ui.separator();
+            }
+            
+            ui.label(format!("🕳️ Empty: {}", stats.empty_count)); ui.separator();
+            ui.label(format!("🎯 Matched: {} / {}", stats.matched_count, stats.total_count));
         });
         ui.add_space(5.0);
     });

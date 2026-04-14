@@ -1,11 +1,14 @@
 use std::{fs, io::Read};
 
 use chrono::{DateTime, Local};
-
+use std::{
+				collections::BTreeMap,
+				path::{Path, PathBuf},
+			};
 use super::{
-	path_canonical_ctx::PathCanonicalCtx,
-	paths_result::{FilterList, MatchLabel},
-	table_spec::{TabColumn, TabSortBy, TabSortOrder, TableSpec},
+	PathCanonicalCtx,
+	FilterList, MatchLabel,
+	TabColumn, TabSortBy, TabSortOrder, TabSpec,TabPathStructure,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -29,7 +32,7 @@ pub struct TableRow {
 #[derive(Debug, Clone)]
 pub struct TableData {
 	pub rows: Vec<TableRow>,
-	pub is_tree: bool,
+	pub structure: TabPathStructure,
 }
 
 /// Ostateczny wynik materializacji
@@ -61,7 +64,7 @@ fn get_dir_size(path: &std::path::Path) -> u64 {
 impl TableData {
 	pub fn gather<L: MatchLabel>(list: &FilterList<L>) -> Self {
 		let rows = list.paths.iter().filter_map(|p| Self::inspect(p, &list.entry).ok()).collect();
-		Self { rows, is_tree: false }
+		Self { rows, structure: TabPathStructure::Tree }
 	}
 
 	fn inspect(rel_path: &str, relation: &PathCanonicalCtx) -> anyhow::Result<TableRow> {
@@ -81,8 +84,8 @@ impl TableData {
 		Ok(TableRow { path: rel_path.to_string(), size, modified, kind })
 	}
 
-	pub fn sort(mut self, by: TabSortBy, order: TabSortOrder, is_tree: bool) -> Self {
-		self.is_tree = is_tree;
+	pub fn sort(mut self, by: TabSortBy, order: TabSortOrder, structure: TabPathStructure) -> Self {
+        self.structure = structure;
 
 		fn get_merge_key(path: &str) -> &str {
 			let trimmed = path.trim_end_matches('/');
@@ -116,11 +119,9 @@ impl TableData {
 			cmp
 		};
 
-		if is_tree {
-			use std::{
-				collections::BTreeMap,
-				path::{Path, PathBuf},
-			};
+		match structure {
+            TabPathStructure::Tree => {
+			
 
 			let clean_paths: Vec<PathBuf> =
 				self.rows.iter().map(|r| PathBuf::from(r.path.trim_end_matches('/'))).collect();
@@ -167,18 +168,22 @@ impl TableData {
 			let mut new_rows = Vec::with_capacity(temp_rows.len());
 
 			for idx in flat_indices {
-				new_rows.push(temp_rows[idx].take().unwrap());
-			}
-			self.rows = new_rows;
-		} else {
-			self.rows.sort_by(compare);
-		}
+                    new_rows.push(temp_rows[idx].take().unwrap());
+                }
+                self.rows = new_rows;
+            }
+
+            TabPathStructure::List => {
+                // ⚡ LISTA: Czysty sort bez cudowania z mapami
+                self.rows.sort_by(compare);
+            }
+        }
 
 		self
 	}
 
-	pub fn into_output(self, spec: &TableSpec) -> TableOutput {
-		 TableOutput {
+	pub fn into_output(self, spec: &TabSpec) -> TableOutput {
+		TableOutput {
             data: self,
             columns: spec.columns.clone(),
             trim_size: spec.trim_size,

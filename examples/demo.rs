@@ -1,39 +1,44 @@
 // ./examples/demo.rs
 
-use plot::lib::logic::{DocEngine, DocEngineMultiple, MX, TabColumn, TabSortBy, TabSortOrder};
+use plot::lib::logic::{
+    DocEngine, DocEngineMultiple, IoConfig, MX, ScanSpec, TabPathStructure, TabSortBy, TabSortOrder, TabSpec,
+};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-	// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-	let a1 = ".";
-	let a2 = vec!["./{.rustfmt,Cargo}.toml&/", "./**/*.rs&/", "!./target/**"];
-	// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    println!("=== TEST API BEZPOŚREDNIEGO ===");
 
-	let view_row = (TabSortBy::Name, TabSortOrder::Desc, true);
-	let view_col = &[
-		TabColumn::Date,
-		TabColumn::Time,
-		TabColumn::Size,
-		TabColumn::TreeList,
-		TabColumn::Icon,
-		TabColumn::Number,
-		TabColumn::Path,
-	];
+    // 1. Zamiast ręcznie wpisywać potężny wektor wzorców i ścieżek, 
+    //    korzystamy z wbudowanego, idealnie skrojonego pod Rusta Defaulta!
+    let scan_config = ScanSpec::default(); 
+    // Jeśli chciałbyś inną ścieżkę, po prostu: ScanSpec::new("./src")
 
-	// Zobacz jakie to teraz czyste! Cała logika zamknięta w jednym potężnym
-	// łańcuchu.
-	DocEngine::new(a1, a2, true, view_row, view_col)
+    // 2. Konfiguracja tabeli (bierzemy domyślne kolumny i tylko nadpisujemy sortowanie)
+    let table_config = TabSpec::default()
+        .sort(TabSortBy::Name, TabSortOrder::Desc, TabPathStructure::List);
+
+    // 3. Odpalenie głównego silnika
+    DocEngine::new(scan_config)
+        .spec(table_config)
         .view(MX::M, false, false)
-		.save_structure_of_the_content("./docs/raport", Some("abcd"))
+        .save_structure_of_the_content("./docs/raport", Some("abcd"))
         .view(MX::M, true, false)
-		.save_content_of_the_structure("./docs/raport",Some("efgh"));
+        .save_content_of_the_structure("./docs/raport", Some("efgh"));
 
-	// 2. Od razu płynnie zrzut tabeli ODRZUCONEJ (X), z limitem do 10, bez
-	//    statystyk, z promo!
-	//.view(MX::X, false, true);
-	DocEngineMultiple::get_config_from_default()
-        .if_not_exist_create_default()?
-        .do_job("p1")?
-        .do_jobs()?;
 
-	Ok(())
+    println!("\n=== TEST API KONFIGURACYJNEGO (TOML) ===");
+
+    // 4. Inicjalizacja pliku TOML za pomocą nowej, bezpiecznej struktury IoConfig
+    // Tworzy ./.x-do.toml, jeśli jeszcze go nie ma (i ładuje do niego domyślne JobSpec)
+    IoConfig::default_config_init_if_missing(IoConfig::DEFAULT_PATH)?;
+
+    // 5. Wczytywanie konfiguracji i wykonanie zadań
+    let orchestrator = DocEngineMultiple::loader_default()?;
+    
+    // Jeśli chcesz odpalić konkretne zadanie (pamiętaj, w Default nazywa się "default_job", a nie "p1"!):
+    // orchestrator.job_id("default_job")?;
+    
+    // A najprościej odpalić po prostu wszystkie zadania z pliku z automatu:
+    orchestrator.jobs()?;
+
+    Ok(())
 }

@@ -1,7 +1,7 @@
 use colored::Colorize;
 
 use super::{Color, DrawTree, Icon};
-use crate::lib::logic::{TabColumn, FileKind, TableData, TableOutput, TableRow};
+use crate::lib::logic::{TabColumn, FileKind, TableData, TableOutput, TableRow,TabPathStructure};
 
 fn format_size(bytes: u64) -> String {
 	if bytes < 1024 {
@@ -62,7 +62,7 @@ impl std::fmt::Display for TableOutput {
 
 		let mut prefix_map = std::collections::HashMap::new();
 
-		if self.data.is_tree {
+		if self.data.structure == TabPathStructure::Tree {
 			use std::{
 				collections::BTreeMap,
 				path::{Path, PathBuf},
@@ -120,7 +120,7 @@ impl std::fmt::Display for TableOutput {
 		for (i, row) in rows_to_show.iter().enumerate() {
 			let actual_idx = index_offset + i + 1;
 
-			let tree_list_prefix_str = if self.data.is_tree {
+			let tree_list_prefix_str = if self.data.structure == TabPathStructure::Tree {
 				prefix_map.get(&row.path).map(|s| s.as_str()).unwrap_or("")
 			} else {
 				DrawTree::list(i, current_view_count)

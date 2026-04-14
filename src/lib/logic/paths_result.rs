@@ -7,7 +7,7 @@ use super::{
 	PathScan,
 	PathsPatterns,
 	PattEnvIndex,
-	table_spec::{TabColumn, TabSortBy, TabSortOrder, TableSpec},
+	TabColumn, TabSortBy, TabSortOrder, TabSpec, TabPathStructure
 };
 
 // ============================================================================
@@ -87,7 +87,7 @@ pub struct ResultScanPatterns {
 	pub x: FilterList<Mismatched>,
 
 	// Przechowuje recepturę jak zbudować wyjściową tabelę
-	pub spec: TableSpec,
+	pub spec: TabSpec,
 }
 
 impl ResultScanPatterns {
@@ -123,7 +123,7 @@ impl ResultScanPatterns {
 				_marker: std::marker::PhantomData,
 			},
 			x: FilterList { paths: x_vec, label: Mismatched::label(), entry, _marker: std::marker::PhantomData },
-			spec: TableSpec::default(),
+			spec: TabSpec::default(),
 		}
 	}
 
@@ -131,10 +131,10 @@ impl ResultScanPatterns {
 	// BUILDER API (Konfiguracja specyfikacji w miejscu)
 	// ============================================================================
 
-	pub fn sort(mut self, by: TabSortBy, order: TabSortOrder, is_tree: bool) -> Self {
-		self.spec = self.spec.sort(by, order, is_tree);
-		self
-	}
+	pub fn sort(mut self, by: TabSortBy, order: TabSortOrder, structure: TabPathStructure) -> Self {
+        self.spec = self.spec.sort(by, order, structure);
+        self
+    }
 
 	pub fn columns(mut self, cols: &[TabColumn]) -> Self {
 		self.spec = self.spec.columns(cols);
@@ -152,13 +152,13 @@ impl ResultScanPatterns {
 
     pub fn build_matched(&self) -> TableOutput {
         TableData::gather(&self.m)
-            .sort(self.spec.sort_by, self.spec.sort_order, self.spec.list_instead_tree)
+            .sort(self.spec.sort_by, self.spec.sort_order, self.spec.structure)
             .into_output(&self.spec)
     }
 
     pub fn build_mismatched(&self) -> TableOutput {
         TableData::gather(&self.x)
-            .sort(self.spec.sort_by, self.spec.sort_order, self.spec.list_instead_tree)
+            .sort(self.spec.sort_by, self.spec.sort_order, self.spec.structure)
             .into_output(&self.spec)
     }
 }

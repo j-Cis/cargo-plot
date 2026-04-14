@@ -10,8 +10,7 @@ use super::{
 	TableOutput,
 	TagTime,
 	tag_time,
-    //config_io,
-    //tag_time,
+    ConfigManifest,create_default_if_missing,load_manifest,ConfigJob,
 };
 
 #[derive(Clone, Copy)]
@@ -203,7 +202,7 @@ impl DocEngine {
     }
 }
 
-/*/
+
 // ============================================================================
 // DOC ENGINE MULTIPLE (ORCHESTRATOR ZADAŃ TOML)
 // ============================================================================
@@ -215,8 +214,8 @@ pub struct ConfigLoader {
 
 impl ConfigLoader {
     pub fn if_not_exist_create_default(self) -> Result<DocEngineMultiple, String> {
-        config_io::create_default_if_missing(&self.path)?;
-        let manifest = config_io::load_manifest(&self.path)?;
+        create_default_if_missing(&self.path)?;
+        let manifest = load_manifest(&self.path)?;
 
         Ok(DocEngineMultiple { file_path: self.path, manifest })
     }
@@ -346,4 +345,3 @@ impl DocEngineMultiple {
     }
 }
 
-*/

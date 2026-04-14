@@ -5,7 +5,7 @@ pub mod lib {
 		pub mod path_scan;
 		pub use path_scan::{PathScan, PathScanStat};
 		pub mod path_context;
-		pub use path_context::PathContext;
+		pub use path_context::{PathContext};
 		pub mod paths_patterns;
 		pub use paths_patterns::{PathsPatterns, PattEnvIndex, PattExp, PattRaw};
 		pub mod table_spec;
@@ -17,11 +17,15 @@ pub mod lib {
 		pub mod tag_time;
 		pub use tag_time::{TagTime, tag_time};
 		pub mod lang_mapper;
-		pub use lang_mapper::LangMapper;
+		pub use lang_mapper::{LangMapper};
 		pub mod doc_markdown;
-		pub use doc_markdown::DocMarkdown;
+		pub use doc_markdown::{DocMarkdown};
 		pub mod doc_engine;
-		pub use doc_engine::{DocEngine, MX, RenderFlags};
+		pub use doc_engine::{DocEngine, MX, RenderFlags,DocEngineMultiple,ConfigLoader};
+		pub mod config_io;
+		pub use config_io::{create_default_if_missing,load_manifest};
+		pub mod config_model;
+		pub use config_model::{ConfigJob,ConfigExport,ConfigLayout,ConfigManifest,ConfigPattern,ConfigRender,ConfigTrimming};
 	}
 	pub mod command {
 		pub mod args;

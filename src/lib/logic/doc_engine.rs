@@ -1,19 +1,14 @@
 use super::{
-	TabColumn,
 	DocMarkdown,
 	PathCanonicalCtx,
 	PathScan,
 	PathsPatterns,
 	ResultScanPatterns,
-	TabSortBy,
-	TabSortOrder,
-	TabSpec,
-	TabPathStructure,
 	ScanSpec,
+	TabSpec,
 	TableOutput,
 	TagTime,
 	tag_time,
-    ConfigManifest,create_default_if_missing,load_manifest,ConfigJob,
 };
 
 #[derive(Clone, Copy)]
@@ -42,28 +37,27 @@ pub struct DocEngine {
 impl DocEngine {
 	pub fn new(scan: ScanSpec) -> Self {
 		let dir = PathCanonicalCtx::new(&scan.work_path).unwrap_or_else(|x| {
-            eprintln!("❌ {}", x);
-            std::process::exit(1);
-        });
+			eprintln!("❌ {}", x);
+			std::process::exit(1);
+		});
 
 		let ctx = PathScan::scan(&dir);
 		let ref_patterns: Vec<&str> = scan.patterns.iter().map(|s| s.as_str()).collect();
-        let cfg = PathsPatterns::new(ref_patterns, scan.ignore_case);
-		
-		
-		//let mut tab = ResultScanPatterns::new(ctx, cfg)
-        //    .sort(spec.sort_by, spec.sort_order, spec.structure)
-        //    .columns(&spec.columns);
-		//tab.spec = spec; 
+		let cfg = PathsPatterns::new(ref_patterns, scan.ignore_case);
+
+		// let mut tab = ResultScanPatterns::new(ctx, cfg)
+		//    .sort(spec.sort_by, spec.sort_order, spec.structure)
+		//    .columns(&spec.columns);
+		// tab.spec = spec;
 		let tab = ResultScanPatterns::new(ctx, cfg);
 
-        Self { path: dir, tagtime: tag_time(), result: tab, last_render: None }
+		Self { path: dir, tagtime: tag_time(), result: tab, last_render: None }
 	}
 
 	pub fn spec(mut self, spec: TabSpec) -> Self {
-        self.result.spec = spec;
-        self
-    }
+		self.result.spec = spec;
+		self
+	}
 
 	// ============================================================================
 	// Wewnętrzny silnik generujący
@@ -140,18 +134,18 @@ impl DocEngine {
 	}
 
 	/// REZULTAT PRZYCIĘTY/POCIĘTY (Limit / Paginacja)
-    pub fn view_trimmed(
-        mut self,
-        tab_mode: MX,
-        hide_stats: bool,
-        hide_promo: bool,
-        size: usize,
-        page: Option<usize>, // Jeśli None, działa jak dawny Limit (strona 1)
-    ) -> Self {
-        self.result.spec = self.result.spec.trim(size, page);
-        self.finalize_view_structure_of_the_content(RenderFlags { hide_stats, hide_promo, mode: tab_mode });
-        self
-    }
+	pub fn view_trimmed(
+		mut self,
+		tab_mode: MX,
+		hide_stats: bool,
+		hide_promo: bool,
+		size: usize,
+		page: Option<usize>, // Jeśli None, działa jak dawny Limit (strona 1)
+	) -> Self {
+		self.result.spec = self.result.spec.trim(size, page);
+		self.finalize_view_structure_of_the_content(RenderFlags { hide_stats, hide_promo, mode: tab_mode });
+		self
+	}
 
 	// ============================================================================
 	// UTILS "DRY"
@@ -187,27 +181,26 @@ impl DocEngine {
 	// ============================================================================
 
 	pub fn save_structure_of_the_content(self, rel_path: &str, title: Option<&str>) -> Self {
-        let flags = self.current_flags();
-        let table_output = self.generate_table(flags.mode);
-        let raw_out_str = self.build_structure_of_the_content(&flags);
-        let md = self.init_markdown(raw_out_str, table_output);
+		let flags = self.current_flags();
+		let table_output = self.generate_table(flags.mode);
+		let raw_out_str = self.build_structure_of_the_content(&flags);
+		let md = self.init_markdown(raw_out_str, table_output);
 
-        if let Err(e) = md.structure_of_the_content_save_as(rel_path, title) {
-            eprintln!("❌ Błąd zapisu SOTC (Struktura Zawartości): {}", e);
-        }
-        self
-    }
+		if let Err(e) = md.structure_of_the_content_save_as(rel_path, title) {
+			eprintln!("❌ Błąd zapisu SOTC (Struktura Zawartości): {}", e);
+		}
+		self
+	}
 
-    pub fn save_content_of_the_structure(self, rel_path: &str, title: Option<&str>) -> Self {
-        let flags = self.current_flags();
-        let table_output = self.generate_table(flags.mode);
-        let raw_out_str = self.build_structure_of_the_content(&flags);
-        let md = self.init_markdown(raw_out_str, table_output);
+	pub fn save_content_of_the_structure(self, rel_path: &str, title: Option<&str>) -> Self {
+		let flags = self.current_flags();
+		let table_output = self.generate_table(flags.mode);
+		let raw_out_str = self.build_structure_of_the_content(&flags);
+		let md = self.init_markdown(raw_out_str, table_output);
 
-        if let Err(e) = md.content_of_the_structure_save_as(rel_path, title) {
-            eprintln!("❌ Błąd zapisu COTS (Zawartość Struktury): {}", e);
-        }
-        self
-    }
+		if let Err(e) = md.content_of_the_structure_save_as(rel_path, title) {
+			eprintln!("❌ Błąd zapisu COTS (Zawartość Struktury): {}", e);
+		}
+		self
+	}
 }
-

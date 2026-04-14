@@ -1,15 +1,13 @@
-use std::{fs, io::Read};
+use std::{
+	collections::BTreeMap,
+	fs,
+	io::Read,
+	path::{Path, PathBuf},
+};
 
 use chrono::{DateTime, Local};
-use std::{
-				collections::BTreeMap,
-				path::{Path, PathBuf},
-			};
-use super::{
-	PathCanonicalCtx,
-	FilterList, MatchLabel,
-	TabColumn, TabSortBy, TabSortOrder, TabSpec,TabPathStructure,
-};
+
+use super::{FilterList, MatchLabel, PathCanonicalCtx, TabColumn, TabPathStructure, TabSortBy, TabSortOrder, TabSpec};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum FileKind {
@@ -38,10 +36,10 @@ pub struct TableData {
 /// Ostateczny wynik materializacji
 pub struct TableOutput {
 	pub data: TableData,
-    pub columns: Vec<TabColumn>,
-    pub trim_size: Option<usize>,
-    pub trim_page: usize,
-    pub more_icons: bool,
+	pub columns: Vec<TabColumn>,
+	pub trim_size: Option<usize>,
+	pub trim_page: usize,
+	pub more_icons: bool,
 }
 
 fn is_binary(path: &std::path::Path) -> std::io::Result<bool> {
@@ -85,7 +83,7 @@ impl TableData {
 	}
 
 	pub fn sort(mut self, by: TabSortBy, order: TabSortOrder, structure: TabPathStructure) -> Self {
-        self.structure = structure;
+		self.structure = structure;
 
 		fn get_merge_key(path: &str) -> &str {
 			let trimmed = path.trim_end_matches('/');
@@ -120,75 +118,73 @@ impl TableData {
 		};
 
 		match structure {
-            TabPathStructure::Tree => {
-			
+			TabPathStructure::Tree => {
+				let clean_paths: Vec<PathBuf> =
+					self.rows.iter().map(|r| PathBuf::from(r.path.trim_end_matches('/'))).collect();
+				let mut tree_map: BTreeMap<PathBuf, Vec<usize>> = BTreeMap::new();
 
-			let clean_paths: Vec<PathBuf> =
-				self.rows.iter().map(|r| PathBuf::from(r.path.trim_end_matches('/'))).collect();
-			let mut tree_map: BTreeMap<PathBuf, Vec<usize>> = BTreeMap::new();
-
-			for (i, p) in clean_paths.iter().enumerate() {
-				let parent = p.parent().map_or_else(|| PathBuf::from("."), Path::to_path_buf);
-				tree_map.entry(parent).or_default().push(i);
-			}
-
-			for indices in tree_map.values_mut() {
-				indices.sort_by(|&a, &b| compare(&self.rows[a], &self.rows[b]));
-			}
-
-			let mut root_indices = Vec::new();
-			for (i, p) in clean_paths.iter().enumerate() {
-				let parent = p.parent().map_or_else(|| PathBuf::from("."), Path::to_path_buf);
-				let is_root = parent == Path::new(".") || parent == Path::new("") || !clean_paths.contains(&parent);
-				if is_root {
-					root_indices.push(i);
+				for (i, p) in clean_paths.iter().enumerate() {
+					let parent = p.parent().map_or_else(|| PathBuf::from("."), Path::to_path_buf);
+					tree_map.entry(parent).or_default().push(i);
 				}
-			}
-			root_indices.sort_by(|&a, &b| compare(&self.rows[a], &self.rows[b]));
 
-			let mut flat_indices = Vec::with_capacity(self.rows.len());
-			fn flatten(
-				indices: &[usize],
-				tree_map: &BTreeMap<PathBuf, Vec<usize>>,
-				clean_paths: &[PathBuf],
-				out: &mut Vec<usize>,
-			) {
-				for &idx in indices {
-					out.push(idx);
-					if let Some(children) = tree_map.get(&clean_paths[idx]) {
-						flatten(children, tree_map, clean_paths, out);
+				for indices in tree_map.values_mut() {
+					indices.sort_by(|&a, &b| compare(&self.rows[a], &self.rows[b]));
+				}
+
+				let mut root_indices = Vec::new();
+				for (i, p) in clean_paths.iter().enumerate() {
+					let parent = p.parent().map_or_else(|| PathBuf::from("."), Path::to_path_buf);
+					let is_root = parent == Path::new(".") || parent == Path::new("") || !clean_paths.contains(&parent);
+					if is_root {
+						root_indices.push(i);
 					}
 				}
+				root_indices.sort_by(|&a, &b| compare(&self.rows[a], &self.rows[b]));
+
+				let mut flat_indices = Vec::with_capacity(self.rows.len());
+				fn flatten(
+					indices: &[usize],
+					tree_map: &BTreeMap<PathBuf, Vec<usize>>,
+					clean_paths: &[PathBuf],
+					out: &mut Vec<usize>,
+				) {
+					for &idx in indices {
+						out.push(idx);
+						if let Some(children) = tree_map.get(&clean_paths[idx]) {
+							flatten(children, tree_map, clean_paths, out);
+						}
+					}
+				}
+
+				flatten(&root_indices, &tree_map, &clean_paths, &mut flat_indices);
+
+				let old_rows = std::mem::take(&mut self.rows);
+				let mut temp_rows: Vec<Option<TableRow>> = old_rows.into_iter().map(Some).collect();
+				let mut new_rows = Vec::with_capacity(temp_rows.len());
+
+				for idx in flat_indices {
+					new_rows.push(temp_rows[idx].take().unwrap());
+				}
+				self.rows = new_rows;
 			}
 
-			flatten(&root_indices, &tree_map, &clean_paths, &mut flat_indices);
-
-			let old_rows = std::mem::take(&mut self.rows);
-			let mut temp_rows: Vec<Option<TableRow>> = old_rows.into_iter().map(Some).collect();
-			let mut new_rows = Vec::with_capacity(temp_rows.len());
-
-			for idx in flat_indices {
-                    new_rows.push(temp_rows[idx].take().unwrap());
-                }
-                self.rows = new_rows;
-            }
-
-            TabPathStructure::List => {
-                // ⚡ LISTA: Czysty sort bez cudowania z mapami
-                self.rows.sort_by(compare);
-            }
-        }
+			TabPathStructure::List => {
+				// ⚡ LISTA: Czysty sort bez cudowania z mapami
+				self.rows.sort_by(compare);
+			}
+		}
 
 		self
 	}
 
 	pub fn into_output(self, spec: &TabSpec) -> TableOutput {
 		TableOutput {
-            data: self,
-            columns: spec.columns.clone(),
-            trim_size: spec.trim_size,
-            trim_page: spec.trim_page,
-            more_icons: spec.more_icons, 
+			data: self,
+			columns: spec.columns.clone(),
+			trim_size: spec.trim_size,
+			trim_page: spec.trim_page,
+			more_icons: spec.more_icons,
 		}
 	}
 }

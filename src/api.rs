@@ -5,11 +5,20 @@ pub mod lib {
 		pub mod path_scan;
 		pub use path_scan::{PathScan, PathScanStat};
 		pub mod path_context;
-		pub use path_context::{PathContext};
+		pub use path_context::PathContext;
 		pub mod paths_patterns;
 		pub use paths_patterns::{PathsPatterns, PattEnvIndex, PattExp, PattRaw};
 		pub mod specification;
-		pub use specification::{TabColumn, TabSortBy, TabSortOrder, TabSpec, TabPathStructure,JobMode,JobSpec,ScanSpec};
+		pub use specification::{
+			JobMode,
+			JobSpec,
+			ScanSpec,
+			TabColumn,
+			TabPathStructure,
+			TabSortBy,
+			TabSortOrder,
+			TabSpec,
+		};
 		pub mod table_data;
 		pub use table_data::{FileKind, TableData, TableOutput, TableRow};
 		pub mod paths_result;
@@ -17,24 +26,27 @@ pub mod lib {
 		pub mod tag_time;
 		pub use tag_time::{TagTime, tag_time};
 		pub mod lang_mapper;
-		pub use lang_mapper::{LangMapper};
+		pub use lang_mapper::LangMapper;
 		pub mod doc_markdown;
-		pub use doc_markdown::{DocMarkdown};
+		pub use doc_markdown::DocMarkdown;
 		pub mod doc_engine;
 		pub use doc_engine::{DocEngine, MX, RenderFlags};
 		pub mod doc_engine_multiple;
 		pub use doc_engine_multiple::DocEngineMultiple;
-		pub mod config_io;
-		pub use config_io::{create_default_if_missing,load_manifest};
 		pub mod config_model;
-		pub use config_model::{ConfigJob,ConfigExport,ConfigLayout,ConfigManifest,ConfigPattern,ConfigRender,ConfigTrimming};
+		pub use config_model::{
+			ConfigExport,
+			ConfigJob,
+			ConfigLayout,
+			ConfigManifest,
+			ConfigPattern,
+			ConfigTrimming,
+		};
 		pub mod io_config;
 		pub use io_config::IoConfig;
 	}
 	pub mod command {
 		pub mod args;
-		pub mod table;
-		pub use table::{parse_column, parse_sort};
 		pub mod help;
 	}
 	pub mod display {
@@ -164,9 +176,8 @@ pub mod lib {
 		}
 	}
 	pub mod util {
-		use std::fs;
-		use std::path::Path;
-		use std::process::Command; 
+		use std::{fs, path::Path, process::Command};
+
 		use walkdir::WalkDir;
 
 		pub struct WhitespaceCleaner;
@@ -178,12 +189,10 @@ pub mod lib {
 
 				for entry in WalkDir::new(dir).into_iter().filter_map(|e| e.ok()) {
 					let path = entry.path();
-					
+
 					// Interesują nas tylko pliki Rustowe
-					if path.is_file() && path.extension().is_some_and(|ext| ext == "rs") {
-						if Self::clean_file(path)? {
-							cleaned_files += 1;
-						}
+					if path.is_file() && path.extension().is_some_and(|ext| ext == "rs") && Self::clean_file(path)? {
+						cleaned_files += 1;
 					}
 				}
 
@@ -196,18 +205,11 @@ pub mod lib {
 				Ok(())
 			}
 
-			
 			pub fn run_cargo_fmt() -> std::io::Result<()> {
 				println!("formatting...");
 
 				let status = Command::new("cargo")
-					.args([
-						"+nightly",
-						"fmt",
-						"--",
-						"--config-path",
-						"./.rustfmt.toml",
-					])
+					.args(["+nightly", "fmt", "--", "--config-path", "./.rustfmt.toml"])
 					.status()?; // Czekamy na zakończenie procesu
 
 				if status.success() {
@@ -222,8 +224,9 @@ pub mod lib {
 			/// Pomocnicza funkcja clean_file (zostaje bez zmian)
 			fn clean_file(file_path: &Path) -> std::io::Result<bool> {
 				let content = fs::read_to_string(file_path)?;
-				
-				// Szacujemy pojemność, by uniknąć reallokacji (z reguły plik po czyszczeniu będzie nieco mniejszy)
+
+				// Szacujemy pojemność, by uniknąć reallokacji (z reguły plik po czyszczeniu
+				// będzie nieco mniejszy)
 				let mut cleaned = String::with_capacity(content.len());
 				let mut is_modified = false;
 
@@ -236,7 +239,8 @@ pub mod lib {
 					cleaned.push('\n');
 				}
 
-				// Zapisujemy tylko, jeśli faktycznie dokonano zmian (chroni to czasy modyfikacji mtime)
+				// Zapisujemy tylko, jeśli faktycznie dokonano zmian (chroni to czasy
+				// modyfikacji mtime)
 				if is_modified {
 					fs::write(file_path, cleaned)?;
 					println!("   -> Wyczyszczono: {}", file_path.display());

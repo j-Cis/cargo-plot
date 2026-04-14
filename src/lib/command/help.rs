@@ -1,8 +1,8 @@
 // ./src/lib/command/help.rs
 
 pub fn help_for_pattern_syntax_and_semantics() {
-    println!(
-        r#"
+	println!(
+		r#"
 ======================================================================
 🔎 PATTERN SYNTAX AND SEMANTICS
 ======================================================================
@@ -32,12 +32,12 @@ pub fn help_for_pattern_syntax_and_semantics() {
 Usage example:
 x-do -p "*.{{rs,toml}}&/" "!tests/**" -m
 "#
-    );
+	);
 }
 
 pub fn help_for_automatization_on_config_file() {
-    println!(
-        r#"
+	println!(
+		r#"
 ======================================================================
 ⚙️  AUTOMATIZATION & TOML CONFIGURATION
 ======================================================================
@@ -84,5 +84,5 @@ Usage example:
 x-do -g                   # Runs the configuration from ./.x-do.toml
 x-do -g ./my_config.toml  # Runs the configuration from a specific file
 "#
-    );
+	);
 }

@@ -7,7 +7,11 @@ use super::{
 	PathScan,
 	PathsPatterns,
 	PattEnvIndex,
-	TabColumn, TabSortBy, TabSortOrder, TabSpec, TabPathStructure
+	TabColumn,
+	TabPathStructure,
+	TabSortBy,
+	TabSortOrder,
+	TabSpec,
 };
 
 // ============================================================================
@@ -132,33 +136,33 @@ impl ResultScanPatterns {
 	// ============================================================================
 
 	pub fn sort(mut self, by: TabSortBy, order: TabSortOrder, structure: TabPathStructure) -> Self {
-        self.spec = self.spec.sort(by, order, structure);
-        self
-    }
+		self.spec = self.spec.sort(by, order, structure);
+		self
+	}
 
 	pub fn columns(mut self, cols: &[TabColumn]) -> Self {
 		self.spec = self.spec.columns(cols);
 		self
 	}
 
-    pub fn trim(mut self, size: usize, page: Option<usize>) -> Self {
-        self.spec = self.spec.trim(size, page);
-        self
-    }
+	pub fn trim(mut self, size: usize, page: Option<usize>) -> Self {
+		self.spec = self.spec.trim(size, page);
+		self
+	}
 
 	// ============================================================================
 	// LENIWA MATERIALIZACJA (Fizyczny odczyt FS na wybranej grupie)
 	// ============================================================================
 
-    pub fn build_matched(&self) -> TableOutput {
-        TableData::gather(&self.m)
-            .sort(self.spec.sort_by, self.spec.sort_order, self.spec.structure)
-            .into_output(&self.spec)
-    }
+	pub fn build_matched(&self) -> TableOutput {
+		TableData::gather(&self.m)
+			.sort(self.spec.sort_by, self.spec.sort_order, self.spec.structure)
+			.into_output(&self.spec)
+	}
 
-    pub fn build_mismatched(&self) -> TableOutput {
-        TableData::gather(&self.x)
-            .sort(self.spec.sort_by, self.spec.sort_order, self.spec.structure)
-            .into_output(&self.spec)
-    }
+	pub fn build_mismatched(&self) -> TableOutput {
+		TableData::gather(&self.x)
+			.sort(self.spec.sort_by, self.spec.sort_order, self.spec.structure)
+			.into_output(&self.spec)
+	}
 }

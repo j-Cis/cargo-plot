@@ -1,7 +1,7 @@
 use colored::Colorize;
 
 use super::{Color, DrawTree, Icon};
-use crate::lib::logic::{TabColumn, FileKind, TableData, TableOutput, TableRow,TabPathStructure};
+use crate::lib::logic::{FileKind, TabColumn, TabPathStructure, TableData, TableOutput, TableRow};
 
 fn format_size(bytes: u64) -> String {
 	if bytes < 1024 {
@@ -51,11 +51,11 @@ impl std::fmt::Display for TableOutput {
 		let total_rows = self.data.rows.len();
 
 		let (rows_to_show, index_offset) = if let Some(size) = self.trim_size {
-            let start = self.trim_page.saturating_sub(1) * size;
-            (self.data.rows.iter().skip(start).take(size).collect::<Vec<_>>(), start)
-        } else {
-            (self.data.rows.iter().collect::<Vec<_>>(), 0)
-        };
+			let start = self.trim_page.saturating_sub(1) * size;
+			(self.data.rows.iter().skip(start).take(size).collect::<Vec<_>>(), start)
+		} else {
+			(self.data.rows.iter().collect::<Vec<_>>(), 0)
+		};
 
 		let current_view_count = rows_to_show.len();
 		let num_width = total_rows.to_string().len();
@@ -230,21 +230,21 @@ impl std::fmt::Display for TableOutput {
 		}
 
 		if let Some(size) = self.trim_size {
-            let total_pages = total_rows.saturating_add(size - 1) / size;
-            if total_pages > 1 {
-                output_lines.push(format!(
-                    "          {}",
-                    format!("... Strona {} z {} (łącznie {} pozycji)", self.trim_page, total_pages, total_rows)
-                        .italic()
-                        .dimmed()
-                ));
-            } else if total_rows > size {
-                output_lines.push(format!(
-                    "          {}",
-                    format!("... i {} innych pozycji", total_rows - size).italic().dimmed()
-                ));
-            }
-        }
+			let total_pages = total_rows.saturating_add(size - 1) / size;
+			if total_pages > 1 {
+				output_lines.push(format!(
+					"          {}",
+					format!("... Strona {} z {} (łącznie {} pozycji)", self.trim_page, total_pages, total_rows)
+						.italic()
+						.dimmed()
+				));
+			} else if total_rows > size {
+				output_lines.push(format!(
+					"          {}",
+					format!("... i {} innych pozycji", total_rows - size).italic().dimmed()
+				));
+			}
+		}
 
 		write!(f, "{}", output_lines.join("\n"))
 	}

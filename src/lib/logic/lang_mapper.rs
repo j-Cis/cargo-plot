@@ -7,17 +7,17 @@ impl LangMapper {
 		matches!(
 			e.as_str(),
 			// GRAFIKA
-			"png" | "jpg" | "jpeg" | "gif" | "bmp" | "ico" | "svg" | "webp" | "tiff" | "tif" | "heic" | "psd" | "ai" | 
+			"png" | "jpg" | "jpeg" | "gif" | "bmp" | "ico" | "svg" | "webp" | "tiff" | "tif" | "heic" | "psd" | "ai" |
             // BINARKI
-            "exe" | "dll" | "so" | "dylib" | "bin" | "wasm" | "pdb" | "rlib" | "rmeta" | "lib" | "o" | "a" | "obj" | "pch" | "ilk" | "exp" | 
-            "jar" | "class" | "war" | "ear" | 
-            "pyc" | "pyd" | "pyo" | "whl" | 
+            "exe" | "dll" | "so" | "dylib" | "bin" | "wasm" | "pdb" | "rlib" | "rmeta" | "lib" | "o" | "a" | "obj" | "pch" | "ilk" | "exp" |
+            "jar" | "class" | "war" | "ear" |
+            "pyc" | "pyd" | "pyo" | "whl" |
             // ARCHIWA
-            "zip" | "tar" | "gz" | "tgz" | "7z" | "rar" | "bz2" | "xz" | "iso" | "dmg" | "pkg" | "apk" | 
+            "zip" | "tar" | "gz" | "tgz" | "7z" | "rar" | "bz2" | "xz" | "iso" | "dmg" | "pkg" | "apk" |
             // BAZY / DOKUMENTY / FONTY
-            "sqlite" | "sqlite3" | "db" | "db3" | "mdf" | "ldf" | "rdb" | 
-            "pdf" | "doc" | "docx" | "xls" | "xlsx" | "ppt" | "pptx" | "odt" | "ods" | "odp" | 
-            "woff" | "woff2" | "ttf" | "eot" | "otf" | 
+            "sqlite" | "sqlite3" | "db" | "db3" | "mdf" | "ldf" | "rdb" |
+            "pdf" | "doc" | "docx" | "xls" | "xlsx" | "ppt" | "pptx" | "odt" | "ods" | "odp" |
+            "woff" | "woff2" | "ttf" | "eot" | "otf" |
             // MEDIA
             "mp3" | "mp4" | "avi" | "mkv" | "wav" | "flac" | "ogg" | "m4a" | "mov" | "wmv" | "flv"
 		)

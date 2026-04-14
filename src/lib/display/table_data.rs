@@ -50,14 +50,12 @@ impl std::fmt::Display for TableOutput {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 		let total_rows = self.data.rows.len();
 
-		let (rows_to_show, index_offset) = if let (Some(page), Some(size)) = (self.page, self.page_size) {
-			let start = page.saturating_sub(1) * size;
-			(self.data.rows.iter().skip(start).take(size).collect::<Vec<_>>(), start)
-		} else if let Some(n) = self.limit {
-			(self.data.rows.iter().take(n).collect::<Vec<_>>(), 0)
-		} else {
-			(self.data.rows.iter().collect::<Vec<_>>(), 0)
-		};
+		let (rows_to_show, index_offset) = if let Some(size) = self.trim_size {
+            let start = self.trim_page.saturating_sub(1) * size;
+            (self.data.rows.iter().skip(start).take(size).collect::<Vec<_>>(), start)
+        } else {
+            (self.data.rows.iter().collect::<Vec<_>>(), 0)
+        };
 
 		let current_view_count = rows_to_show.len();
 		let num_width = total_rows.to_string().len();
@@ -129,7 +127,7 @@ impl std::fmt::Display for TableOutput {
 			};
 			let tree_list_prefix = Color::tree(tree_list_prefix_str);
 
-			let icon_str = if self.extended_icons {
+			let icon_str = if self.more_icons {
 				let is_dir = row.kind == FileKind::Dir;
 				let file_name = row.path.trim_end_matches('/').split('/').next_back().unwrap_or("");
 				let is_hidden = file_name.starts_with('.');
@@ -231,20 +229,22 @@ impl std::fmt::Display for TableOutput {
 			output_lines.push(line_parts.join(" "));
 		}
 
-		if let (Some(page), Some(size)) = (self.page, self.page_size) {
-			let total_pages = total_rows.saturating_add(size - 1) / size;
-			if total_pages > 1 {
-				output_lines.push(format!(
-					"          {}",
-					format!("... Strona {} z {} (łącznie {} pozycji)", page, total_pages, total_rows).italic().dimmed()
-				));
-			}
-		} else if let Some(n) = self.limit
-			&& total_rows > n
-		{
-			output_lines
-				.push(format!("          {}", format!("... i {} innych pozycji", total_rows - n).italic().dimmed()));
-		}
+		if let Some(size) = self.trim_size {
+            let total_pages = total_rows.saturating_add(size - 1) / size;
+            if total_pages > 1 {
+                output_lines.push(format!(
+                    "          {}",
+                    format!("... Strona {} z {} (łącznie {} pozycji)", self.trim_page, total_pages, total_rows)
+                        .italic()
+                        .dimmed()
+                ));
+            } else if total_rows > size {
+                output_lines.push(format!(
+                    "          {}",
+                    format!("... i {} innych pozycji", total_rows - size).italic().dimmed()
+                ));
+            }
+        }
 
 		write!(f, "{}", output_lines.join("\n"))
 	}

@@ -35,11 +35,10 @@ pub struct TableData {
 /// Ostateczny wynik materializacji
 pub struct TableOutput {
 	pub data: TableData,
-	pub limit: Option<usize>,
-	pub columns: Vec<TabColumn>,
-	pub page: Option<usize>,
-	pub page_size: Option<usize>,
-	pub extended_icons: bool,
+    pub columns: Vec<TabColumn>,
+    pub trim_size: Option<usize>,
+    pub trim_page: usize,
+    pub more_icons: bool,
 }
 
 fn is_binary(path: &std::path::Path) -> std::io::Result<bool> {
@@ -179,13 +178,12 @@ impl TableData {
 	}
 
 	pub fn into_output(self, spec: &TableSpec) -> TableOutput {
-		TableOutput {
-			data: self,
-			limit: spec.limit,
-			columns: spec.columns.clone(),
-			page: spec.page,
-			page_size: spec.page_size,
-			extended_icons: spec.extended_icons,
+		 TableOutput {
+            data: self,
+            columns: spec.columns.clone(),
+            trim_size: spec.trim_size,
+            trim_page: spec.trim_page,
+            more_icons: spec.more_icons, 
 		}
 	}
 }

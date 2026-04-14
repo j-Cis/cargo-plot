@@ -27,7 +27,7 @@ pub mod lib {
 		pub mod args;
 		pub mod table;
 		pub use table::{parse_column, parse_sort};
-		pub mod pattern_syntax_and_semantics;
+		pub mod help;
 	}
 	pub mod display {
 

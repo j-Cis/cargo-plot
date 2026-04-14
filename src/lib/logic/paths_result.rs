@@ -141,24 +141,24 @@ impl ResultScanPatterns {
 		self
 	}
 
-	pub fn limit(mut self, n: usize) -> Self {
-		self.spec = self.spec.limit(n);
-		self
-	}
+    pub fn trim(mut self, size: usize, page: Option<usize>) -> Self {
+        self.spec = self.spec.trim(size, page);
+        self
+    }
 
 	// ============================================================================
 	// LENIWA MATERIALIZACJA (Fizyczny odczyt FS na wybranej grupie)
 	// ============================================================================
 
-	pub fn build_matched(&self) -> TableOutput {
-		TableData::gather(&self.m)
-			.sort(self.spec.sort_by, self.spec.sort_order, self.spec.is_tree)
-			.into_output(&self.spec)
-	}
+    pub fn build_matched(&self) -> TableOutput {
+        TableData::gather(&self.m)
+            .sort(self.spec.sort_by, self.spec.sort_order, self.spec.list_instead_tree)
+            .into_output(&self.spec)
+    }
 
-	pub fn build_mismatched(&self) -> TableOutput {
-		TableData::gather(&self.x)
-			.sort(self.spec.sort_by, self.spec.sort_order, self.spec.is_tree)
-			.into_output(&self.spec)
-	}
+    pub fn build_mismatched(&self) -> TableOutput {
+        TableData::gather(&self.x)
+            .sort(self.spec.sort_by, self.spec.sort_order, self.spec.list_instead_tree)
+            .into_output(&self.spec)
+    }
 }

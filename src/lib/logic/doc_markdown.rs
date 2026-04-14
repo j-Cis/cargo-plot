@@ -34,28 +34,31 @@ impl DocMarkdown {
 	// BUILD & RENDER
 	// ============================================================================
 
-	fn structure_of_the_content_render(&self) -> String {
-		format!("# STRUCTURE OF THE CONTENT v:{}\n\n```plaintext\n{}\n```\n", self.timetag.0, self.content)
-	}
+	fn structure_of_the_content_render(&self, title: Option<&str>) -> String {
+        let title_str = title.map_or(String::new(), |t| format!("{} ", t));
+        format!(
+            "# {}(STRUCTURE OF THE CONTENT v:{})\n\n```plaintext\n{}\n```\n",
+            title_str, self.timetag.0, self.content
+        )
+    }
 
-	fn content_of_the_structure_render(&self, code_blocks: &str) -> String {
-		format!(
-			"# CONTENT OF THE STRUCTURE v:{}\n\n```plaintext\n{}\n```\n\n{}",
-			self.timetag.0, self.content, code_blocks
-		)
-	}
+    fn content_of_the_structure_render(&self, code_blocks: &str, title: Option<&str>) -> String {
+        let title_str = title.map_or(String::new(), |t| format!("{} ", t));
+        format!(
+            "# {}(CONTENT OF THE STRUCTURE v:{})\n\n```plaintext\n{}\n```\n\n{}",
+            title_str, self.timetag.0, self.content, code_blocks
+        )
+    }
 
 	pub fn content_of_the_structure_build(&self, target_dir: &Path) -> String {
 		let mut content = String::new();
 
-		let (rows_to_show, index_offset) = if let (Some(page), Some(size)) = (self.table.page, self.table.page_size) {
-			let start = page.saturating_sub(1) * size;
-			(self.table.data.rows.iter().skip(start).take(size).collect::<Vec<_>>(), start)
-		} else if let Some(n) = self.table.limit {
-			(self.table.data.rows.iter().take(n).collect::<Vec<_>>(), 0)
-		} else {
-			(self.table.data.rows.iter().collect::<Vec<_>>(), 0)
-		};
+		let (rows_to_show, index_offset) = if let Some(size) = self.table.trim_size {
+            let start = self.table.trim_page.saturating_sub(1) * size;
+            (self.table.data.rows.iter().skip(start).take(size).collect::<Vec<_>>(), start)
+        } else {
+            (self.table.data.rows.iter().collect::<Vec<_>>(), 0)
+        };
 
 		for (i, row) in rows_to_show.iter().enumerate() {
 			let actual_idx = index_offset + i + 1;
@@ -104,22 +107,22 @@ impl DocMarkdown {
 	// SAVE AS
 	// ============================================================================
 
-	pub fn structure_of_the_content_save_as(&self, relpath: &str) -> std::io::Result<()> {
-		let file_path = self.path_build(relpath, ScOrCs::SOTC)?;
-		let content = self.structure_of_the_content_render();
+	pub fn structure_of_the_content_save_as(&self, relpath: &str, title: Option<&str>) -> std::io::Result<()> {
+        let file_path = self.path_build(relpath, ScOrCs::SOTC)?;
+        let content = self.structure_of_the_content_render(title);
 
-		Self::fs_write(&file_path, content)?;
-		Ok(())
-	}
+        Self::fs_write(&file_path, content)?;
+        Ok(())
+    }
 
-	pub fn content_of_the_structure_save_as(&self, relpath: &str) -> std::io::Result<()> {
-		let file_path = self.path_build(relpath, ScOrCs::COTS)?;
-		let code_blocks = self.content_of_the_structure_build(&self.wrk.buf);
-		let content = self.content_of_the_structure_render(&code_blocks);
+    pub fn content_of_the_structure_save_as(&self, relpath: &str, title: Option<&str>) -> std::io::Result<()> {
+        let file_path = self.path_build(relpath, ScOrCs::COTS)?;
+        let code_blocks = self.content_of_the_structure_build(&self.wrk.buf);
+        let content = self.content_of_the_structure_render(&code_blocks, title);
 
-		Self::fs_write(&file_path, content)?;
-		Ok(())
-	}
+        Self::fs_write(&file_path, content)?;
+        Ok(())
+    }
 
 	// ============================================================================
 	// UTILS "DRY"

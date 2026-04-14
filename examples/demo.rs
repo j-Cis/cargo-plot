@@ -23,9 +23,9 @@ fn main() {
 	// łańcuchu.
 	DocEngine::new(a1, a2, true, view_row, view_col)
         .view(MX::M, false, false)
-		.save_structure_of_the_content("./docs/raport")
+		.save_structure_of_the_content("./docs/raport", Some("abcd"))
         .view(MX::M, true, false)
-		.save_content_of_the_structure("./docs/raport");
+		.save_content_of_the_structure("./docs/raport",Some("efgh"));
 
 	// 2. Od razu płynnie zrzut tabeli ODRZUCONEJ (X), z limitem do 10, bez
 	//    statystyk, z promo!

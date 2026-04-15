@@ -75,9 +75,9 @@ more_icons = false
 
 [job.export]
 save_sotc_at = "./target/.cargo-plot/File"
-title_sotc = "Rust Project Snapshot [Structure of the content]"
+title_sotc = "Rust Project Snapshot"
 save_cots_at = "./target/.cargo-plot/Docs"
-title_cots = "Rust Project Snapshot [Content of the structure]"
+title_cots = "Rust Project Snapshot"
 "#
 		.to_string()
 	}

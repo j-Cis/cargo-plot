@@ -19,7 +19,7 @@ pub struct PathNode {
 }
 
 fn normalize_path<P: AsRef<Path>>(p: P) -> String {
-	p.as_ref().to_string_lossy().trim_start_matches(r"\\?\").replace('\\', "/")
+	p.as_ref().to_string_lossy().trim_start_matches(r"\\?\").replace('\\', "/").replace("/./", "/")
 }
 
 impl PathNode {
@@ -66,8 +66,9 @@ impl AnchoredPathsDatum {
 		let stem = base_dir_path.file_stem().unwrap_or_else(|| OsStr::new("output")).to_string_lossy();
 
 		// Składamy pełną nazwę pliku w jednym kroku
-		let file_name = format!("{}_{}_{}.md", stem, time_tag, suffix);
-		let file_path = base_dir_path.with_file_name(file_name);
+		let file_name = format!("{}_{}{}.md", stem, time_tag, suffix);
+		let raw_file_path = base_dir_path.with_file_name(file_name);
+		let file_path = PathBuf::from(normalize_path(&raw_file_path));
 
 		if let Some(parent) = file_path.parent() {
 			fs::create_dir_all(parent)?;
@@ -82,7 +83,7 @@ impl AnchoredPathsDatum {
 		let file_path = self.build_output_file_path(relpath, tt.0.clone(), "SOTC")?;
 		let title_str = title.map_or(String::new(), |t| format!("{} ", t));
 		let content = format!(
-			"# {}(STRUCTURE OF THE CONTENT v:{})\n{}",
+			"# {}(v:{} [Structure of the content])\n{}",
 			title_str,
 			tt.0,
 			Self::md_plaintext(table_sotc_tree_cli)
@@ -104,19 +105,13 @@ impl AnchoredPathsDatum {
 		let file_path = self.build_output_file_path(relpath, tt.0.clone(), "COTS")?;
 		let title_str = title.map_or(String::new(), |t| format!("{} ", t));
 		let content = format!(
-			"# {}(CONTENT OF THE STRUCTURE v:{})\n{}\n{}",
+			"# {}(v:{} [Content of the structure])\n{}\n{}",
 			title_str,
 			tt.0,
 			Self::md_plaintext(table_sotc_tree_cli),
 			self.md_build(table_sotc_tree_raw)
 		);
 		Self::fs_write(&file_path, content)?;
-		Ok(())
-	}
-
-	fn fs_write(file_path: &PathBuf, content: String) -> std::io::Result<()> {
-		fs::write(file_path, content)?;
-		println!("📦 Zapisano archiwum kodu do: {}", file_path.display());
 		Ok(())
 	}
 
@@ -177,5 +172,12 @@ impl AnchoredPathsDatum {
 		}
 
 		content
+	}
+
+
+	fn fs_write(file_path: &PathBuf, content: String) -> std::io::Result<()> {
+		fs::write(file_path, content)?;
+		println!("📦 Zapisano archiwum kodu do: {}", file_path.display());
+		Ok(())
 	}
 }

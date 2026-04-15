@@ -10,7 +10,7 @@ pub mod lib {
 			pub mod paths_patterns;
 			pub use paths_patterns::{PattEnvIndex, PattExp, PattRaw, PatternsToApply};
 			pub mod paths_table;
-			pub use paths_table::{FileKind, TableData, TableOutput, TableRow};
+			pub use paths_table::{FileKind, TableData, TableRow, TableSotcTreeOutput};
 			pub mod paths_result;
 			pub use paths_result::{MatchLabel, Matched, Mismatched, Partition, PartitioningResult};
 		}
@@ -31,8 +31,8 @@ pub mod lib {
 			ScannedToApply,
 			StatsScannedTreeFs,
 			TableData,
-			TableOutput,
 			TableRow,
+			TableSotcTreeOutput,
 		};
 
 		pub mod specification;
@@ -50,10 +50,8 @@ pub mod lib {
 		pub use tag_time::{TagTime, tag_time};
 		pub mod mapper_lang_type;
 		pub use mapper_lang_type::LangMapper;
-		pub mod file_markdown_docs;
-		pub use file_markdown_docs::DocMarkdown;
 		pub mod engine;
-		pub use engine::{DocEngine, MX, RenderFlags};
+		pub use engine::{JobEngine, MX, RenderFlags};
 		pub mod engine_multiple;
 		pub use engine_multiple::DocEngineMultiple;
 		pub mod config_model;

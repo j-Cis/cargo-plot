@@ -12,7 +12,7 @@ use crate::lib::logic::{
 	TabSortOrder,
 	TabSpec,
 	TableData,
-	TableOutput,
+	TableSotcTreeOutput,
 };
 
 // ============================================================================
@@ -145,13 +145,13 @@ impl PartitioningResult {
 	// LENIWA MATERIALIZACJA (Fizyczny odczyt FS na wybranej grupie)
 	// ============================================================================
 
-	pub fn build_matched(&self) -> TableOutput {
+	pub fn build_matched(&self) -> TableSotcTreeOutput {
 		TableData::gather(&self.m)
 			.sort(self.spec.sort_by, self.spec.sort_order, self.spec.structure)
 			.into_output(&self.spec)
 	}
 
-	pub fn build_mismatched(&self) -> TableOutput {
+	pub fn build_mismatched(&self) -> TableSotcTreeOutput {
 		TableData::gather(&self.x)
 			.sort(self.spec.sort_by, self.spec.sort_order, self.spec.structure)
 			.into_output(&self.spec)

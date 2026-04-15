@@ -1,7 +1,7 @@
 use colored::Colorize;
 
 use super::{Color, DrawTree, Icon};
-use crate::lib::logic::{FileKind, TabColumn, TabPathStructure, TableData, TableOutput, TableRow};
+use crate::lib::logic::{FileKind, TabColumn, TabPathStructure, TableData, TableRow, TableSotcTreeOutput};
 
 fn format_size(bytes: u64) -> String {
 	if bytes < 1024 {
@@ -46,7 +46,7 @@ impl std::fmt::Display for TableData {
 	}
 }
 
-impl std::fmt::Display for TableOutput {
+impl std::fmt::Display for TableSotcTreeOutput {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 		let total_rows = self.data.rows.len();
 

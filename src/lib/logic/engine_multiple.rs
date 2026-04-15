@@ -1,7 +1,7 @@
-use crate::lib::logic::{ConfigJob, ConfigManifest, DocEngine, IoConfig, JobMode, JobSpec, MX, RenderFlags};
+use crate::lib::logic::{ConfigJob, ConfigManifest, IoConfig, JobEngine, JobMode, JobSpec, MX, RenderFlags};
 /// Orchestrator zadań wsadowych.
 /// Pobiera konfigurację z plików TOML, tłumaczy ją na silnie typowane obiekty
-/// JobSpec i zleca ich wykonanie do rdzennego DocEngine.
+/// JobSpec i zleca ich wykonanie do rdzennego JobEngine.
 pub struct DocEngineMultiple {
 	pub manifest: ConfigManifest,
 }
@@ -44,7 +44,7 @@ impl DocEngineMultiple {
 	}
 
 	// ============================================================================
-	// EXECUTORY (Wykonywanie zadań za pomocą DocEngine)
+	// EXECUTORY (Wykonywanie zadań za pomocą JobEngine)
 	// ============================================================================
 
 	/// Mapuje i wykonuje w pętli wszystkie zadania zdefiniowane w pliku TOML
@@ -64,10 +64,10 @@ impl DocEngineMultiple {
 	}
 
 	// ============================================================================
-	// SILNIK WYKONAWCZY (Delegacja do DocEngine)
+	// SILNIK WYKONAWCZY (Delegacja do JobEngine)
 	// ============================================================================
 
-	/// Bierze gotowy i bezpieczny JobSpec, a następnie karmi nim DocEngine
+	/// Bierze gotowy i bezpieczny JobSpec, a następnie karmi nim JobEngine
 	fn execute_spec(&self, spec: JobSpec) -> Result<(), String> {
 		if !spec.quiet_work {
 			let name = spec.name.as_deref().unwrap_or("Brak nazwy");
@@ -80,9 +80,9 @@ impl DocEngineMultiple {
 			JobMode::Mismatched => MX::Mismatched,
 		};
 
-		// 2. Inicjujemy rdzewny DocEngine przekazując mu od razu obiekt ScanSpec i
+		// 2. Inicjujemy rdzewny JobEngine przekazując mu od razu obiekt ScanSpec i
 		//    TabSpec
-		let mut engine = DocEngine::new(spec.scan.clone()).spec(spec.table.clone());
+		let mut engine = JobEngine::new(spec.scan.clone()).spec(spec.table.clone());
 
 		// 3. Widok w terminalu (lub cichy stan dla plików)
 		if !spec.quiet_work {

@@ -43,7 +43,7 @@ pub struct TableData {
 }
 
 /// Ostateczny wynik materializacji
-pub struct TableOutput {
+pub struct TableSotcTreeOutput {
 	pub data: TableData,
 	pub columns: Vec<TabColumn>,
 	pub trim_size: Option<usize>,
@@ -187,8 +187,8 @@ impl TableData {
 		self
 	}
 
-	pub fn into_output(self, spec: &TabSpec) -> TableOutput {
-		TableOutput {
+	pub fn into_output(self, spec: &TabSpec) -> TableSotcTreeOutput {
+		TableSotcTreeOutput {
 			data: self,
 			columns: spec.columns.clone(),
 			trim_size: spec.trim_size,

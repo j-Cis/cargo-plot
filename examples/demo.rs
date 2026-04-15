@@ -1,9 +1,9 @@
 // ./examples/demo.rs
 #[allow(unused_imports)]
 use plot::lib::logic::{
-	DocEngine,
 	DocEngineMultiple,
 	IoConfig,
+	JobEngine,
 	MX,
 	ScanSpec,
 	TabPathStructure,
@@ -26,7 +26,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 	//    .sort(TabSortBy::Name, TabSortOrder::Desc, TabPathStructure::List);
 
 	// 3. Odpalenie głównego silnika
-	// DocEngine::new(scan_config)
+	// JobEngine::new(scan_config)
 	//    .spec(table_config)
 	//    .view(MX::M, false, false)
 	//    .save_structure_of_the_content("./docs/raport-file", Some("file"))
@@ -51,7 +51,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 	// "default_job", a nie "p1"!): orchestrator.job_id("default_job")?;
 
 	// A najprościej odpalić po prostu wszystkie zadania z pliku z automatu:
-	//orchestrator.jobs()?;
+	orchestrator.jobs()?;
 
 	Ok(())
 }

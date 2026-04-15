@@ -1,14 +1,11 @@
 use crate::lib::logic::{
 	AnchoredPathsDatum,
-	DocMarkdown,
 	PartitioningResult,
 	PatternsToApply,
 	ScanSpec,
 	ScannedToApply,
 	TabSpec,
-	TableOutput,
-	TagTime,
-	tag_time,
+	TableSotcTreeOutput,
 };
 
 #[derive(Clone, Copy)]
@@ -27,14 +24,13 @@ pub struct RenderFlags {
 }
 
 /// Główny silnik spinający skanowanie, filtrowanie i konfigurację widoku.
-pub struct DocEngine {
-	pub path: AnchoredPathsDatum,
-	pub tagtime: TagTime,
+pub struct JobEngine {
+	pub anchored: AnchoredPathsDatum, // używane tylko do zapisu plików
 	pub result: PartitioningResult,
 	pub last_render: Option<RenderFlags>,
 }
 
-impl DocEngine {
+impl JobEngine {
 	pub fn new(scan: ScanSpec) -> Self {
 		let anchored_paths_datum = AnchoredPathsDatum::new(&scan.work_path).unwrap_or_else(|x| {
 			eprintln!("❌ {}", x);
@@ -52,7 +48,7 @@ impl DocEngine {
 		let partitioning_result =
 			PartitioningResult::new(scanned_to_apply, patterns_to_apply, anchored_paths_datum.clone());
 
-		Self { path: anchored_paths_datum, tagtime: tag_time(), result: partitioning_result, last_render: None }
+		Self { anchored: anchored_paths_datum, result: partitioning_result, last_render: None }
 	}
 
 	pub fn spec(mut self, spec: TabSpec) -> Self {
@@ -157,24 +153,12 @@ impl DocEngine {
 		self.last_render.unwrap_or(RenderFlags { hide_stats: false, hide_promo: false, mode: MX::M })
 	}
 
-	/// Generuje surowy obiekt TableOutput na podstawie trybu z flag
-	fn generate_table(&self, mode: MX) -> TableOutput {
+	/// Generuje surowy obiekt TableSotcTreeOutput na podstawie trybu z flag
+	fn generate_table(&self, mode: MX) -> TableSotcTreeOutput {
 		match mode {
 			MX::M | MX::Matched => self.result.build_matched(),
 			MX::X | MX::Mismatched => self.result.build_mismatched(),
 		}
-	}
-
-	/// Składa w jedną całość inicjalizację obiektu Markdown (redukcja powtórzeń
-	/// w metodach save)
-	fn init_markdown(&self, content: String, table: TableOutput) -> DocMarkdown {
-		DocMarkdown::new(
-			content,
-			table,
-			self.path.execution_dir.clone(),
-			self.path.workspace_dir.clone(),
-			self.tagtime.clone(),
-		)
 	}
 
 	// ============================================================================
@@ -183,11 +167,9 @@ impl DocEngine {
 
 	pub fn save_structure_of_the_content(self, rel_path: &str, title: Option<&str>) -> Self {
 		let flags = self.current_flags();
-		let table_output = self.generate_table(flags.mode);
 		let raw_out_str = self.build_structure_of_the_content(&flags);
-		let md = self.init_markdown(raw_out_str, table_output);
 
-		if let Err(e) = md.structure_of_the_content_save_as(rel_path, title) {
+		if let Err(e) = self.anchored.save_sotc_tree(rel_path, title, raw_out_str) {
 			eprintln!("❌ Błąd zapisu SOTC (Struktura Zawartości): {}", e);
 		}
 		self
@@ -197,9 +179,8 @@ impl DocEngine {
 		let flags = self.current_flags();
 		let table_output = self.generate_table(flags.mode);
 		let raw_out_str = self.build_structure_of_the_content(&flags);
-		let md = self.init_markdown(raw_out_str, table_output);
 
-		if let Err(e) = md.content_of_the_structure_save_as(rel_path, title) {
+		if let Err(e) = self.anchored.save_cots_plot(rel_path, title, raw_out_str, table_output) {
 			eprintln!("❌ Błąd zapisu COTS (Zawartość Struktury): {}", e);
 		}
 		self

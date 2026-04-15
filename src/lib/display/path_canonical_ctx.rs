@@ -1,5 +1,5 @@
 use super::DrawTree;
-use crate::lib::logic::{PathCanonicalCtx, PathNode};
+use crate::lib::logic::{AnchoredPathsDatum, PathNode};
 
 impl std::fmt::Display for PathNode {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -8,7 +8,7 @@ impl std::fmt::Display for PathNode {
 	}
 }
 
-impl std::fmt::Display for PathCanonicalCtx {
+impl std::fmt::Display for AnchoredPathsDatum {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 		let mut lines = Vec::new();
 

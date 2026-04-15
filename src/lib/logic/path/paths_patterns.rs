@@ -1,6 +1,6 @@
 use regex::Regex;
 
-use super::PathContext;
+use crate::lib::logic::PathContext;
 
 // ============================================================================
 // ENV ABSTRAKCJA (ODCIĘCIE OD FS / STRUKTUR KOLEKCJI)
@@ -25,7 +25,7 @@ pub struct PattRaw(pub Vec<String>);
 pub struct PattExp(pub Vec<String>);
 
 #[derive(Debug, Clone)]
-pub struct PathsPatterns {
+pub struct PatternsToApply {
 	pub patterns: PattRaw,
 	pub expanded: PattExp,
 	compiled: Vec<PatternCompiled>,
@@ -53,7 +53,7 @@ struct PatternCompiled {
 // PATTERNS IMPLEMENTATION
 // ============================================================================
 
-impl PathsPatterns {
+impl PatternsToApply {
 	pub fn new<I, S>(patterns: I, ignore_case_sensitive: bool) -> Self
 	where
 		I: IntoIterator<Item = S>,

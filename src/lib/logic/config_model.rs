@@ -11,10 +11,10 @@ pub struct ConfigJob {
 	pub name: Option<String>,
 	pub description: Option<String>,
 	#[serde(default)]
-    pub quiet_work: bool,
-    pub scan: ConfigPattern,
-    pub spec: ConfigSpec,
-    pub table_sotc: ConfigLayout,
+	pub quiet_work: bool,
+	pub scan: ConfigPattern,
+	pub spec: ConfigSpec,
+	pub table_sotc: ConfigLayout,
 	pub export: Option<ConfigExport>,
 }
 
@@ -22,7 +22,7 @@ pub struct ConfigJob {
 pub struct ConfigPattern {
 	#[serde(default = "default_work_path")]
 	pub work_path: String,
-    pub patterns: Vec<String>,
+	pub patterns: Vec<String>,
 	#[serde(default)]
 	pub ignore_case: bool,
 }
@@ -34,17 +34,17 @@ pub struct ConfigSpec {
 	pub hide_stats: bool,
 	#[serde(default)]
 	pub hide_promo: bool,
-    pub trimming: Option<ConfigTrimming>, // Zagnieżdżone w [job.spec.trimming]
+	pub trimming: Option<ConfigTrimming>, // Zagnieżdżone w [job.spec.trimming]
 }
 
 #[derive(Debug, Deserialize, Default, Clone)]
 pub struct ConfigLayout {
-    pub sort_by: String,    // Zgodnie z TOML
-    pub sort_order: String, // Zgodnie z TOML
+	pub sort_by: String,    // Zgodnie z TOML
+	pub sort_order: String, // Zgodnie z TOML
 	pub reverse: bool,
-    pub structure: String,
+	pub structure: String,
 	pub columns: Vec<String>,
-    pub trim_page: usize,
+	pub trim_page: usize,
 	pub more_icons: bool,
 }
 

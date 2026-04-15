@@ -7,7 +7,16 @@ use std::{
 
 use chrono::{DateTime, Local};
 
-use super::{FilterList, MatchLabel, PathCanonicalCtx, TabColumn, TabPathStructure, TabSortBy, TabSortOrder, TabSpec};
+use crate::lib::logic::{
+	AnchoredPathsDatum,
+	MatchLabel,
+	Partition,
+	TabColumn,
+	TabPathStructure,
+	TabSortBy,
+	TabSortOrder,
+	TabSpec,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum FileKind {
@@ -60,12 +69,12 @@ fn get_dir_size(path: &std::path::Path) -> u64 {
 }
 
 impl TableData {
-	pub fn gather<L: MatchLabel>(list: &FilterList<L>) -> Self {
+	pub fn gather<L: MatchLabel>(list: &Partition<L>) -> Self {
 		let rows = list.paths.iter().filter_map(|p| Self::inspect(p, &list.entry).ok()).collect();
 		Self { rows, structure: TabPathStructure::Tree }
 	}
 
-	fn inspect(rel_path: &str, relation: &PathCanonicalCtx) -> anyhow::Result<TableRow> {
+	fn inspect(rel_path: &str, relation: &AnchoredPathsDatum) -> anyhow::Result<TableRow> {
 		let clean_rel = rel_path.strip_prefix("./").unwrap_or(rel_path);
 		let absolute_path = relation.select_dir.buf.join(clean_rel);
 

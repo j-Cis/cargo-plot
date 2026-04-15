@@ -1,4 +1,4 @@
-use super::{ConfigJob, ConfigManifest, DocEngine, IoConfig, JobMode, JobSpec, MX, RenderFlags};
+use crate::lib::logic::{ConfigJob, ConfigManifest, DocEngine, IoConfig, JobMode, JobSpec, MX, RenderFlags};
 /// Orchestrator zadań wsadowych.
 /// Pobiera konfigurację z plików TOML, tłumaczy ją na silnie typowane obiekty
 /// JobSpec i zleca ich wykonanie do rdzennego DocEngine.

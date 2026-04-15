@@ -1,26 +1,26 @@
 use walkdir::WalkDir;
 
-use super::{PathCanonicalCtx, PathNode};
+use crate::lib::logic::{AnchoredPathsDatum, PathNode};
 
 /// Statystyki skanowania systemu plików
 #[derive(Debug, Clone)]
-pub struct PathScanStat {
+pub struct ScanPathStat {
 	pub count_files: usize,
 	pub count_folder: usize,
 	pub count_empty: usize,
-	pub relation: PathCanonicalCtx,
+	pub relation: AnchoredPathsDatum,
 }
 
 /// Skaner systemu plików (warstwa IO)
 #[derive(Debug, Clone)]
-pub struct PathScan {
+pub struct ScannedToApply {
 	pub files: Vec<PathNode>,
 	pub dirs: Vec<PathNode>,
-	pub stat: PathScanStat,
+	pub stat: ScanPathStat,
 }
 
-impl PathScan {
-	pub fn scan(relation: &PathCanonicalCtx) -> Self {
+impl ScannedToApply {
+	pub fn scan(relation: &AnchoredPathsDatum) -> Self {
 		let mut files = Vec::new();
 		let mut dirs = Vec::new();
 
@@ -67,7 +67,7 @@ impl PathScan {
 		files.sort_unstable_by(|a, b| a.str.cmp(&b.str));
 		dirs.sort_unstable_by(|a, b| a.str.cmp(&b.str));
 
-		let stat = PathScanStat { count_files, count_folder, count_empty, relation: relation.clone() };
+		let stat = ScanPathStat { count_files, count_folder, count_empty, relation: relation.clone() };
 
 		Self { files, dirs, stat }
 	}

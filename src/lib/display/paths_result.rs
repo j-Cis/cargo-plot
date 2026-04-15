@@ -1,7 +1,7 @@
 use super::{DrawTree, Icon};
-use crate::lib::logic::{FilterList, MatchLabel, ResultScanPatterns};
+use crate::lib::logic::{MatchLabel, Partition, PartitioningResult};
 
-impl<L: MatchLabel> std::fmt::Display for FilterList<L> {
+impl<L: MatchLabel> std::fmt::Display for Partition<L> {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 		writeln!(f, "{}", self.label)?;
 		for path in &self.paths {
@@ -11,7 +11,7 @@ impl<L: MatchLabel> std::fmt::Display for FilterList<L> {
 	}
 }
 
-impl std::fmt::Display for ResultScanPatterns {
+impl std::fmt::Display for PartitioningResult {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 		// Pierwsza linia z enterem
 		writeln!(f, "{} {} Matched (m): {}", DrawTree::list(0, 3), Icon::BOOL_TRUE, self.m.paths.len())?;

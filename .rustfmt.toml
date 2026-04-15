@@ -105,11 +105,11 @@ format_code_in_doc_comments = true
 # 26【F02】 Normalizacja atrybutów dokumentacji
 normalize_doc_attributes = true
 
-# 27【F03】 Automatyczne zawijanie komentarzy
-wrap_comments = true
+# 27【F03】 Automatyczne zawijanie komentarzy - UWAGA TRUE NISZCZY KOMPOZYCJE
+wrap_comments = false
 
-# 28【F04】 Normalizacja stylu komentarzy
-normalize_comments = true
+# 28【F04】 Normalizacja stylu komentarzy - UWAGA TRUE NISZCZY KOMPOZYCJE
+normalize_comments = false
 
 
 # =========================

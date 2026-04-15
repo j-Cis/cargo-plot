@@ -42,7 +42,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 	// 5. Wczytywanie konfiguracji i wykonanie zadań
 	let orchestrator = DocEngineMultiple::loader_default()?;
-
+	println!("{}", orchestrator.manifest);
 	// Jeśli chcesz odpalić konkretne zadanie (pamiętaj, w Default nazywa się
 	// "default_job", a nie "p1"!): orchestrator.job_id("default_job")?;
 

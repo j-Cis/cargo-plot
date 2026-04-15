@@ -1,6 +1,6 @@
 [package]
 name = "cargo-plot"
-version = "0.2.0"
+version = "0.3.0-beta.1"
 authors = ["Jan Roman Cisowski „j-Cis”"]
 edition = "2024"
 rust-version = "1.94.0"
@@ -12,6 +12,17 @@ repository = "https://github.com/j-Cis/cargo-plot"
 keywords = [ "cargo",  "tree",  "markdown",  "filesystem", "documentation"]
 categories = [ "development-tools::cargo-plugins",  "command-line-utilities", "command-line-interface", "text-processing",]
 resolver = "3"
+
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "Cargo.toml",
+    "Cargo.lock",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE-APACHE",
+    "LICENSE-MIT"
+]
 
 [package.metadata.cargo]
 edition = "2024"

@@ -1,7 +1,7 @@
 use super::Icon;
-use crate::lib::logic::{PathScan, PathScanStat}; // Zwróć uwagę, że usunąłem DrawTree, bo nie jest tu już potrzebne
+use crate::lib::logic::{ScanPathStat, ScannedToApply}; // Zwróć uwagę, że usunąłem DrawTree, bo nie jest tu już potrzebne
 
-impl std::fmt::Display for PathScanStat {
+impl std::fmt::Display for ScanPathStat {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 		write!(
 			f,
@@ -18,7 +18,7 @@ impl std::fmt::Display for PathScanStat {
 	}
 }
 
-impl std::fmt::Display for PathScan {
+impl std::fmt::Display for ScannedToApply {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 		// Domyślny format dla całego skanera to po prostu czytelne statystyki!
 		write!(f, "📊 Stats -> {}", self.stat)

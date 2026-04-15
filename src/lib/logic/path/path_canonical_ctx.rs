@@ -26,13 +26,13 @@ impl PathNode {
 
 /// Relacja między katalogiem wykonania a katalogiem docelowym
 #[derive(Debug, Clone)]
-pub struct PathCanonicalCtx {
+pub struct AnchoredPathsDatum {
 	pub execut_dir: PathNode,
 	pub select_dir: PathNode,
 	pub relat_path: String,
 }
 
-impl PathCanonicalCtx {
+impl AnchoredPathsDatum {
 	pub fn new<P: AsRef<Path>>(input: P) -> Result<Self> {
 		let input = input.as_ref();
 

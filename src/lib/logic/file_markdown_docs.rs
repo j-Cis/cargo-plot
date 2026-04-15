@@ -11,7 +11,7 @@ enum ScOrCs {
 	COTS,
 }
 
-use super::{LangMapper, PathNode, TableOutput, TagTime};
+use crate::lib::logic::{LangMapper, PathNode, TableOutput, TagTime};
 
 pub struct DocMarkdown {
 	cwd: PathNode,

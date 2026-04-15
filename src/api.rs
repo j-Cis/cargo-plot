@@ -1,13 +1,40 @@
 pub mod lib {
 	pub mod logic {
-		pub mod path_canonical_ctx;
-		pub use path_canonical_ctx::{PathCanonicalCtx, PathNode};
-		pub mod path_scan;
-		pub use path_scan::{PathScan, PathScanStat};
-		pub mod path_context;
-		pub use path_context::PathContext;
-		pub mod paths_patterns;
-		pub use paths_patterns::{PathsPatterns, PattEnvIndex, PattExp, PattRaw};
+		pub mod path {
+			pub mod path_canonical_ctx;
+			pub use path_canonical_ctx::{AnchoredPathsDatum, PathNode};
+			pub mod path_scan;
+			pub use path_scan::{ScanPathStat, ScannedToApply};
+			pub mod path_context;
+			pub use path_context::PathContext;
+			pub mod paths_patterns;
+			pub use paths_patterns::{PattEnvIndex, PattExp, PattRaw, PatternsToApply};
+			pub mod paths_table;
+			pub use paths_table::{FileKind, TableData, TableOutput, TableRow};
+			pub mod paths_result;
+			pub use paths_result::{MatchLabel, Matched, Mismatched, Partition, PartitioningResult};
+		}
+		pub use path::{
+			AnchoredPathsDatum,
+			FileKind,
+			MatchLabel,
+			Matched,
+			Mismatched,
+			Partition,
+			PartitioningResult,
+			PathContext,
+			PathNode,
+			PattEnvIndex,
+			PattExp,
+			PattRaw,
+			PatternsToApply,
+			ScanPathStat,
+			ScannedToApply,
+			TableData,
+			TableOutput,
+			TableRow,
+		};
+
 		pub mod specification;
 		pub use specification::{
 			JobMode,
@@ -19,20 +46,16 @@ pub mod lib {
 			TabSortOrder,
 			TabSpec,
 		};
-		pub mod table_data;
-		pub use table_data::{FileKind, TableData, TableOutput, TableRow};
-		pub mod paths_result;
-		pub use paths_result::{FilterList, MatchLabel, Matched, Mismatched, ResultScanPatterns};
 		pub mod tag_time;
 		pub use tag_time::{TagTime, tag_time};
-		pub mod lang_mapper;
-		pub use lang_mapper::LangMapper;
-		pub mod doc_markdown;
-		pub use doc_markdown::DocMarkdown;
-		pub mod doc_engine;
-		pub use doc_engine::{DocEngine, MX, RenderFlags};
-		pub mod doc_engine_multiple;
-		pub use doc_engine_multiple::DocEngineMultiple;
+		pub mod mapper_lang_type;
+		pub use mapper_lang_type::LangMapper;
+		pub mod file_markdown_docs;
+		pub use file_markdown_docs::DocMarkdown;
+		pub mod engine;
+		pub use engine::{DocEngine, MX, RenderFlags};
+		pub mod engine_multiple;
+		pub use engine_multiple::DocEngineMultiple;
 		pub mod config_model;
 		pub use config_model::{
 			ConfigExport,
@@ -40,17 +63,19 @@ pub mod lib {
 			ConfigLayout,
 			ConfigManifest,
 			ConfigPattern,
+			ConfigSpec,
 			ConfigTrimming,
 		};
-		pub mod io_config;
-		pub use io_config::IoConfig;
+		pub mod file_toml_config;
+		pub use file_toml_config::IoConfig;
 	}
-	pub mod command {
-		pub mod args;
-		pub mod help;
-	}
+	// pub mod command {
+	// 	pub mod args;
+	// 	pub mod help;
+	// }
 	pub mod display {
 
+		pub mod config;
 		pub mod path_canonical_ctx;
 		pub mod path_scan;
 		pub mod paths_patterns;

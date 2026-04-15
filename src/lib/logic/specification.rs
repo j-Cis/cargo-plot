@@ -78,8 +78,8 @@ pub enum TabSortOrder {
 impl TabSortOrder {
 	pub fn parse(s: &str) -> Result<Self, String> {
 		match s.trim().to_lowercase().as_str() {
-			"az" |"asc" | "ascending" => Ok(TabSortOrder::Asc),
-			"za" |"desc" | "descending" => Ok(TabSortOrder::Desc),
+			"az" | "asc" | "ascending" => Ok(TabSortOrder::Asc),
+			"za" | "desc" | "descending" => Ok(TabSortOrder::Desc),
 			_ => Err(format!("Nieprawidłowy kierunek sortowania: '{}'. Dostępne: asc, desc", s)),
 		}
 	}

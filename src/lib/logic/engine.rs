@@ -1,10 +1,10 @@
-use super::{
+use crate::lib::logic::{
+	AnchoredPathsDatum,
 	DocMarkdown,
-	PathCanonicalCtx,
-	PathScan,
-	PathsPatterns,
-	ResultScanPatterns,
+	PartitioningResult,
+	PatternsToApply,
 	ScanSpec,
+	ScannedToApply,
 	TabSpec,
 	TableOutput,
 	TagTime,
@@ -28,30 +28,30 @@ pub struct RenderFlags {
 
 /// Główny silnik spinający skanowanie, filtrowanie i konfigurację widoku.
 pub struct DocEngine {
-	pub path: PathCanonicalCtx,
+	pub path: AnchoredPathsDatum,
 	pub tagtime: TagTime,
-	pub result: ResultScanPatterns,
+	pub result: PartitioningResult,
 	pub last_render: Option<RenderFlags>,
 }
 
 impl DocEngine {
 	pub fn new(scan: ScanSpec) -> Self {
-		let dir = PathCanonicalCtx::new(&scan.work_path).unwrap_or_else(|x| {
+		let anchored_paths_datum = AnchoredPathsDatum::new(&scan.work_path).unwrap_or_else(|x| {
 			eprintln!("❌ {}", x);
 			std::process::exit(1);
 		});
 
-		let ctx = PathScan::scan(&dir);
+		let scanned_to_apply = ScannedToApply::scan(&anchored_paths_datum);
 		let ref_patterns: Vec<&str> = scan.patterns.iter().map(|s| s.as_str()).collect();
-		let cfg = PathsPatterns::new(ref_patterns, scan.ignore_case);
+		let patterns_to_apply = PatternsToApply::new(ref_patterns, scan.ignore_case);
 
-		// let mut tab = ResultScanPatterns::new(ctx, cfg)
+		// let mut tab = PartitioningResult::new(scanned_to_apply, patterns_to_apply)
 		//    .sort(spec.sort_by, spec.sort_order, spec.structure)
 		//    .columns(&spec.columns);
 		// tab.spec = spec;
-		let tab = ResultScanPatterns::new(ctx, cfg);
+		let partitioning_result = PartitioningResult::new(scanned_to_apply, patterns_to_apply);
 
-		Self { path: dir, tagtime: tag_time(), result: tab, last_render: None }
+		Self { path: anchored_paths_datum, tagtime: tag_time(), result: partitioning_result, last_render: None }
 	}
 
 	pub fn spec(mut self, spec: TabSpec) -> Self {

@@ -1,17 +1,18 @@
 use std::collections::HashSet;
 
 // Wciągamy czyste, domenowe nazwy
-use super::table_data::{TableData, TableOutput};
-use super::{
-	PathCanonicalCtx,
-	PathScan,
-	PathsPatterns,
+use crate::lib::logic::{
+	AnchoredPathsDatum,
 	PattEnvIndex,
+	PatternsToApply,
+	ScannedToApply,
 	TabColumn,
 	TabPathStructure,
 	TabSortBy,
 	TabSortOrder,
 	TabSpec,
+	TableData,
+	TableOutput,
 };
 
 // ============================================================================
@@ -40,10 +41,10 @@ impl MatchLabel for Mismatched {
 /// ============================================================================
 
 #[derive(Debug, Clone)]
-pub struct FilterList<L: MatchLabel> {
+pub struct Partition<L: MatchLabel> {
 	pub paths: Vec<String>,
 	pub label: &'static str,
-	pub entry: PathCanonicalCtx,
+	pub entry: AnchoredPathsDatum,
 	pub _marker: std::marker::PhantomData<L>,
 }
 
@@ -83,19 +84,19 @@ impl<'a> PattEnvIndex for EnvIndex<'a> {
 // ============================================================================
 
 #[derive(Debug, Clone)]
-pub struct ResultScanPatterns {
-	pub scanner: PathScan,
-	pub patterns: PathsPatterns,
+pub struct PartitioningResult {
+	pub scanner: ScannedToApply,
+	pub patterns: PatternsToApply,
 
-	pub m: FilterList<Matched>,
-	pub x: FilterList<Mismatched>,
+	pub m: Partition<Matched>,
+	pub x: Partition<Mismatched>,
 
 	// Przechowuje recepturę jak zbudować wyjściową tabelę
 	pub spec: TabSpec,
 }
 
-impl ResultScanPatterns {
-	pub fn new(scanner: PathScan, patterns: PathsPatterns) -> Self {
+impl PartitioningResult {
+	pub fn new(scanner: ScannedToApply, patterns: PatternsToApply) -> Self {
 		let env_index = EnvIndex {
 			dirs: scanner.dirs.iter().map(|n| n.str.as_str()).collect(),
 			files: scanner.files.iter().map(|n| n.str.as_str()).collect(),
@@ -120,13 +121,13 @@ impl ResultScanPatterns {
 		Self {
 			scanner,
 			patterns,
-			m: FilterList {
+			m: Partition {
 				paths: m_vec,
 				label: Matched::label(),
 				entry: entry.clone(),
 				_marker: std::marker::PhantomData,
 			},
-			x: FilterList { paths: x_vec, label: Mismatched::label(), entry, _marker: std::marker::PhantomData },
+			x: Partition { paths: x_vec, label: Mismatched::label(), entry, _marker: std::marker::PhantomData },
 			spec: TabSpec::default(),
 		}
 	}

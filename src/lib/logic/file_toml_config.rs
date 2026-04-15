@@ -1,7 +1,7 @@
 use std::{fs, path::Path};
 
 // Importujemy z Twojej biblioteki:
-use super::{ConfigManifest, tag_time};
+use crate::lib::logic::{ConfigManifest, tag_time};
 
 // Zakładam, że masz ConfigManifest, który np. posiada pole `job: Vec<JobSpec>`
 // Jeśli korzystasz z Serde, upewnij się, że struktury mają #[derive(Serialize,
@@ -46,6 +46,7 @@ patterns = [
     "./{.rustfmt,Cargo,rust-toolchain,Makefile}.toml&/",
     "./**/*.rs&/",
     "!./target/**",
+    "!./temp/**",
     "!./.git/**",
     "./.{gitattributes,gitignore}",
     "./.github/workflows/*.yml&/",

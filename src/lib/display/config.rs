@@ -1,7 +1,6 @@
 use super::{Color, Icon};
 use crate::lib::logic::{ConfigJob, ConfigManifest};
 
-
 impl std::fmt::Display for ConfigJob {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 		let name = self.name.as_deref().unwrap_or("Brak nazwy");
@@ -9,7 +8,7 @@ impl std::fmt::Display for ConfigJob {
 
 		let quiet_status = if self.quiet_work { "🔇 (Quiet)" } else { "🔊 (Verbose)" };
 
-		write!(f, "【ID】🔖 [{}] | {} | {}", Color::num(&self.id), Color::folder(name),quiet_status)?;
+		write!(f, "【ID】🔖 [{}] | {} | {}", Color::num(&self.id), Color::folder(name), quiet_status)?;
 		write!(f, "\n      📜 {}", Color::border(desc))?;
 		Ok(())
 	}

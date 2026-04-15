@@ -1,5 +1,5 @@
-use std::collections::HashSet;
-use std::marker::PhantomData;
+use std::{collections::HashSet, marker::PhantomData};
+
 // Wciągamy czyste, domenowe nazwy
 use crate::lib::logic::{
 	AnchoredPathsDatum,
@@ -95,11 +95,9 @@ pub struct PartitioningResult {
 	pub spec: TabSpec,
 }
 impl PartitioningResult {
-	pub fn new(scanner: ScannedToApply, patterns: PatternsToApply,anchored:AnchoredPathsDatum) -> Self {
-		let env_index = EnvIndex {
-			dirs: scanner.iter_dir_paths().collect(),
-            files: scanner.iter_file_paths().collect(),
-		};
+	pub fn new(scanner: ScannedToApply, patterns: PatternsToApply, anchored: AnchoredPathsDatum) -> Self {
+		let env_index =
+			EnvIndex { dirs: scanner.iter_dir_paths().collect(), files: scanner.iter_file_paths().collect() };
 
 		let mut m_vec = Vec::new();
 		let mut x_vec = Vec::new();
@@ -107,29 +105,19 @@ impl PartitioningResult {
 		let all_paths = scanner.iter_file_paths().chain(scanner.iter_dir_paths());
 
 		for p in all_paths {
-            // p jest tutaj &str pochodzącym z node.path.str
-            if patterns.is_match(p, &env_index) {
-                m_vec.push(p.to_string());
-            } else {
-                x_vec.push(p.to_string());
-            }
-        }
+			// p jest tutaj &str pochodzącym z node.path.str
+			if patterns.is_match(p, &env_index) {
+				m_vec.push(p.to_string());
+			} else {
+				x_vec.push(p.to_string());
+			}
+		}
 
 		Self {
 			scanner,
 			patterns,
-			m: Partition {
-				paths: m_vec,
-				label: Matched::label(),
-				entry: anchored.clone(),
-				_marker: PhantomData,
-			},
-			x: Partition { 
-				paths: x_vec, 
-				label: Mismatched::label(), 
-				entry: anchored.clone(),
-				_marker: PhantomData 
-			},
+			m: Partition { paths: m_vec, label: Matched::label(), entry: anchored.clone(), _marker: PhantomData },
+			x: Partition { paths: x_vec, label: Mismatched::label(), entry: anchored.clone(), _marker: PhantomData },
 			spec: TabSpec::default(),
 		}
 	}

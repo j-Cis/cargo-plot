@@ -78,10 +78,10 @@ pub mod lib {
 		pub mod anchored_paths_datum;
 		pub mod config;
 		pub mod fs_scanner;
+		pub mod job_spec;
 		pub mod paths_patterns;
 		pub mod paths_result;
 		pub mod table_data;
-		pub mod job_spec;
 
 		use colored::*;
 

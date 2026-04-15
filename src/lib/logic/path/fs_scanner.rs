@@ -82,12 +82,8 @@ pub struct StatsScannedTreeFs {
 
 impl StatsScannedTreeFs {
 	/// Zwraca informację, do jakiej relacji ścieżek należą te statystyki
-	pub fn where_scanned(&self) -> &PathNode {
-        &self.anchored.workspace_dir
-	}
-	pub fn where_runtime(&self) -> &PathNode {
-        &self.anchored.execution_dir
-	}
+	pub fn where_scanned(&self) -> &PathNode { &self.anchored.workspace_dir }
+	pub fn where_runtime(&self) -> &PathNode { &self.anchored.execution_dir }
 }
 
 //=======================================================
@@ -126,7 +122,6 @@ pub struct ScannedToApply {
 	pub stat: StatsScannedTreeFs,
 }
 
-
 impl ScannedToApply {
 	pub fn scan(p: &AnchoredPathsDatum) -> Self {
 		let mut files = Vec::new();
@@ -141,23 +136,23 @@ impl ScannedToApply {
 		let mut count_files_binary = 0;
 		let mut count_symlinks_skipped = 0;
 
-        for e in WalkDir::new(&p.workspace_dir.buf).into_iter().filter_map(|e| e.ok()) {
+		for e in WalkDir::new(&p.workspace_dir.buf).into_iter().filter_map(|e| e.ok()) {
 			if e.depth() == 0 {
 				continue;
 			}
 
 			if e.path_is_symlink() {
-                count_symlinks_skipped += 1;
-                // Śledzenie w którym katalogu był symlink
-                if let Some(parent) = e.path().strip_prefix(&p.workspace_dir.buf).ok().and_then(|p| p.parent()) {
-                    let parent_str = parent.to_string_lossy().replace('\\', "/");
-                    let formatted = if parent_str.is_empty() { "./".to_string() } else { format!("./{}/", parent_str) };
-                    symlink_parents.insert(formatted);
-                }
+				count_symlinks_skipped += 1;
+				// Śledzenie w którym katalogu był symlink
+				if let Some(parent) = e.path().strip_prefix(&p.workspace_dir.buf).ok().and_then(|p| p.parent()) {
+					let parent_str = parent.to_string_lossy().replace('\\', "/");
+					let formatted = if parent_str.is_empty() { "./".to_string() } else { format!("./{}/", parent_str) };
+					symlink_parents.insert(formatted);
+				}
 				continue;
 			}
 
-            let Ok(rel_path) = e.path().strip_prefix(&p.workspace_dir.buf) else {
+			let Ok(rel_path) = e.path().strip_prefix(&p.workspace_dir.buf) else {
 				continue;
 			};
 
@@ -165,109 +160,102 @@ impl ScannedToApply {
 
 			if e.file_type().is_dir() {
 				path.push('/');
-                count_dirs += 1;
+				count_dirs += 1;
 
 				let is_empty = e.metadata().map(|m| m.is_dir()).unwrap_or(false)
 					&& e.path().read_dir().map(|mut r| r.next().is_none()).unwrap_or(false);
 
 				if is_empty {
-                    count_dirs_empty += 1;
+					count_dirs_empty += 1;
 				}
 
-                dirs_raw.push(PathNode::new(format!("./{}", path).into()));
+				dirs_raw.push(PathNode::new(format!("./{}", path).into()));
 			} else {
 				count_files += 1;
 
 				let abs_path = e.path();
-                let is_empty = abs_path.metadata().map(|m| m.len() == 0).unwrap_or(false);
-                let mut is_binary = false;
+				let is_empty = abs_path.metadata().map(|m| m.len() == 0).unwrap_or(false);
+				let mut is_binary = false;
 
-                if is_empty {
-                    count_files_empty += 1;
-                } else {
-                    is_binary = is_binary_file(abs_path.to_str().unwrap_or("")).unwrap_or(false);
-                    if is_binary {
-                        count_files_binary += 1;
-                    } else {
-                        count_files_text += 1;
-                    }
-                }
+				if is_empty {
+					count_files_empty += 1;
+				} else {
+					is_binary = is_binary_file(abs_path.to_str().unwrap_or("")).unwrap_or(false);
+					if is_binary {
+						count_files_binary += 1;
+					} else {
+						count_files_text += 1;
+					}
+				}
 
-                files.push(ScannedFileNode {
-                    path: PathNode::new(format!("./{}", path).into()),
-                    is_binary,
-                    is_empty,
-                });
+				files.push(ScannedFileNode { path: PathNode::new(format!("./{}", path).into()), is_binary, is_empty });
 			}
 		}
 
-        files.sort_unstable_by(|a, b| a.path.str.cmp(&b.path.str));
-        dirs_raw.sort_unstable_by(|a, b| a.str.cmp(&b.str));
+		files.sort_unstable_by(|a, b| a.path.str.cmp(&b.path.str));
+		dirs_raw.sort_unstable_by(|a, b| a.str.cmp(&b.str));
 
 		// Post-processing folderów
-        let mut dirs = Vec::with_capacity(dirs_raw.len());
-        for i in 0..dirs_raw.len() {
-            let path = dirs_raw[i].clone();
-            let mut has_subdirs = false;
-            let mut has_files_binary = false;
-            let mut has_files_text = false;
-            let has_symlinks = symlink_parents.contains(&path.str);
-            
-            for f in &files {
-                if f.path.str.starts_with(&path.str) {
-                    let remainder = &f.path.str[path.str.len()..];
-                    if !remainder.contains('/') { 
-                        if f.is_binary { has_files_binary = true; }
-                        else if !f.is_empty { has_files_text = true; }
-                    }
-                }
-            }
+		let mut dirs = Vec::with_capacity(dirs_raw.len());
+		for i in 0..dirs_raw.len() {
+			let path = dirs_raw[i].clone();
+			let mut has_subdirs = false;
+			let mut has_files_binary = false;
+			let mut has_files_text = false;
+			let has_symlinks = symlink_parents.contains(&path.str);
 
-            for j in (i + 1)..dirs_raw.len() {
-                if dirs_raw[j].str.starts_with(&path.str) {
-                    let remainder = &dirs_raw[j].str[path.str.len()..];
-                    if !remainder.is_empty() {
-                        has_subdirs = true;
-                        break;
-                    }
-                } else {
-                    break; 
-                }
-            }
+			for f in &files {
+				if f.path.str.starts_with(&path.str) {
+					let remainder = &f.path.str[path.str.len()..];
+					if !remainder.contains('/') {
+						if f.is_binary {
+							has_files_binary = true;
+						} else if !f.is_empty {
+							has_files_text = true;
+						}
+					}
+				}
+			}
 
-            dirs.push(ScannedDirNode {
-                path,
-                has_subdirs,
-                has_files_binary,
-                has_files_text,
-                has_symlinks,
-            });
-        }
+			for j in (i + 1)..dirs_raw.len() {
+				if dirs_raw[j].str.starts_with(&path.str) {
+					let remainder = &dirs_raw[j].str[path.str.len()..];
+					if !remainder.is_empty() {
+						has_subdirs = true;
+						break;
+					}
+				} else {
+					break;
+				}
+			}
 
-        let stat = StatsScannedTreeFs {
-            count_dirs,
-            count_dirs_empty,
-            count_files,
-            count_files_empty,
-            count_files_text,
-            count_files_binary,
-            count_symlinks_skipped,
-            anchored: p.clone(), 
-};
+			dirs.push(ScannedDirNode { path, has_subdirs, has_files_binary, has_files_text, has_symlinks });
+		}
+
+		let stat = StatsScannedTreeFs {
+			count_dirs,
+			count_dirs_empty,
+			count_files,
+			count_files_empty,
+			count_files_text,
+			count_files_binary,
+			count_symlinks_skipped,
+			anchored: p.clone(),
+		};
 
 		Self { files, dirs, stat }
 	}
 	// =========================================================================
-    // DOSTĘP TYLKO DO ŚCIEŻEK (Zwracają wygodne iteratory tekstowe)
-    // =========================================================================
+	// DOSTĘP TYLKO DO ŚCIEŻEK (Zwracają wygodne iteratory tekstowe)
+	// =========================================================================
 
-    /// Zwraca iterator przechodzący wyłącznie po tekstowych ścieżkach plików
-    pub fn iter_file_paths(&self) -> impl Iterator<Item = &str> + '_ { 
-        self.files.iter().map(|node| node.path.str.as_str()) 
-    }
+	/// Zwraca iterator przechodzący wyłącznie po tekstowych ścieżkach plików
+	pub fn iter_file_paths(&self) -> impl Iterator<Item = &str> + '_ {
+		self.files.iter().map(|node| node.path.str.as_str())
+	}
 
-    /// Zwraca iterator przechodzący wyłącznie po tekstowych ścieżkach katalogów
-    pub fn iter_dir_paths(&self) -> impl Iterator<Item = &str> + '_ { 
-        self.dirs.iter().map(|node| node.path.str.as_str()) 
-    }
+	/// Zwraca iterator przechodzący wyłącznie po tekstowych ścieżkach katalogów
+	pub fn iter_dir_paths(&self) -> impl Iterator<Item = &str> + '_ {
+		self.dirs.iter().map(|node| node.path.str.as_str())
+	}
 }

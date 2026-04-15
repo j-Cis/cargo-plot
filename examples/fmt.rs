@@ -1,13 +1,7 @@
 // examples/whitespace-cleaner.rs
 
-use std::{
-	fs,
-	io::{self, Read},
-	path::Path,
-	process::Command,
-};
+use std::{fs, io, path::Path, process::Command};
 
-use memchr::memchr;
 use walkdir::WalkDir;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
 	let targets = ["./src", "./examples"];

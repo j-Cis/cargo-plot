@@ -49,7 +49,8 @@ impl DocEngine {
 		//    .sort(spec.sort_by, spec.sort_order, spec.structure)
 		//    .columns(&spec.columns);
 		// tab.spec = spec;
-		let partitioning_result = PartitioningResult::new(scanned_to_apply, patterns_to_apply,anchored_paths_datum.clone());
+		let partitioning_result =
+			PartitioningResult::new(scanned_to_apply, patterns_to_apply, anchored_paths_datum.clone());
 
 		Self { path: anchored_paths_datum, tagtime: tag_time(), result: partitioning_result, last_render: None }
 	}

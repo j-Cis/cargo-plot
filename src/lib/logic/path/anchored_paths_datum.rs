@@ -40,19 +40,17 @@ impl AnchoredPathsDatum {
 		let workspace_dir_buf = fs::canonicalize(input)
 			.with_context(|| format!("Nie można ustalić ścieżki '{}'", input.to_string_lossy()))?;
 
-		
-
-		Ok(Self { execution_dir: PathNode::new(execution_dir_buf), workspace_dir: PathNode::new(workspace_dir_buf)})
+		Ok(Self { execution_dir: PathNode::new(execution_dir_buf), workspace_dir: PathNode::new(workspace_dir_buf) })
 	}
 
 	/// Metoda obliczająca względną ścieżkę między execution_dir a workspace_dir.
-    pub fn to_relative_path(&self) -> String {
-        match self.workspace_dir.buf.strip_prefix(&self.execution_dir.buf) {
-            Ok(rel) => {
-                let s = rel.to_string_lossy().replace('\\', "/");
-                if s.is_empty() { "./".to_string() } else { format!("./{}/", s) }
-            }
-            Err(_) => normalize_path(&self.workspace_dir.buf), 
-        }
-    }
+	pub fn to_relative_path(&self) -> String {
+		match self.workspace_dir.buf.strip_prefix(&self.execution_dir.buf) {
+			Ok(rel) => {
+				let s = rel.to_string_lossy().replace('\\', "/");
+				if s.is_empty() { "./".to_string() } else { format!("./{}/", s) }
+			}
+			Err(_) => normalize_path(&self.workspace_dir.buf),
+		}
+	}
 }

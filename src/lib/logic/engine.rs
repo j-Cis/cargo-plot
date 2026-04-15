@@ -49,7 +49,7 @@ impl DocEngine {
 		//    .sort(spec.sort_by, spec.sort_order, spec.structure)
 		//    .columns(&spec.columns);
 		// tab.spec = spec;
-		let partitioning_result = PartitioningResult::new(scanned_to_apply, patterns_to_apply);
+		let partitioning_result = PartitioningResult::new(scanned_to_apply, patterns_to_apply,anchored_paths_datum.clone());
 
 		Self { path: anchored_paths_datum, tagtime: tag_time(), result: partitioning_result, last_render: None }
 	}
@@ -69,13 +69,13 @@ impl DocEngine {
 		let x_len = self.result.x.paths.len();
 
 		let stat = &self.result.scanner.stat;
-		let dir_path = format!("\"{}\"", stat.relation.workspace_dir.buf.display());
+		let dir_path = format!("\"{}\"", stat.where_scanned().str);
 
 		let mut header = String::new();
 		header.push_str(&format!("{}\n", border));
 		header.push_str(&format!(
 			"📊 | 📝 {} | 📂 {} | ⭕ {} | ✔️  {} | ✖️  {} |\n",
-			stat.count_files, stat.count_folder, stat.count_empty, m_len, x_len
+			stat.count_files, stat.count_dirs, stat.count_dirs_empty, m_len, x_len
 		));
 		header.push_str(&format!("🔎 {}\n", pats));
 		header.push_str(&format!("🗃️  {}\n", dir_path));

@@ -1,5 +1,5 @@
 // ./examples/demo.rs
-
+#[allow(unused_imports)]
 use plot::lib::logic::{
 	DocEngine,
 	DocEngineMultiple,
@@ -43,11 +43,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 	// 5. Wczytywanie konfiguracji i wykonanie zadań
 	let orchestrator = DocEngineMultiple::loader_default()?;
 	println!("{}", orchestrator.manifest);
+	// Pobranie i sparsowanie zadania o konkretnym ID do JobSpec
+	let job1 = orchestrator.parse_for("default_job")?;
+	println!("{}", job1);
+
 	// Jeśli chcesz odpalić konkretne zadanie (pamiętaj, w Default nazywa się
 	// "default_job", a nie "p1"!): orchestrator.job_id("default_job")?;
 
 	// A najprościej odpalić po prostu wszystkie zadania z pliku z automatu:
-	orchestrator.jobs()?;
+	//orchestrator.jobs()?;
 
 	Ok(())
 }

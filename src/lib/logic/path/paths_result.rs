@@ -1,5 +1,5 @@
 use std::collections::HashSet;
-
+use std::marker::PhantomData;
 // Wciągamy czyste, domenowe nazwy
 use crate::lib::logic::{
 	AnchoredPathsDatum,
@@ -94,29 +94,26 @@ pub struct PartitioningResult {
 	// Przechowuje recepturę jak zbudować wyjściową tabelę
 	pub spec: TabSpec,
 }
-
 impl PartitioningResult {
-	pub fn new(scanner: ScannedToApply, patterns: PatternsToApply) -> Self {
+	pub fn new(scanner: ScannedToApply, patterns: PatternsToApply,anchored:AnchoredPathsDatum) -> Self {
 		let env_index = EnvIndex {
-			dirs: scanner.dirs.iter().map(|n| n.str.as_str()).collect(),
-			files: scanner.files.iter().map(|n| n.str.as_str()).collect(),
+			dirs: scanner.iter_dir_paths().collect(),
+            files: scanner.iter_file_paths().collect(),
 		};
 
 		let mut m_vec = Vec::new();
 		let mut x_vec = Vec::new();
 
-		let all_paths = scanner.files.iter().chain(scanner.dirs.iter());
+		let all_paths = scanner.iter_file_paths().chain(scanner.iter_dir_paths());
 
-		for node in all_paths {
-			let p = node.str.as_str();
-			if patterns.is_match(p, &env_index) {
-				m_vec.push(node.str.clone());
-			} else {
-				x_vec.push(node.str.clone());
-			}
-		}
-
-		let entry = scanner.stat.relation.clone();
+		for p in all_paths {
+            // p jest tutaj &str pochodzącym z node.path.str
+            if patterns.is_match(p, &env_index) {
+                m_vec.push(p.to_string());
+            } else {
+                x_vec.push(p.to_string());
+            }
+        }
 
 		Self {
 			scanner,
@@ -124,10 +121,15 @@ impl PartitioningResult {
 			m: Partition {
 				paths: m_vec,
 				label: Matched::label(),
-				entry: entry.clone(),
-				_marker: std::marker::PhantomData,
+				entry: anchored.clone(),
+				_marker: PhantomData,
 			},
-			x: Partition { paths: x_vec, label: Mismatched::label(), entry, _marker: std::marker::PhantomData },
+			x: Partition { 
+				paths: x_vec, 
+				label: Mismatched::label(), 
+				entry: anchored.clone(),
+				_marker: PhantomData 
+			},
 			spec: TabSpec::default(),
 		}
 	}

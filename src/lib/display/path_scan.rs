@@ -7,7 +7,7 @@ impl std::fmt::Display for ScanPathStat {
 			f,
 			"{} {} | {} {} | {} {} | {} {}",
 			Icon::ENTRY,
-			self.relation.select_dir.buf.display(),
+			self.relation.workspace_dir.buf.display(),
 			Icon::FILE,
 			self.count_files,
 			Icon::FOLDER,

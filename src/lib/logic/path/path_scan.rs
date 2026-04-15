@@ -28,7 +28,7 @@ impl ScannedToApply {
 		let mut count_folder = 0;
 		let mut count_empty = 0;
 
-		let root = &relation.select_dir.buf;
+		let root =&relation.workspace_dir.buf;
 
 		for e in WalkDir::new(root).into_iter().filter_map(|e| e.ok()) {
 			if e.depth() == 0 {

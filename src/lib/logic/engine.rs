@@ -69,7 +69,7 @@ impl DocEngine {
 		let x_len = self.result.x.paths.len();
 
 		let stat = &self.result.scanner.stat;
-		let dir_path = format!("\"{}\"", stat.relation.select_dir.buf.display());
+		let dir_path = format!("\"{}\"", stat.relation.workspace_dir.buf.display());
 
 		let mut header = String::new();
 		header.push_str(&format!("{}\n", border));
@@ -170,8 +170,8 @@ impl DocEngine {
 		DocMarkdown::new(
 			content,
 			table,
-			self.path.execut_dir.clone(),
-			self.path.select_dir.clone(),
+			self.path.execution_dir.clone(),
+			self.path.workspace_dir.clone(),
 			self.tagtime.clone(),
 		)
 	}

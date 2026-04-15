@@ -76,7 +76,7 @@ impl TableData {
 
 	fn inspect(rel_path: &str, relation: &AnchoredPathsDatum) -> anyhow::Result<TableRow> {
 		let clean_rel = rel_path.strip_prefix("./").unwrap_or(rel_path);
-		let absolute_path = relation.select_dir.buf.join(clean_rel);
+		let absolute_path = relation.workspace_dir.buf.join(clean_rel);
 
 		let metadata = fs::metadata(&absolute_path)?;
 		let modified = DateTime::from(metadata.modified()?);

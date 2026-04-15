@@ -1,8 +1,8 @@
 pub mod lib {
 	pub mod logic {
 		pub mod path {
-			pub mod path_canonical_ctx;
-			pub use path_canonical_ctx::{AnchoredPathsDatum, PathNode};
+			pub mod anchored_paths_datum;
+			pub use anchored_paths_datum::{AnchoredPathsDatum, PathNode};
 			pub mod path_scan;
 			pub use path_scan::{ScanPathStat, ScannedToApply};
 			pub mod path_context;
@@ -76,7 +76,7 @@ pub mod lib {
 	pub mod display {
 
 		pub mod config;
-		pub mod path_canonical_ctx;
+		pub mod anchored_paths_datum;
 		pub mod path_scan;
 		pub mod paths_patterns;
 		pub mod paths_result;

@@ -4,14 +4,16 @@ pub mod lib {
 		pub use config::*;
 		pub mod step1;
 		pub use step1::*;
-		pub mod step2;
-		pub use step2::*;
 		pub mod gens {
 			pub mod item_icon;
 			pub mod item_list;
 			pub use item_icon::*;
 			pub use item_list::*;
 		}
+		pub mod step2;
+		pub use step2::*;
+		pub mod step3;
+		pub use step3::*;
 	}
 	pub mod logic {
 		pub mod anchored_paths_datum;

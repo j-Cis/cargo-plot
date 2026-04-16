@@ -18,14 +18,20 @@ impl TreeLast {
 	pub const DIR_WITH_CHILDREN: &'static str = "└──┬";
 	pub const FILE: &'static str = "└──•";
 	pub const INDENT: &'static str = "   ";
+	pub const BRIDGE_START: &'static str =   "└──•";
+	pub const BRIDGE_NEXT: &'static str =    "──•";
+	pub const BRIDGE_LAST: &'static str =    "───";
 }
 
 pub struct TreeMid;
 impl TreeMid {
 	pub const DIR_NO_CHILDREN: &'static str = "├───";
-	pub const DIR_WITH_CHILDREN: &'static str = "├──┬";
+	pub const DIR_WITH_CHILDREN: &'static str = "├──┬";	
 	pub const FILE: &'static str = "├──•";
 	pub const INDENT: &'static str = "│  ";
+	pub const BRIDGE_START: &'static str =   "├──•";
+	pub const BRIDGE_NEXT: &'static str =    "──•";
+	pub const BRIDGE_LAST: &'static str =    "───";
 }
 
 pub struct DrawTree;
@@ -34,6 +40,7 @@ impl DrawTree {
 	pub const ITEM_FIRST: &'static str = "  ┌──•";
 	pub const ITEM_LAST: &'static str = "  └──•";
 	pub const ITEM_ONEFOLD: &'static str = "   ──•";
+	
 
 	pub fn list(index: usize, total: usize) -> &'static str {
 		if total <= 1 {
@@ -110,3 +117,6 @@ pub fn draw_list(mode: &ValidModeItemList, index: usize, tab: &[RawRow], _tier_m
 		ValidModeItemList::None => unreachable!("None jest obsługiwane lokalnie przed wywołaniem"),
 	}
 }
+
+
+// 🧠 ten plik prawidłowo drukuje Tree, za wyjątkiem MOSTKÓW

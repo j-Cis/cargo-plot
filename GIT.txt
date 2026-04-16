@@ -1,0 +1,14 @@
+TAGI
+
+----------------------------
+$hash = git rev-parse --short HEAD   
+  git tag -a "v0.3.0-beta.1-$hash" -m "Release v0.3.0-beta.1 hash: $hash"                      
+
+git push origin --tags  
+----------------------------
+git tag -n
+git tag -n5
+git tag --sort=creatordate
+git tag --sort=-creatordate
+
+git log --oneline --graph --all --decorate

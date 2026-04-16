@@ -12,14 +12,14 @@ pub struct ConfigJob {
 	pub description: Option<String>,
 	#[serde(default)]
 	pub quiet_work: bool,
-	pub scan: ConfigPattern,
+	pub scan: ScanRawJobNew,
 	pub spec: ConfigSpec,
 	pub table_sotc: ConfigLayout,
 	pub export: Option<ConfigExport>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
-pub struct ConfigPattern {
+pub struct ScanRawJobNew {
 	#[serde(default = "default_work_path")]
 	pub work_path: String,
 	pub patterns: Vec<String>,

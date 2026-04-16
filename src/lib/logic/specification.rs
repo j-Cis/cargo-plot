@@ -1,4 +1,4 @@
-// use super::{ConfigJob, ConfigPattern, ConfigLayout, ConfigTrimming,
+// use super::{ConfigJob, ScanRawJobNew, ConfigLayout, ConfigTrimming,
 // ConfigExport, ConfigSpec};
 use crate::lib::logic::config_model::*;
 // ============================================================================
@@ -235,6 +235,7 @@ impl Default for ScanSpec {
 				"./.github/workflows/*.yml&/".to_string(),
 				"./.vscode/settings.json&/".to_string(),
 				"./{API,ARCHITECTURE,AUTHORS,CHANGELOG,README,ROADMAP,TODO}.md".to_string(),
+				"./dist/**".to_string(),
 			],
 			ignore_case: false,
 		}
@@ -244,7 +245,7 @@ impl Default for ScanSpec {
 impl ScanSpec {
 	pub fn new(work_path: impl Into<String>) -> Self { Self { work_path: work_path.into(), ..Default::default() } }
 
-	pub fn from_config(cfg: &ConfigPattern) -> Self {
+	pub fn from_config(cfg: &ScanRawJobNew) -> Self {
 		Self::new(&cfg.work_path)
 			.patterns(cfg.patterns.iter().map(|s| s.as_str()).collect())
 			.ignore_case(cfg.ignore_case)

@@ -51,7 +51,8 @@ patterns = [
     "./.{gitattributes,gitignore}",
     "./.github/workflows/*.yml&/",
     "./.vscode/settings.json&/",
-    "./{API,ARCHITECTURE,AUTHORS,CHANGELOG,README,ROADMAP,TODO}.md"
+    "./{API,ARCHITECTURE,AUTHORS,CHANGELOG,README,ROADMAP,TODO}.md",
+	"./dist/**"
 ]
 ignore_case = false
 

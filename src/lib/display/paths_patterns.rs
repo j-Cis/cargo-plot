@@ -1,5 +1,5 @@
 use super::{BoolExt, DrawTree, Icon};
-use crate::lib::logic::{PattExp, PattRaw, PatternsToApply};
+use crate::lib::logic::{PattExp, PattRaw, PatternsQueries};
 
 impl std::fmt::Display for PattRaw {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -36,7 +36,7 @@ impl std::fmt::Display for PattExp {
 	}
 }
 
-impl std::fmt::Display for PatternsToApply {
+impl std::fmt::Display for PatternsQueries {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 		let mut lines = Vec::new();
 

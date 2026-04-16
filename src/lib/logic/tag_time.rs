@@ -29,3 +29,6 @@ pub fn tag_time() -> TagTime {
 
 	TagTime(format!("R{r:04}W{w:02}D{d}H{h:02}M{m:02}S{s:02}T{t:02}Q{q:02}"))
 }
+
+//let date_str = Color::date(&row.modified.format("%Y W%V %a").to_string());
+//let time_str = Color::time(&row.modified.format("%H:%M:%S.%3f").to_string());

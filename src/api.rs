@@ -1,39 +1,46 @@
 pub mod lib {
-	pub mod logic {
-		pub mod path {
-			pub mod anchored_paths_datum;
-			pub use anchored_paths_datum::{AnchoredPathsDatum, PathNode};
-			pub mod fs_scanner;
-			pub use fs_scanner::{ScannedToApply, StatsScannedTreeFs};
-			pub mod path_context;
-			pub use path_context::PathContext;
-			pub mod paths_patterns;
-			pub use paths_patterns::{PattEnvIndex, PattExp, PattRaw, PatternsToApply};
-			pub mod paths_table;
-			pub use paths_table::{FileKind, TableData, TableRow, TableSotcTreeOutput};
-			pub mod paths_result;
-			pub use paths_result::{MatchLabel, Matched, Mismatched, Partition, PartitioningResult};
+	pub mod job {
+		pub mod config;
+		pub use config::*;
+		pub mod step1;
+		pub use step1::*;
+		pub mod step2;
+		pub use step2::*;
+		pub mod gens {
+			pub mod item_icon;
+			pub mod item_list;
+			pub use item_icon::*;
+			pub use item_list::*;
 		}
-		pub use path::{
-			AnchoredPathsDatum,
-			FileKind,
+	}
+	pub mod logic {
+		pub mod anchored_paths_datum;
+		pub use anchored_paths_datum::{AnchoredPathsDatum, PathNode};
+		pub mod path_patterns;
+		pub use path_patterns::{PattEnvIndex, PattExp, PattRaw, PatternsQueries};
+		pub mod fs_scanner;
+		pub use fs_scanner::{
 			MatchLabel,
-			Matched,
-			Mismatched,
+			MatchedDir,
+			MatchedFile,
+			MismatchedDir,
+			MismatchedFile,
+			NodeIs,
 			Partition,
-			PartitioningResult,
-			PathContext,
-			PathNode,
-			PattEnvIndex,
-			PattExp,
-			PattRaw,
-			PatternsToApply,
-			ScannedToApply,
+			PartitionScanned,
+			ScannedDirNode,
+			ScannedFileNode,
+			ScannedNode,
+			StatsPartitioning,
 			StatsScannedTreeFs,
-			TableData,
-			TableRow,
-			TableSotcTreeOutput,
+			is_binary_file,
 		};
+		pub mod path_context;
+		pub use path_context::PathContext;
+		// pub mod paths_table;
+		// pub use paths_table::{FileKind, TableData, TableRow, TableSotcTreeOutput};
+		// pub mod paths_result;
+		// pub use paths_result::{Matched, Mismatched,PartitioningResult};
 
 		pub mod specification;
 		pub use specification::{
@@ -50,19 +57,19 @@ pub mod lib {
 		pub use tag_time::{TagTime, tag_time};
 		pub mod mapper_lang_type;
 		pub use mapper_lang_type::LangMapper;
-		pub mod engine;
-		pub use engine::{JobEngine, MX, RenderFlags};
-		pub mod engine_multiple;
-		pub use engine_multiple::DocEngineMultiple;
+		// pub mod engine;
+		// pub use engine::{JobEngine, MX, RenderFlags};
+		// pub mod engine_multiple;
+		// pub use engine_multiple::DocEngineMultiple;
 		pub mod config_model;
 		pub use config_model::{
 			ConfigExport,
 			ConfigJob,
 			ConfigLayout,
 			ConfigManifest,
-			ConfigPattern,
 			ConfigSpec,
 			ConfigTrimming,
+			ScanRawJobNew,
 		};
 		pub mod file_toml_config;
 		pub use file_toml_config::IoConfig;
@@ -75,11 +82,11 @@ pub mod lib {
 
 		pub mod anchored_paths_datum;
 		pub mod config;
-		pub mod fs_scanner;
 		pub mod job_spec;
-		pub mod paths_patterns;
-		pub mod paths_result;
-		pub mod table_data;
+		// pub mod fs_scanner;
+		// pub mod paths_patterns;
+		// pub mod paths_result;
+		// pub mod table_data;
 
 		use colored::*;
 

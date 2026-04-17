@@ -8,7 +8,7 @@ name: Deploy Release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 permissions:
   contents: write
@@ -23,12 +23,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Wymagane, aby pobrać wszystkie gałęzie i historię
-      
+
       - name: Verify Branch
         run: |
           # Pobiera SHA commita, do którego przypisany jest tag
           COMMIT_SHA=${{ github.sha }}
-          
+
           # Sprawdza, czy ten commit należy do gałęzi origin/main
           if git branch -r --contains "$COMMIT_SHA" | grep -q "origin/main"; then
             echo "Tag is on main. Proceeding with release."
@@ -51,7 +51,7 @@ jobs:
             os: windows-latest
             archive_name: cargo-plot-x86_64-windows.zip
             bin_name: cargo-plot.exe
-          
+
           - target: i686-pc-windows-msvc
             os: windows-latest
             archive_name: cargo-plot-i686-windows.zip
@@ -91,7 +91,7 @@ jobs:
       - name: Install Linux Deps
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y build-essential
-          
+
       - name: Install Multilib (Linux 32-bit)
         if: matrix.install_multilib == true
         run: sudo apt-get install -y gcc-multilib
@@ -128,6 +128,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: ${{ matrix.archive_name }}
+          prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha')  || contains(github.ref, 'dev')  || contains(github.ref, 'rc') }}
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

@@ -235,7 +235,7 @@ impl Default for ScanSpec {
 				"./.github/workflows/*.yml&/".to_string(),
 				"./.vscode/settings.json&/".to_string(),
 				"./{API,ARCHITECTURE,AUTHORS,CHANGELOG,README,ROADMAP,TODO}.md".to_string(),
-				"./dist/**".to_string(),
+				"./dist/{**/*,*}.{bat,exe}&/".to_string(),
 			],
 			ignore_case: false,
 		}

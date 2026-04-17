@@ -1,16 +1,16 @@
-use crate::lib::job::ValidModeItemList;
-// pub fn draw_list(mode: &ValidModeItemList, node: &ScannedNode) -> String {
+use crate::lib::job::ModeListForValidColumnItem;
+// pub fn draw_list(mode: &ModeListForValidColumnItem, node: &ScannedNode) -> String {
 // 	match mode {
-// 		ValidModeItemList::Flat => "•".to_string(),
-// 		ValidModeItemList::Tree => {
+// 		ModeListForValidColumnItem::Flat => "•".to_string(),
+// 		ModeListForValidColumnItem::Tree => {
 // 			// Tier 1 (root) nie ma wcięcia, Tier 2 ma jedno, itd.
 // 			let indent = "│  ".repeat(node.tier.saturating_sub(1));
 // 			format!("{}├──", indent)
 // 		}
-// 		ValidModeItemList::None => unreachable!("None jest obsługiwane lokalnie przed wywołaniem"),
+// 		ModeListForValidColumnItem::None => unreachable!("None jest obsługiwane lokalnie przed wywołaniem"),
 // 	}
 // }
-use crate::lib::{job::RawRow, logic::NodeIs};
+use crate::lib::{job::ValidResultMainRow, logic::NodeIs};
 
 pub struct TreeLast;
 impl TreeLast {
@@ -18,20 +18,20 @@ impl TreeLast {
 	pub const DIR_WITH_CHILDREN: &'static str = "└──┬";
 	pub const FILE: &'static str = "└──•";
 	pub const INDENT: &'static str = "   ";
-	pub const BRIDGE_START: &'static str =   "└──•";
-	pub const BRIDGE_NEXT: &'static str =    "──•";
-	pub const BRIDGE_LAST: &'static str =    "───";
+	pub const BRIDGE_START: &'static str = "└──•";
+	pub const BRIDGE_NEXT: &'static str = "──•";
+	pub const BRIDGE_LAST: &'static str = "───";
 }
 
 pub struct TreeMid;
 impl TreeMid {
 	pub const DIR_NO_CHILDREN: &'static str = "├───";
-	pub const DIR_WITH_CHILDREN: &'static str = "├──┬";	
+	pub const DIR_WITH_CHILDREN: &'static str = "├──┬";
 	pub const FILE: &'static str = "├──•";
 	pub const INDENT: &'static str = "│  ";
-	pub const BRIDGE_START: &'static str =   "├──•";
-	pub const BRIDGE_NEXT: &'static str =    "──•";
-	pub const BRIDGE_LAST: &'static str =    "───";
+	pub const BRIDGE_START: &'static str = "├──•";
+	pub const BRIDGE_NEXT: &'static str = "──•";
+	pub const BRIDGE_LAST: &'static str = "───";
 }
 
 pub struct DrawTree;
@@ -40,7 +40,6 @@ impl DrawTree {
 	pub const ITEM_FIRST: &'static str = "  ┌──•";
 	pub const ITEM_LAST: &'static str = "  └──•";
 	pub const ITEM_ONEFOLD: &'static str = "   ──•";
-	
 
 	pub fn list(index: usize, total: usize) -> &'static str {
 		if total <= 1 {
@@ -55,10 +54,15 @@ impl DrawTree {
 	}
 }
 
-pub fn draw_list(mode: &ValidModeItemList, index: usize, tab: &[RawRow], _tier_max: usize) -> String {
+pub fn draw_list(
+	mode: &ModeListForValidColumnItem,
+	index: usize,
+	tab: &[ValidResultMainRow],
+	_tier_max: usize,
+) -> String {
 	match mode {
-		ValidModeItemList::Flat => DrawTree::list(index, tab.len()).to_string(),
-		ValidModeItemList::Tree => {
+		ModeListForValidColumnItem::Flat => DrawTree::list(index, tab.len()).to_string(),
+		ModeListForValidColumnItem::Tree => {
 			let node = &tab[index].node;
 			let t = node.tier;
 
@@ -142,6 +146,6 @@ pub fn draw_list(mode: &ValidModeItemList, index: usize, tab: &[RawRow], _tier_m
 
 			result
 		}
-		ValidModeItemList::None => unreachable!("None jest obsługiwane lokalnie przed wywołaniem"),
+		ModeListForValidColumnItem::None => unreachable!("None jest obsługiwane lokalnie przed wywołaniem"),
 	}
 }

@@ -1,4 +1,4 @@
-# Rust Project Snapshot [Content of the structure] (CONTENT OF THE STRUCTURE v:R2026W16D3H10M42S30T00Q12)
+# CargoPlot v0.3.0-beta.1 (v:R2026W16D3H10M42S30T00Q12COTS [Content of the structure])
 
 ```plaintext
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░

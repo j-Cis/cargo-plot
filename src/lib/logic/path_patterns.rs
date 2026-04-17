@@ -146,6 +146,14 @@ impl PatternCompiled {
 			clean = clean.strip_suffix("&/").or_else(|| clean.strip_suffix("&\\")).unwrap_or(&clean).to_string();
 		}
 
+		// 🧠 ŹLE DZIAŁA FLAGA `+` np w "./dist/+"
+		// ⚡ KRYTYCZNA ZMIANA: Obliczamy targets_file ZANIM utniemy ukośnik!
+		// let targets_file = !clean.ends_with('/') && !clean.ends_with("**");
+		// // ⚡ Usuwamy wiszący ukośnik, aby uniknąć podwójnego slasha `//` w regexie
+		// if is_deep && clean.ends_with('/') {
+		//     clean.pop();
+		// }
+
 		let base_name = clean
 			.trim_end_matches('/')
 			.split('/')

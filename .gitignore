@@ -1,5 +1,4 @@
 /target/
-*.exe
 *.lock
 /.cargo-plot/
 /temp/

@@ -7,17 +7,17 @@ fn main() {
 	// STEP 0: Inicjalizacja
 	// =========================================================================
 
-	let ws_cfg = job::ValidWorkspace::parse_vec_as_config(["."]);
-	let pt_cfg = job::ValidPattern::parse_vec_as_config(Vec::<&str>::new(), None);
-	// let pt_cfg = job::ValidPattern::parse_vec_as_config::<[&str; 0]>([], None);
+	let ws_cfg = job::ValidWorkspaceParse::parse_vec_as_config(["."]);
+	let pt_cfg = job::ValidPatternParse::parse_vec_as_config(Vec::<&str>::new(), None);
+	// let pt_cfg = job::ValidPatternParse::parse_vec_as_config::<[&str; 0]>([], None);
 
 	// =========================================================================
 	// STEP 1: Skanowanie i pobranie metadanych z dysku
 	// =========================================================================
-	let part_cfg = job::ValidTablePart::parse_vec_as_config(["md", "mf"]);
+	let part_cfg = job::ValidTablePartParse::parse_vec_as_config(["md", "mf"]);
 	let raw_rows = job::engine_step1_scanner(part_cfg, &ws_cfg, &pt_cfg);
 
-	println!("Skanowanie zakończone. Zabrano wierszy (RawRow): {}\n", raw_rows.rows.len());
+	println!("Skanowanie zakończone. Zabrano wierszy (ValidResultMainRow): {}\n", raw_rows.rows.len());
 
 	// =========================================================================
 	// STEP 2: Formatowanie komórek
@@ -25,13 +25,13 @@ fn main() {
 
 	// Ustawiamy dość bogatą konfigurację, żeby przetestować wszystkie mechanizmy
 	let item_cfg =
-		job::ValidColumnItem::parse_vec_as_config(["list-tree", "name-show", "ws-show", "icons-lite"]).unwrap();
+		job::ValidColumnItemParse::parse_vec_as_config(["list-tree", "name-show", "ws-show", "icons-lite"]).unwrap();
 
-	let cols_cfg = job::ValidTableColumns::parse_vec_as_config(["date", "time", "size", "item", "path"]);
+	let cols_cfg = job::ValidTableColumnsParse::parse_vec_as_config(["date", "time", "size", "item", "path"]);
 
-	let date_cfg = job::ValidColumnDate::parse_vec_as_config(["default"]);
-	let time_cfg = job::ValidColumnTime::parse_vec_as_config(["default"]);
-	let size_cfg = job::ValidColumnSize::parse_vec_as_config(["dec"]);
+	let date_cfg = job::ValidColumnDateParse::parse_vec_as_config(["default"]);
+	let time_cfg = job::ValidColumnTimeParse::parse_vec_as_config(["default"]);
+	let size_cfg = job::ValidColumnSizeParse::parse_vec_as_config(["dec"]);
 
 	let formatted_rows =
 		job::engine_step2_data_formater((&item_cfg, &cols_cfg), (&date_cfg, &time_cfg, &size_cfg), &raw_rows);
@@ -55,16 +55,18 @@ fn mock_render(rows: &[job::FormattedRow], cols_cfg: &job::ValidTableColumnsConf
 		for (col_idx, cell) in row.cells.iter().enumerate() {
 			line.push_str(cell);
 
-			// Jeśli to nie jest ostatnia kolumna, dodajemy separator
+			// Jeśli to nie jest ostatnia komórka, dodajemy separator
 			if col_idx < row.cells.len() - 1 {
-				let current_col = &cols_cfg.columns[col_idx];
-				let next_col = &cols_cfg.columns[col_idx + 1];
+				// Używamy bezpiecznego .get(), bo kolumny debug nie mają swojej definicji w configu
+				let current_col = cols_cfg.columns.get(col_idx);
+				let next_col = cols_cfg.columns.get(col_idx + 1);
 
-				// ⚡ Magia: Jeśli obok siebie stoją Data i Czas (w dowolnej kolejności),
-				// rezygnujemy z pionowej kreski na rzecz zwykłej spacji.
-				let is_date_time_pair = (current_col == &job::ValidTableColumns::Date
-					&& next_col == &job::ValidTableColumns::Time)
-					|| (current_col == &job::ValidTableColumns::Time && next_col == &job::ValidTableColumns::Date);
+				// ⚡ Magia: Jeśli obok siebie stoją Data i Czas (w dowolnej kolejności)
+				let is_date_time_pair = match (current_col, next_col) {
+					(Some(job::ValidTableColumnsParse::Date), Some(job::ValidTableColumnsParse::Time)) => true,
+					(Some(job::ValidTableColumnsParse::Time), Some(job::ValidTableColumnsParse::Date)) => true,
+					_ => false,
+				};
 
 				if is_date_time_pair {
 					line.push_str(" "); // Sklejenie Daty i Czasu

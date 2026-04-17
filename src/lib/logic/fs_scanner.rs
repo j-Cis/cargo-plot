@@ -100,34 +100,39 @@ pub struct Partition<L: MatchLabel> {
 	pub label: &'static str,
 	pub tier_max: usize,
 	pub name_len_max: usize,
+	pub path_len_max: usize,
 	pub count: usize,
 	_marker: PhantomData<L>,
 }
 
 impl<L: MatchLabel> Partition<L> {
 	// Pomocniczy trait-like look dla L::Node, aby dobrać się do pól tier i name
-	pub fn calculate_metadata(nodes: &[L::Node]) -> (usize, usize)
+	pub fn calculate_metadata(nodes: &[L::Node]) -> (usize, usize, usize)
 	where L::Node: AsMetadataNode // Musimy zdefiniować ten pomocniczy trait poniżej
 	{
 		let t_max = nodes.iter().map(|n| n.get_tier()).max().unwrap_or(0);
 		let n_max = nodes.iter().map(|n| n.get_name().chars().count()).max().unwrap_or(0);
-		(t_max, n_max)
+		let p_max = nodes.iter().map(|n| n.get_path_len()).max().unwrap_or(0); // ⚡ NOWE
+		(t_max, n_max, p_max)
 	}
 }
 // Dodaj ten pomocniczy trait w fs_scanner.rs, aby Partition mogło operować na typach generycznych
 pub trait AsMetadataNode {
 	fn get_tier(&self) -> usize;
 	fn get_name(&self) -> &str;
+	fn get_path_len(&self) -> usize;
 }
 
 impl AsMetadataNode for ScannedFileNode {
 	fn get_tier(&self) -> usize { self.tier }
 	fn get_name(&self) -> &str { &self.name }
+	fn get_path_len(&self) -> usize { self.path.str.chars().count() }
 }
 
 impl AsMetadataNode for ScannedDirNode {
 	fn get_tier(&self) -> usize { self.tier }
 	fn get_name(&self) -> &str { &self.name }
+	fn get_path_len(&self) -> usize { self.path.str.chars().count() }
 }
 // ============================================================================
 // STRUKTURY DANYCH I STATYSTYK
@@ -166,6 +171,8 @@ pub struct ScannedNode {
 	pub path: PathNode,
 	pub node: NodeIs,
 	pub tier: usize,
+	pub id_self: usize,      // ⚡ Własne ID
+	pub id_path: Vec<usize>, // ⚡ Ścieżka przodków [0, 1, 5...]
 	pub dir_has_subdirs: Option<usize>,
 	pub dir_has_files_binary: Option<usize>,
 	pub dir_has_files_text: Option<usize>,
@@ -179,6 +186,8 @@ pub struct ScannedDirNode {
 	pub name: String,
 	pub path: PathNode,
 	pub tier: usize,
+	pub id_self: usize,      // ⚡
+	pub id_path: Vec<usize>, // ⚡
 	pub has_subdirs: usize,
 	pub has_files_binary: usize,
 	pub has_files_text: usize,
@@ -190,6 +199,8 @@ pub struct ScannedFileNode {
 	pub name: String,
 	pub path: PathNode,
 	pub tier: usize,
+	pub id_self: usize,      // ⚡
+	pub id_path: Vec<usize>, // ⚡
 	pub is_binary: bool,
 	pub is_empty: bool,
 }
@@ -246,154 +257,24 @@ pub struct PartitionScanned {
 
 impl PartitionScanned {
 	pub fn scan(p: &AnchoredPathsDatum, q: &PatternsQueries) -> Self {
-		let mut files = Vec::new();
-		let mut dirs_raw = Vec::new();
-		let mut symlink_counts = HashMap::new();
+		// ░░░░░░░░░░░░░░░ 🅰️ ZBIERANIE DANYCH ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+		let raw_data = gather_raw_nodes(p);
+		let files = raw_data.files;
+		let dirs = build_directory_nodes(&raw_data.dirs_raw, &files, &raw_data.symlink_counts);
+		let stat_scan = raw_data.stat_scan;
 
-		let mut count_dirs = 0;
-		let mut count_dirs_empty = 0;
-		let mut count_files = 0;
-		let mut count_files_empty = 0;
-		let mut count_files_text = 0;
-		let mut count_files_binary = 0;
-		let mut count_symlinks_skipped = 0;
-
-		for e in WalkDir::new(&p.workspace_dir.buf).into_iter().filter_map(|e| e.ok()) {
-			if e.depth() == 0 {
-				continue;
-			}
-
-			let tier = e.depth();
-
-			if e.path_is_symlink() {
-				count_symlinks_skipped += 1;
-				if let Some(parent) = e.path().strip_prefix(&p.workspace_dir.buf).ok().and_then(|p| p.parent()) {
-					let parent_str = parent.to_string_lossy().replace('\\', "/");
-					let formatted = if parent_str.is_empty() { "./".to_string() } else { format!("./{}/", parent_str) };
-					*symlink_counts.entry(formatted).or_insert(0usize) += 1;
-				}
-				continue;
-			}
-
-			let Ok(rel_path) = e.path().strip_prefix(&p.workspace_dir.buf) else {
-				continue;
-			};
-			let mut path = rel_path.to_string_lossy().replace('\\', "/");
-
-			if e.file_type().is_dir() {
-				path.push('/');
-				count_dirs += 1;
-
-				let is_empty = e.metadata().map(|m| m.is_dir()).unwrap_or(false)
-					&& e.path().read_dir().map(|mut r| r.next().is_none()).unwrap_or(false);
-
-				if is_empty {
-					count_dirs_empty += 1;
-				}
-				dirs_raw.push((PathNode::new(format!("./{}", path).into()), tier));
-			} else {
-				count_files += 1;
-				let abs_path = e.path();
-				let is_empty = abs_path.metadata().map(|m| m.len() == 0).unwrap_or(false);
-				let mut is_binary = false;
-
-				if is_empty {
-					count_files_empty += 1;
-				} else {
-					is_binary = is_binary_file(abs_path.to_str().unwrap_or("")).unwrap_or(false);
-					if is_binary {
-						count_files_binary += 1;
-					} else {
-						count_files_text += 1;
-					}
-				}
-
-				files.push(ScannedFileNode {
-					name: abs_path.file_name().unwrap_or_default().to_string_lossy().to_string(),
-					path: PathNode::new(format!("./{}", path).into()),
-					tier,
-					is_binary,
-					is_empty,
-				});
-			}
-		}
-
-		files.sort_unstable_by(|a, b| a.path.str.cmp(&b.path.str));
-		dirs_raw.sort_unstable_by(|a, b| a.0.str.cmp(&b.0.str));
-
-		let mut dirs = Vec::with_capacity(dirs_raw.len());
-		for i in 0..dirs_raw.len() {
-			let (path, tier) = dirs_raw[i].clone();
-			let mut count_subdirs = 0;
-			let mut count_files_binary = 0;
-			let mut count_files_text = 0;
-			let count_symlinks = *symlink_counts.get(&path.str).unwrap_or(&0);
-
-			// Zliczanie plików bezpośrednich
-			for f in &files {
-				if f.path.str.starts_with(&path.str) {
-					let remainder = &f.path.str[path.str.len()..];
-					if !remainder.contains('/') {
-						// Tylko bezpośrednie dzieci
-						if f.is_binary {
-							count_files_binary += 1;
-						} else if !f.is_empty {
-							count_files_text += 1;
-						}
-					}
-				}
-			}
-
-			// Zliczanie subkatalogów bezpośrednich
-			for j in (i + 1)..dirs_raw.len() {
-				if dirs_raw[j].0.str.starts_with(&path.str) {
-					let remainder = &dirs_raw[j].0.str[path.str.len()..];
-					if !remainder.is_empty() && !remainder.trim_end_matches('/').contains('/') {
-						count_subdirs += 1;
-					}
-				} else {
-					break;
-				}
-			}
-
-			dirs.push(ScannedDirNode {
-				name: path.str.trim_end_matches('/').split('/').next_back().unwrap_or("").to_string(),
-				path,
-				tier,
-				has_subdirs: count_subdirs,
-				has_files_binary: count_files_binary,
-				has_files_text: count_files_text,
-				has_symlinks: count_symlinks,
-			});
-		}
-
-		let stat_scan = StatsScannedTreeFs {
-			count_dirs,
-			count_dirs_empty,
-			count_files,
-			count_files_empty,
-			count_files_text,
-			count_files_binary,
-			count_symlinks_skipped,
-		};
-
-		// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-		// FAZA FILTROWANIA (Rozwiązanie problemu 'Borrow Checkera')
-		// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
-		// 1. Zbudowanie EnvIndex na referencjach (pożyczamy ścieżki)
+		// Zbudowanie EnvIndex na referencjach (pożyczamy ścieżki)
 		let env_index = EnvIndex {
 			dirs: dirs.iter().map(|d| d.path.str.as_str()).collect(),
 			files: files.iter().map(|f| f.path.str.as_str()).collect(),
 		};
 
-		// 2. Pierwszy przebieg: zbieramy TYLKO wyniki true/false do masek
+		// ░░░░░░░░░░░░░░░ 🅱️ PIERWSZY PRZEBIEG ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+		// zbieramy TYLKO wyniki true/false do masek
 		let files_matches: Vec<bool> = files.iter().map(|f| q.is_match(&f.path.str, &env_index)).collect();
 		let dirs_matches: Vec<bool> = dirs.iter().map(|d| q.is_match(&d.path.str, &env_index)).collect();
 
-		/* 3. Uwalniamy referencje - od tego momentu env_index przestaje istnieć,
-		 * więc wektory files i dirs znów są 'wolne' i można je przenosić.
-		 * */
+		// Uwalniamy referencje
 		drop(env_index);
 
 		let mut vec_m_f = Vec::new();
@@ -401,7 +282,8 @@ impl PartitionScanned {
 		let mut vec_m_d = Vec::new();
 		let mut vec_x_d = Vec::new();
 
-		// 4. Drugi przebieg: złączenie (zip) plików z zapisanymi wynikami (bez żadnego klonowania!)
+		// ░░░░░░░░░░░░░░░ 🆎 DRUGI PRZEBIEG ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+		// złączenie plików z zapisanymi wynikami
 		for (f, is_matched) in files.into_iter().zip(files_matches) {
 			if is_matched {
 				vec_m_f.push(f);
@@ -418,6 +300,7 @@ impl PartitionScanned {
 			}
 		}
 
+		// ░░░░░░░░░░░░░░░ 🅾️ MONTOWANIE WYNIKU ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 		let stat_part = StatsPartitioning {
 			count_m: vec_m_f.len() + vec_m_d.len(),
 			count_x: vec_x_f.len() + vec_x_d.len(),
@@ -426,10 +309,11 @@ impl PartitionScanned {
 			count_m_d: vec_m_d.len(),
 			count_x_d: vec_x_d.len(),
 		};
-		let (mf_t, mf_n) = Partition::<MatchedFile>::calculate_metadata(&vec_m_f);
-		let (xf_t, xf_n) = Partition::<MismatchedFile>::calculate_metadata(&vec_x_f);
-		let (md_t, md_n) = Partition::<MatchedDir>::calculate_metadata(&vec_m_d);
-		let (xd_t, xd_n) = Partition::<MismatchedDir>::calculate_metadata(&vec_x_d);
+
+		let (mf_t, mf_n, mf_p) = Partition::<MatchedFile>::calculate_metadata(&vec_m_f);
+		let (xf_t, xf_n, xf_p) = Partition::<MismatchedFile>::calculate_metadata(&vec_x_f);
+		let (md_t, md_n, md_p) = Partition::<MatchedDir>::calculate_metadata(&vec_m_d);
+		let (xd_t, xd_n, xd_p) = Partition::<MismatchedDir>::calculate_metadata(&vec_x_d);
 
 		Self {
 			m_f: Partition {
@@ -437,7 +321,8 @@ impl PartitionScanned {
 				label: MatchedFile::label(),
 				tier_max: mf_t,
 				name_len_max: mf_n,
-				count: stat_part.count_m_f, // ⚡ Używamy policzonej wartości
+				path_len_max: mf_p,
+				count: stat_part.count_m_f,
 				_marker: PhantomData,
 			},
 			x_f: Partition {
@@ -445,7 +330,8 @@ impl PartitionScanned {
 				label: MismatchedFile::label(),
 				tier_max: xf_t,
 				name_len_max: xf_n,
-				count: stat_part.count_x_f, // ⚡ Używamy policzonej wartości
+				path_len_max: xf_p,
+				count: stat_part.count_x_f,
 				_marker: PhantomData,
 			},
 			m_d: Partition {
@@ -453,7 +339,8 @@ impl PartitionScanned {
 				label: MatchedDir::label(),
 				tier_max: md_t,
 				name_len_max: md_n,
-				count: stat_part.count_m_d, // ⚡ Używamy policzonej wartości
+				path_len_max: md_p,
+				count: stat_part.count_m_d,
 				_marker: PhantomData,
 			},
 			x_d: Partition {
@@ -461,7 +348,8 @@ impl PartitionScanned {
 				label: MismatchedDir::label(),
 				tier_max: xd_t,
 				name_len_max: xd_n,
-				count: stat_part.count_x_d, // ⚡ Używamy policzonej wartości
+				path_len_max: xd_p,
+				count: stat_part.count_x_d,
 				_marker: PhantomData,
 			},
 			stat_scan,
@@ -485,6 +373,8 @@ impl PartitionScanned {
 			path: d.path.clone(),
 			node: NodeIs::Dir,
 			tier: d.tier,
+			id_self: d.id_self,         // ⚡
+			id_path: d.id_path.clone(), // ⚡
 			dir_has_subdirs: Some(d.has_subdirs),
 			dir_has_files_binary: Some(d.has_files_binary),
 			dir_has_files_text: Some(d.has_files_text),
@@ -498,6 +388,8 @@ impl PartitionScanned {
 			path: f.path.clone(),
 			node: NodeIs::File,
 			tier: f.tier,
+			id_self: f.id_self,         // ⚡
+			id_path: f.id_path.clone(), // ⚡
 			dir_has_subdirs: None,
 			dir_has_files_binary: None,
 			dir_has_files_text: None,
@@ -528,4 +420,201 @@ impl PartitionScanned {
 	}
 
 	pub fn iter_paths(&self) -> impl Iterator<Item = &str> + '_ { self.iter_file_paths().chain(self.iter_dir_paths()) }
+}
+
+// ============================================================================
+// HELPERY SKANERA (Przygotowanie danych)
+// ============================================================================
+
+struct RawDirNode {
+	path: PathNode,
+	tier: usize,
+	id_self: usize,
+	id_path: Vec<usize>,
+}
+struct RawGatherData {
+	files: Vec<ScannedFileNode>,
+	dirs_raw: Vec<RawDirNode>,
+	symlink_counts: HashMap<String, usize>,
+	stat_scan: StatsScannedTreeFs,
+}
+
+/// Helper 1: Przechodzi po dysku, kategoryzuje i zbiera surowe węzły
+fn gather_raw_nodes(p: &AnchoredPathsDatum) -> RawGatherData {
+	let mut files = Vec::new();
+	let mut dirs_raw = Vec::new();
+	let mut symlink_counts = HashMap::new();
+
+	let mut count_dirs = 0;
+	let mut count_dirs_empty = 0;
+	let mut count_files = 0;
+	let mut count_files_empty = 0;
+	let mut count_files_text = 0;
+	let mut count_files_binary = 0;
+	let mut count_symlinks_skipped = 0;
+
+	// ⚡ REJESTR ID I ŚCIEŻEK (Materialized Path)
+	let mut current_id = 1; // Zaczynamy od 1, bo 0 to workspace_dir
+	let mut path_registry: HashMap<std::path::PathBuf, (usize, Vec<usize>)> = HashMap::new();
+
+	// Inicjalizujemy korzeń (workspace_dir) z ID 0 i pustą ścieżką przodków
+	path_registry.insert(p.workspace_dir.buf.clone(), (0, vec![]));
+
+	for e in WalkDir::new(&p.workspace_dir.buf).into_iter().filter_map(|e| e.ok()) {
+		if e.depth() == 0 {
+			continue;
+		}
+
+		let tier = e.depth();
+
+		if e.path_is_symlink() {
+			count_symlinks_skipped += 1;
+			if let Some(parent) = e.path().strip_prefix(&p.workspace_dir.buf).ok().and_then(|p| p.parent()) {
+				let parent_str = parent.to_string_lossy().replace('\\', "/");
+				let formatted = if parent_str.is_empty() { "./".to_string() } else { format!("./{}/", parent_str) };
+				*symlink_counts.entry(formatted).or_insert(0usize) += 1;
+			}
+			continue;
+		}
+
+		// ⚡ NADAWANIE TOŻSAMOŚCI I BUDOWANIE ID_PATH
+		let id_self = current_id;
+		current_id += 1;
+
+		// Szukamy rodzica w rejestrze
+		let parent_path = e.path().parent().expect("Błąd systemu plików: Węzeł nie ma rodzica");
+		let (parent_id, parent_id_path) = path_registry.get(parent_path).unwrap_or(&(0, vec![])).clone();
+
+		// Budujemy ścieżkę z ID: bierzemy ścieżkę rodzica i doklejamy do niej ID rodzica
+		// Np. Rodzic to folder `src` (ID: 1, ścieżka: [0]). Nasza nowa ścieżka to [0, 1].
+		let mut id_path = parent_id_path;
+		id_path.push(parent_id);
+
+		// Jeśli to folder, wpisujemy go do rejestru dla jego przyszłych dzieci
+		if e.file_type().is_dir() {
+			path_registry.insert(e.path().to_path_buf(), (id_self, id_path.clone()));
+		}
+
+		let Ok(rel_path) = e.path().strip_prefix(&p.workspace_dir.buf) else {
+			continue;
+		};
+		let mut path = rel_path.to_string_lossy().replace('\\', "/");
+
+		if e.file_type().is_dir() {
+			path.push('/');
+			count_dirs += 1;
+
+			let is_empty = e.metadata().map(|m| m.is_dir()).unwrap_or(false)
+				&& e.path().read_dir().map(|mut r| r.next().is_none()).unwrap_or(false);
+
+			if is_empty {
+				count_dirs_empty += 1;
+			}
+			dirs_raw.push(RawDirNode {
+				path: PathNode::new(format!("./{}", path).into()),
+				tier,
+				id_self,
+				id_path: id_path.clone(),
+			});
+		} else {
+			count_files += 1;
+			let abs_path = e.path();
+			let is_empty = abs_path.metadata().map(|m| m.len() == 0).unwrap_or(false);
+			let mut is_binary = false;
+
+			if is_empty {
+				count_files_empty += 1;
+			} else {
+				is_binary = is_binary_file(abs_path.to_str().unwrap_or("")).unwrap_or(false);
+				if is_binary {
+					count_files_binary += 1;
+				} else {
+					count_files_text += 1;
+				}
+			}
+
+			files.push(ScannedFileNode {
+				name: abs_path.file_name().unwrap_or_default().to_string_lossy().to_string(),
+				path: PathNode::new(format!("./{}", path).into()),
+				id_self,
+				id_path,
+				tier,
+				is_binary,
+				is_empty,
+			});
+		}
+	}
+
+	// Sortowanie gwarantujące stabilność dla logiki analizy dzieci
+	files.sort_unstable_by(|a, b| a.path.str.cmp(&b.path.str));
+	dirs_raw.sort_unstable_by(|a, b| a.path.str.cmp(&b.path.str));
+
+	let stat_scan = StatsScannedTreeFs {
+		count_dirs,
+		count_dirs_empty,
+		count_files,
+		count_files_empty,
+		count_files_text,
+		count_files_binary,
+		count_symlinks_skipped,
+	};
+
+	RawGatherData { files, dirs_raw, symlink_counts, stat_scan }
+}
+
+/// Helper 2: Analizuje relacje rodzic-dziecko i buduje pełne ScannedDirNode
+fn build_directory_nodes(
+	dirs_raw: &[RawDirNode],
+	files: &[ScannedFileNode],
+	symlink_counts: &HashMap<String, usize>,
+) -> Vec<ScannedDirNode> {
+	let mut dirs = Vec::with_capacity(dirs_raw.len());
+
+	for i in 0..dirs_raw.len() {
+		let raw = &dirs_raw[i];
+		let mut count_subdirs = 0;
+		let mut count_files_binary = 0;
+		let mut count_files_text = 0;
+		let count_symlinks = *symlink_counts.get(&raw.path.str).unwrap_or(&0);
+
+		// Zliczanie plików bezpośrednich
+		for f in files {
+			if f.path.str.starts_with(&raw.path.str) {
+				let remainder = &f.path.str[raw.path.str.len()..];
+				if !remainder.contains('/') {
+					if f.is_binary {
+						count_files_binary += 1;
+					} else if !f.is_empty {
+						count_files_text += 1;
+					}
+				}
+			}
+		}
+
+		// Zliczanie subkatalogów bezpośrednich
+		for j in (i + 1)..dirs_raw.len() {
+			if dirs_raw[j].path.str.starts_with(&raw.path.str) {
+				let remainder = &dirs_raw[j].path.str[raw.path.str.len()..];
+				if !remainder.is_empty() && !remainder.trim_end_matches('/').contains('/') {
+					count_subdirs += 1;
+				}
+			} else {
+				break;
+			}
+		}
+
+		dirs.push(ScannedDirNode {
+			name: raw.path.str.trim_end_matches('/').split('/').next_back().unwrap_or("").to_string(),
+			path: raw.path.clone(),
+			id_self: raw.id_self,         // ⚡ PRZEPISANIE ID
+			id_path: raw.id_path.clone(), // ⚡ PRZEPISANIE ŚCIEŻKI
+			tier: raw.tier,
+			has_subdirs: count_subdirs,
+			has_files_binary: count_files_binary,
+			has_files_text: count_files_text,
+			has_symlinks: count_symlinks,
+		});
+	}
+
+	dirs
 }

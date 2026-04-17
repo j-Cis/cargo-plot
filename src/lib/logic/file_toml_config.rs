@@ -52,7 +52,7 @@ patterns = [
     "./.github/workflows/*.yml&/",
     "./.vscode/settings.json&/",
     "./{API,ARCHITECTURE,AUTHORS,CHANGELOG,README,ROADMAP,TODO}.md",
-	"./dist/**"
+	"./dist/{**/*,*}.{bat,exe}&/"
 ]
 ignore_case = false
 

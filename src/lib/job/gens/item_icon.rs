@@ -1,15 +1,15 @@
-use crate::lib::{job::ValidModeItemIcons, logic::NodeIs};
+use crate::lib::{job::ModeIconsForValidColumnItem, logic::NodeIs};
 
-pub fn draw_icon(mode: &ValidModeItemIcons, node_type: &NodeIs, name: &str) -> &'static str {
+pub fn draw_icon(mode: &ModeIconsForValidColumnItem, node_type: &NodeIs, name: &str) -> &'static str {
 	match mode {
-		ValidModeItemIcons::Lite => {
+		ModeIconsForValidColumnItem::Lite => {
 			if *node_type == NodeIs::Dir {
 				"📂"
 			} else {
 				"📝"
 			}
 		}
-		ValidModeItemIcons::More => {
+		ModeIconsForValidColumnItem::More => {
 			if *node_type == NodeIs::Dir {
 				"📁"
 			} else if name.ends_with(".rs") {
@@ -22,6 +22,6 @@ pub fn draw_icon(mode: &ValidModeItemIcons, node_type: &NodeIs, name: &str) -> &
 				"📄"
 			}
 		}
-		ValidModeItemIcons::None => unreachable!("None jest obsługiwane lokalnie przed wywołaniem"),
+		ModeIconsForValidColumnItem::None => unreachable!("None jest obsługiwane lokalnie przed wywołaniem"),
 	}
 }

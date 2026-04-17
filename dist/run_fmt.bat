@@ -1,0 +1,1 @@
+dist\release\examples\v0.3.0-beta.1\fmt.exe

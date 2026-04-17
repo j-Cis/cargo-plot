@@ -20,6 +20,8 @@ pub mod lib {
 		pub use anchored_paths_datum::{AnchoredPathsDatum, PathNode};
 		pub mod path_patterns;
 		pub use path_patterns::{PattEnvIndex, PattExp, PattRaw, PatternsQueries};
+		pub mod path_context;
+		pub use path_context::PathContext;
 		pub mod fs_scanner;
 		pub use fs_scanner::{
 			MatchLabel,
@@ -37,8 +39,8 @@ pub mod lib {
 			StatsScannedTreeFs,
 			is_binary_file,
 		};
-		pub mod path_context;
-		pub use path_context::PathContext;
+		pub mod path_sort;
+		pub use path_sort::SortQueries;
 		// pub mod paths_table;
 		// pub use paths_table::{FileKind, TableData, TableRow, TableSotcTreeOutput};
 		// pub mod paths_result;

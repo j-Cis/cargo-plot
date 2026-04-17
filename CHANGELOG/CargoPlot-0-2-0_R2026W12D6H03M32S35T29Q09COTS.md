@@ -1,3 +1,5 @@
+# CargoPlot v0.2.0 (v:R2026W12D6H03M32S35T29Q09COTS [Content of the structure])
+
 ```plaintext
 [KiB 174.4] └──┬ 📂 cargo-plot-2                   ./cargo-plot-2/
 [KiB 1.380]    ├──• ⚙️ Cargo.toml                 ./Cargo.toml

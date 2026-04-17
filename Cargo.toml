@@ -28,6 +28,17 @@ include = [
 [package.metadata.cargo]
 edition = "2024"
 
+[package.metadata.docs.rs]
+# Buduje dokumentację na docs.rs tylko dla poniższych targetów, które oficjalnie wspieramy
+targets = [
+    "x86_64-pc-windows-msvc",
+    "i686-pc-windows-msvc",
+    "x86_64-unknown-linux-gnu",
+    "x86_64-unknown-linux-musl",
+    "i686-unknown-linux-gnu",
+    "x86_64-apple-darwin",
+    "aarch64-apple-darwin"
+]
 
 [lib]
 name = "plot"        
@@ -67,3 +78,5 @@ unsafe_code = "forbid"
 # pedantic = "warn"
 # Możemy tu też wyciszyć globalnie to, co nas irytuje (opcjonalnie):
 too_many_arguments = "allow"
+
+

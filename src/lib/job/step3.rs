@@ -1,21 +1,19 @@
-use std::{
-	collections::BTreeMap,
-	path::{Path, PathBuf},
-};
+use std::collections::BTreeMap;
 
-use crate::lib::job;
+use crate::lib::{job, job::config::ConfigGetSetup};
 
 // ============================================================================
 // SORTER (Step 3) - UKŁADACZ ELEMENTÓW W WORKU
 // ============================================================================
 
-pub fn engine_step3_data_sort(
+pub fn engine_step3_data_sort<'a>(
 	sort_cfg: &job::ValidSortByConfig,
 	item_cfg: &job::ValidColumnItemConfig,
-	table: &mut job::ValidResultMainTab,
-) {
+	table: &'a mut job::ValidResultMainTab, // ⚡ Zostawiamy referencję mutowalną!
+) -> &'a mut job::ValidResultMainTab {
+	// ⚡ Zwracamy referencję mutowalną!
 	if table.rows.is_empty() {
-		return;
+		return table; // Teraz to zadziała bezbłędnie
 	}
 
 	// Wyciągamy informacje o trybie płaskim bezpośrednio z konfiguratora
@@ -37,38 +35,30 @@ pub fn engine_step3_data_sort(
 		// --------------------------------------------------------------------
 		// WIELE WORKÓW: Sortowanie w obrębie własnych katalogów (Tree)
 		// --------------------------------------------------------------------
-		let clean_paths: Vec<PathBuf> =
-			table.rows.iter().map(|r| PathBuf::from(r.node.path.str.trim_end_matches('/'))).collect();
+		// Mapa powiązań (Klucz = ID Rodzica, Wartość = Indeksy dzieci)
+		let mut tree_map: BTreeMap<usize, Vec<usize>> = BTreeMap::new();
 
-		// Mapa powiązań (Klucz = Rodzic, Wartość = Indeksy dzieci)
-		let mut tree_map: BTreeMap<PathBuf, Vec<usize>> = BTreeMap::new();
-
-		for (i, p) in clean_paths.iter().enumerate() {
-			let parent = p.parent().map_or_else(|| PathBuf::from("."), Path::to_path_buf);
-			tree_map.entry(parent).or_default().push(i);
+		for (i, row) in table.rows.iter().enumerate() {
+			// Bezpośredni rodzic to ostatni element w id_path.
+			// Jeśli id_path jest puste (korzeń), przypisujemy do ID 0.
+			let parent_id = row.node.id_path.last().copied().unwrap_or(0);
+			tree_map.entry(parent_id).or_default().push(i);
 		}
 
-		// Sortujemy zawartość wewnątrz każdego worka z osobna!
+		// Sortujemy zawartość wewnątrz każdego worka (rodzica) z osobna!
 		for indices in tree_map.values_mut() {
 			indices.sort_by(|&a, &b| queries.compare(&table.rows[a], &table.rows[b]));
 		}
 
-		// Szukamy "Korzeni" (Głównych worków)
-		let mut root_indices = Vec::new();
-		for (i, p) in clean_paths.iter().enumerate() {
-			let parent = p.parent().map_or_else(|| PathBuf::from("."), Path::to_path_buf);
-			let is_root = parent == Path::new(".") || parent == Path::new("") || !clean_paths.contains(&parent);
-			if is_root {
-				root_indices.push(i);
-			}
-		}
+		// Szukamy "Korzeni" (elementy, których rodzicem jest workspace_dir z ID 0)
+		let mut root_indices = tree_map.remove(&0).unwrap_or_default();
 
 		// Sortujemy same korzenie między sobą
 		root_indices.sort_by(|&a, &b| queries.compare(&table.rows[a], &table.rows[b]));
 
-		// Zwijamy wszystko z powrotem do płaskiego wektora w idealnej kolejności
+		// Zwijamy wszystko rekurencyjnie do płaskiego wektora w idealnej kolejności
 		let mut flat_indices = Vec::with_capacity(table.rows.len());
-		flatten(&root_indices, &tree_map, &clean_paths, &mut flat_indices);
+		flatten(&root_indices, &tree_map, &table.rows, &mut flat_indices);
 
 		// Błyskawiczna podmiana wierszy (in-place)
 		let total_rows = table.rows.len(); // Najpierw czytamy długość...
@@ -82,14 +72,24 @@ pub fn engine_step3_data_sort(
 			}
 		}
 	}
+	table
 }
 
-/// Helper do rekurencyjnego opróżniania worków w ustalonej kolejności
-fn flatten(indices: &[usize], tree_map: &BTreeMap<PathBuf, Vec<usize>>, clean_paths: &[PathBuf], out: &mut Vec<usize>) {
+/// Helper do rekurencyjnego opróżniania worków w ustalonej kolejności (oparty na ID) 🔙📂
+fn flatten(
+	indices: &[usize],
+	tree_map: &BTreeMap<usize, Vec<usize>>,
+	rows: &[job::ValidResultMainRow],
+	out: &mut Vec<usize>,
+) {
 	for &idx in indices {
 		out.push(idx);
-		if let Some(children) = tree_map.get(&clean_paths[idx]) {
-			flatten(children, tree_map, clean_paths, out);
+
+		let my_id = rows[idx].node.id_self; // Pobieram swoje własne ID
+
+		// Jeśli jestem rodzicem dla jakichś dzieci w mapie, wchodzimy głębiej
+		if let Some(children) = tree_map.get(&my_id) {
+			flatten(children, tree_map, rows, out);
 		}
 	}
 }

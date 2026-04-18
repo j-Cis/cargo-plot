@@ -17,15 +17,14 @@ pub struct FormattedRow {
 // ============================================================================
 
 pub fn engine_step2_data_formater(
-	c: (&job::ValidColumnItemConfig, &job::ValidTableColumnsConfig),
-	s: (&job::ValidColumnDateConfig, &job::ValidColumnTimeConfig, &job::ValidColumnSizeConfig),
+	j: &job::ValidPreparedJobConfig,
 	tab: &job::ValidResultMainTab, // ⚡ Zmiana typu
 ) -> Vec<FormattedRow> {
-	let item_cfg = c.0;
-	let col_cfg = c.1;
-	let date_cfg = s.0;
-	let time_cfg = s.1;
-	let size_cfg = s.2;
+	let item_cfg = &j.item;
+	let col_cfg = &j.cols;
+	let date_cfg = &j.date;
+	let time_cfg = &j.time;
+	let size_cfg = &j.size;
 
 	let total_rows = tab.rows.len();
 	let num_width = total_rows.to_string().len();

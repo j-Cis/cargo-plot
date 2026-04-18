@@ -4,7 +4,6 @@ use anyhow::{Context, Result};
 use chrono::DateTime;
 
 use crate::lib::{job, logic};
-
 // ============================================================================
 // TRAIT POMOCNICZY (Unifikacja typów węzłów)
 // ============================================================================
@@ -57,7 +56,7 @@ impl AsScannedNode for logic::ScannedDirNode {
 // ============================================================================
 
 /// Przechodzi po całej partycji, konwertuje generyczne węzły i uderza do dysku po metadane.
-fn piece_gather<L>(a: &logic::AnchoredPathsDatum, p: &logic::Partition<L>) -> Vec<job::ValidResultMainRow>
+fn piece_gather<L>(j: &job::ValidPreparedJobConfig, p: &logic::Partition<L>) -> Vec<job::ValidResultMainRow>
 where
 	L: logic::MatchLabel,
 	L::Node: AsScannedNode, //  Wymagamy, aby węzeł w partycji potrafił stać się ScannedNode
@@ -66,17 +65,17 @@ where
 		.iter()
 		.filter_map(|n| {
 			let unified_node = n.as_scanned_node();
-			data_inspect(a, unified_node).ok() // Ignorujemy pliki, które np. usunięto w międzyczasie
+			data_inspect(&j, unified_node).ok() // Ignorujemy pliki, które np. usunięto w międzyczasie
 		})
 		.collect()
 }
 
 /// Zderza zunifikowany węzeł z fizycznym dyskiem i buduje ostateczny wiersz.
-fn data_inspect(a: &logic::AnchoredPathsDatum, scanned_node: logic::ScannedNode) -> Result<job::ValidResultMainRow> {
+fn data_inspect(j: &job::ValidPreparedJobConfig, scanned_node: logic::ScannedNode) -> Result<job::ValidResultMainRow> {
 	// 1. Ustalenie fizycznej ścieżki absolutnej
 	// ⁉️ poco ponownie ustalamy
 	let clean_rel = scanned_node.path.str.strip_prefix("./").unwrap_or(&scanned_node.path.str);
-	let absolute_path = a.workspace_dir.buf.join(clean_rel);
+	let absolute_path = j.work.execution_dir.join(clean_rel);
 
 	// 2. Pobranie metadanych systemu plików
 	let metadata = fs::metadata(&absolute_path).context("Nie można odczytać metadanych")?;
@@ -105,37 +104,33 @@ fn get_dir_size(path: &Path) -> u64 {
 //============================================================================
 //job::ValidTablePartConfig
 
-pub fn data_gather(
-	a: &logic::AnchoredPathsDatum,
-	b: &logic::PartitionScanned,
-	c: job::ValidTablePartConfig,
-) -> job::ValidResultMainTab {
+pub fn data_gather(j: &job::ValidPreparedJobConfig, b: &logic::PartitionScanned) -> job::ValidResultMainTab {
 	let mut final_rows = Vec::new();
 	let mut t_max = 0;
 	let mut n_max = 0;
 	let mut p_max = 0;
 
 	// Leniwe pobieranie danych - uderzamy do dysku tylko po wybrane pule
-	if c.md {
-		final_rows.extend(piece_gather(a, &b.m_d));
+	if j.part.md {
+		final_rows.extend(piece_gather(&j, &b.m_d));
 		t_max = t_max.max(b.m_d.tier_max);
 		n_max = n_max.max(b.m_d.name_len_max);
 		p_max = p_max.max(b.m_d.path_len_max);
 	}
-	if c.mf {
-		final_rows.extend(piece_gather(a, &b.m_f));
+	if j.part.mf {
+		final_rows.extend(piece_gather(&j, &b.m_f));
 		t_max = t_max.max(b.m_f.tier_max);
 		n_max = n_max.max(b.m_f.name_len_max);
 		p_max = p_max.max(b.m_f.path_len_max);
 	}
-	if c.xd {
-		final_rows.extend(piece_gather(a, &b.x_d));
+	if j.part.xd {
+		final_rows.extend(piece_gather(&j, &b.x_d));
 		t_max = t_max.max(b.x_d.tier_max);
 		n_max = n_max.max(b.x_d.name_len_max);
 		p_max = p_max.max(b.x_d.path_len_max);
 	}
-	if c.xf {
-		final_rows.extend(piece_gather(a, &b.x_f));
+	if j.part.xf {
+		final_rows.extend(piece_gather(&j, &b.x_f));
 		t_max = t_max.max(b.x_f.tier_max);
 		n_max = n_max.max(b.x_f.name_len_max);
 		p_max = p_max.max(b.x_f.path_len_max);
@@ -148,18 +143,10 @@ pub fn data_gather(
 }
 //============================================================================
 /// [Step 1] Skaner - teraz przyjmuje konfiguratory zamiast surowych struktur Job
-pub fn engine_step1_scanner(
-	c: job::ValidTablePartConfig,
-	workspace: &job::ValidWorkspaceConfig, // Zamiast ScanRawJob
-	patterns: &job::ValidPatternConfig,    // Zamiast ScanRawJob
-) -> job::ValidResultMainTab {
-	// 1. Korzystamy z Twoich nowych metod .get() - one robią całą magię inicjalizacji i walidacji
-	let anchored_paths_datum = workspace.get();
-	let patterns_queries = patterns.get();
-
+pub fn engine_step1_scanner(j: &job::ValidPreparedJobConfig) -> job::ValidResultMainTab {
 	// 2. Bezpośrednie wywołanie skanera z logiki
-	let partition_scanned = logic::PartitionScanned::scan(&anchored_paths_datum, &patterns_queries);
+	let partition_scanned = logic::PartitionScanned::scan(&j);
 
 	// 3. Zbieranie danych (hydracja z dysku) - funkcja data_gather pozostaje bez zmian
-	data_gather(&anchored_paths_datum, &partition_scanned, c)
+	data_gather(&j, &partition_scanned)
 }

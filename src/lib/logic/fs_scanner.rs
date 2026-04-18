@@ -9,8 +9,9 @@ use std::{
 use memchr::memchr;
 use walkdir::WalkDir;
 
+use crate::lib::job;
 // Upewnij się, że PatternsQueries i PattEnvIndex są zaimportowane poprawnie
-use crate::lib::logic::{AnchoredPathsDatum, PathNode, PattEnvIndex, PatternsQueries};
+use crate::lib::logic::{PathNode, PattEnvIndex};
 
 const CHUNK_SIZE: usize = 4096;
 const MAX_SCAN: usize = 16 * 1024; // 16 KB wystarcza w 99.9%
@@ -256,9 +257,10 @@ pub struct PartitionScanned {
 }
 
 impl PartitionScanned {
-	pub fn scan(p: &AnchoredPathsDatum, q: &PatternsQueries) -> Self {
+	pub fn scan(j: &job::ValidPreparedJobConfig) -> Self {
+		let q = j.patt.get(j.work.ignore_case);
 		// ░░░░░░░░░░░░░░░ 🅰️ ZBIERANIE DANYCH ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-		let raw_data = gather_raw_nodes(p);
+		let raw_data = gather_raw_nodes(&j);
 		let files = raw_data.files;
 		let dirs = build_directory_nodes(&raw_data.dirs_raw, &files, &raw_data.symlink_counts);
 		let stat_scan = raw_data.stat_scan;
@@ -355,7 +357,13 @@ impl PartitionScanned {
 			stat_scan,
 			stat_part,
 			stat_patt: q.patterns.0.clone(),
-			stat_work: p.workspace_dir.str.clone(),
+			stat_work: j
+				.work
+				.workspace_dir
+				.clone()
+				.into_os_string()
+				.into_string()
+				.expect("Ścieżka nie jest poprawnym UTF-8"),
 		}
 	}
 
@@ -440,7 +448,7 @@ struct RawGatherData {
 }
 
 /// Helper 1: Przechodzi po dysku, kategoryzuje i zbiera surowe węzły
-fn gather_raw_nodes(p: &AnchoredPathsDatum) -> RawGatherData {
+fn gather_raw_nodes(j: &job::ValidPreparedJobConfig) -> RawGatherData {
 	let mut files = Vec::new();
 	let mut dirs_raw = Vec::new();
 	let mut symlink_counts = HashMap::new();
@@ -458,9 +466,9 @@ fn gather_raw_nodes(p: &AnchoredPathsDatum) -> RawGatherData {
 	let mut path_registry: HashMap<std::path::PathBuf, (usize, Vec<usize>)> = HashMap::new();
 
 	// Inicjalizujemy korzeń (workspace_dir) z ID 0 i pustą ścieżką przodków
-	path_registry.insert(p.workspace_dir.buf.clone(), (0, vec![]));
+	path_registry.insert(j.work.workspace_dir.clone(), (0, vec![]));
 
-	for e in WalkDir::new(&p.workspace_dir.buf).into_iter().filter_map(|e| e.ok()) {
+	for e in WalkDir::new(&j.work.workspace_dir).into_iter().filter_map(|e| e.ok()) {
 		if e.depth() == 0 {
 			continue;
 		}
@@ -469,7 +477,7 @@ fn gather_raw_nodes(p: &AnchoredPathsDatum) -> RawGatherData {
 
 		if e.path_is_symlink() {
 			count_symlinks_skipped += 1;
-			if let Some(parent) = e.path().strip_prefix(&p.workspace_dir.buf).ok().and_then(|p| p.parent()) {
+			if let Some(parent) = e.path().strip_prefix(&j.work.workspace_dir).ok().and_then(|p| p.parent()) {
 				let parent_str = parent.to_string_lossy().replace('\\', "/");
 				let formatted = if parent_str.is_empty() { "./".to_string() } else { format!("./{}/", parent_str) };
 				*symlink_counts.entry(formatted).or_insert(0usize) += 1;
@@ -495,7 +503,7 @@ fn gather_raw_nodes(p: &AnchoredPathsDatum) -> RawGatherData {
 			path_registry.insert(e.path().to_path_buf(), (id_self, id_path.clone()));
 		}
 
-		let Ok(rel_path) = e.path().strip_prefix(&p.workspace_dir.buf) else {
+		let Ok(rel_path) = e.path().strip_prefix(&j.work.workspace_dir) else {
 			continue;
 		};
 		let mut path = rel_path.to_string_lossy().replace('\\', "/");

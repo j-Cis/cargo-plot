@@ -1,7 +1,7 @@
 use std::cmp::Ordering;
 
 use crate::lib::{
-	job::{ModeFileGroupForValidSortBy, StrategyForValidSortBy, ValidResultMainRow, ValidSortByConfig},
+	job::{ModeFileGroupForValidSortBy, StrategyForValidSortBy, ValidResultMainRow, ValidSortByParams},
 	logic::NodeIs,
 };
 
@@ -11,11 +11,11 @@ use crate::lib::{
 
 #[derive(Debug, Clone)]
 pub struct SortQueries {
-	pub raw_config: ValidSortByConfig,
+	pub raw_config: ValidSortByParams,
 }
 
 impl SortQueries {
-	pub fn new(config: ValidSortByConfig) -> Self { Self { raw_config: config } }
+	pub fn new(config: ValidSortByParams) -> Self { Self { raw_config: config } }
 
 	/// Główny komparator. Zwraca Ordering (Mniej, Więcej, Równe).
 	pub fn compare(&self, a: &ValidResultMainRow, b: &ValidResultMainRow) -> Ordering {

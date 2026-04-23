@@ -1,0 +1,179 @@
+use std::path::PathBuf;
+
+use chrono;
+
+use crate::lib::{
+	job::{self},
+	logic::{self},
+};
+// ⚡ GLOBALNA FLAGA DEBUGOWANIA
+// ============================================================================
+// OSTATECZNY WIERSZ DANYCH (Zhydratowany)
+// ============================================================================
+
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+/*
+ * 🧠 KAŻDY `Valid<NAZWA>Flags` posiada parę `Valid<NAZWA>Params` i odwrotnie.
+ *
+ * 🧠 KAŻDY `Valid<NAZWA>Flags` ma metodę `parse_vec_as_config` - automatyczne wywołanie bliźniaka
+ *
+ * 🧠 KAŻDY `Valid<NAZWA>Params` ma metodę `get` - pobiera znormalizowaną konfiguracje
+ *
+ * 🧠 DODATKI DLA `Valid<NAZWA><Params|Flags>` mają nazwę `<ZASTOSOWANIE>ForValid<NAZWA>`
+ *
+ * 🧠 CELEM NINIESZJEGO PLIKU JEST ZAPEWNIANIE PRAWIDŁOWEJ KONFIGURACJI,
+ *          CIĘŻKA LOGIKA POWINNA BYĆ W `Crate::lib::logic::*`;
+ * 	        W ETAPACH KOLEJNYCH W `Crate::lib::job::engine_step*` W GŁÓWNEJ FUNKCJI - ARGUMENTY SĄ
+ *          ZAWSZE TYPU `&job::Valid<NAZWA>Params`
+ *
+ *
+ * ░░░░░░░░░░░░░░░░░░░░░░░░░░░ INDEX ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+ *
+ * pub struct ValidResultMainRow
+ * pub struct ValidResultMainTab
+ * //0
+ * pub struct PreparedJob
+ * //1
+ * pub enum ValidExecutionFlags
+ * pub struct ValidExecutionParams
+ * //2
+ * pub enum ValidSaveAsFlags
+ * pub struct ValidSaveAsParams
+ * //3
+ * pub enum ValidTablePartFlags
+ * pub struct ValidTablePartParams
+ * //4
+ * pub enum ValidColumnItemFlags
+ * pub struct ValidColumnItemParams
+ * pub enum ModeListForValidColumnItem
+ * pub enum ModeIconsForValidColumnItem
+ * //5
+ * pub enum ValidTableColumnsFlags
+ * pub struct ValidTableColumnsParams
+ * //6
+ * pub enum ValidColumnSizeFlags
+ * pub struct ValidColumnSizeParams
+ * //7 i 8
+ * pub enum ValidColumnDateFlags
+ * pub enum ValidColumnTimeFlags
+ * pub struct ValidColumnDateParams
+ * pub struct ValidColumnTimeParams
+ * //9
+ * pub struct ValidPatternParams
+ * pub struct ValidPatternFlags
+ * //10
+ * pub struct ValidWorkspaceParams
+ * pub struct ValidWorkspaceFlags
+ * //11
+ * pub struct ValidSortByFlags //brakuje enumu
+ * pub struct ValidSortByParams
+ * pub enum ModeFileGroupForValidSortBy
+ * pub enum StrategyForValidSortBy
+ *
+ *  */
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+// PREPARED JOB (KONTENER NA WSZYSTKIE USTAWIENIA - STEP 0)
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+// NOTATKI
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+/*
+ * pub enum ValidSaveAsFlags{
+ * 	// w obu plikach musi być ten sam `logic::tag_time().0`,
+ * 	out_dir,
+ *  				▶️ ścieżka - domyślnie `./target/.cargo-plot/` - niezależnie jaki jest tworzy jeśli nie istnieje (ensure_exist)
+ * 	title,
+ * 				    ▶️ tytuł - domyślnie `Project Snapshot`
+ *                  ▶️ i wtedy-> `format!("# {} {} (v:{}{} [{}])",
+ *                          "INDEX (lub) FILES",
+ *                          title,
+ *                          logic::tag_time().0,
+ *                          "SOTC (lub) COTS",
+ *                          "Content of the structure (lub) Structure of the content")`
+ * 	name,
+ *                 ▶️ nazwa pliku - domyślnie name=""
+ *                 ▶️ i wtedy-> `format!("{}{}_{}.md",
+ *                          logic::tag_time().0,
+ *                          "SOTC (lub) COTS",
+ *                          name)`
+ * 	name_is_prefix,
+ *                ▶️ nazwa pliku - domyślnie name=""
+ *                ▶️ i wtedy-> `format!("{}_{}{}.md",
+ *                          name,
+ *                          logic::tag_time().0,
+ *                          "SOTC (lub) COTS")`
+ * }
+ * */
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+/*
+ * dodajemy `ValidSortByFlags`
+ *
+ * - "Date" -  `(Date:DateTime, Reverse:bool)`
+ * - "Size" -  `(Size:Num, Reverse:bool)`
+ * - "Name" -  `(Name:ModeSortName, Reverse:bool, FileGroup:ModeGroup)`
+ * - "Path" -  `(Name:ModeSortName, Reverse:bool, DirSplit:bool, FileGroup:ModeGroup)`
+ *
+ *
+ * `ModeSortName`
+ * - Spec,Num,AZaz"
+ * - Spec,Num,azAZ"
+ * - Spec,Num,aAzZ"
+ * - Spec,Num,AaZz"
+ * - Num,Spec,AZaz"
+ * - Num,Spec,azAZ"
+ * - Num,Spec,aAzZ"
+ * - Num,Spec,AaZz"
+ * - Spec,AZaz,Num"
+ * - Spec,azAZ,Num"
+ * - Spec,aAzZ,Num"
+ * - Spec,AaZz,Num"
+ * - Num,AZaz,Spec"
+ * - Num,azAZ,Spec"
+ * - Num,aAzZ,Spec"
+ * - Num,AaZz,Spec"
+ * - AZaz,Num,Spec"
+ * - azAZ,Num,Spec"
+ * - aAzZ,Num,Spec"
+ * - AaZz,Num,Spec"
+ * - AZaz,Spec,Num"
+ * - azAZ,Spec,Num"
+ * - aAzZ,Spec,Num"
+ * - AaZz,Spec,Num"
+ *
+ * `ModeGroup`
+ * - "Name"
+ * - "Exte"
+ * - "None"
+ *
+ * `Priority`
+ * - "FirstFile"
+ * - "FirstDir"
+ * - "None"
+ *
+ * ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+ * oraz dodajemy `ValidSortByParams`
+ *
+ * ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+ * Tu kluczowe na metode sortowania będzie miał wpływ tryb `ValidColumnItemFlags`
+ * - ValidColumnItemFlags::ListTree
+ * - ValidColumnItemFlags::ListFlat = ValidColumnItemFlags::ListNone
+ *
+ * ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+ * */
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+/*
+ * kiedyś dodać ubsługe wyśfietlania ukrywania pustych folderów
+ * kiedyś dodać ubsługe wyśfietlania ukrywania pustych plików
+ *
+ *
+ *  */

@@ -3,7 +3,7 @@ use crate::lib::job;
 // =========================================================================
 // FUNKCJA POMOCNICZA (MOCK RENDERER - zalążek Step 5)
 // =========================================================================
-pub fn mock_render(rows: &[job::FormattedRow], cols_cfg: &job::ValidTableColumnsConfig) -> String {
+pub fn mock_render(rows: &[job::FormattedRow], cols_cfg: &job::ValidTableColumnsParams) -> String {
 	let mut multiline = String::new();
 
 	for row in rows {
@@ -19,8 +19,8 @@ pub fn mock_render(rows: &[job::FormattedRow], cols_cfg: &job::ValidTableColumns
 
 				let is_date_time_pair = matches!(
 					(current, next),
-					(Some(job::ValidTableColumnsParse::Date), Some(job::ValidTableColumnsParse::Time))
-						| (Some(job::ValidTableColumnsParse::Time), Some(job::ValidTableColumnsParse::Date))
+					(Some(job::ValidTableColumnsFlags::Date), Some(job::ValidTableColumnsFlags::Time))
+						| (Some(job::ValidTableColumnsFlags::Time), Some(job::ValidTableColumnsFlags::Date))
 				);
 
 				if is_date_time_pair {

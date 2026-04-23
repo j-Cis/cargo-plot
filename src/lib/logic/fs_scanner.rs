@@ -257,7 +257,7 @@ pub struct PartitionScanned {
 }
 
 impl PartitionScanned {
-	pub fn scan(j: &job::ValidPreparedJobConfig) -> Self {
+	pub fn scan(j: &job::ValidPreparedJobParams) -> Self {
 		let q = j.patt.get(j.work.ignore_case);
 		// ░░░░░░░░░░░░░░░ 🅰️ ZBIERANIE DANYCH ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 		let raw_data = gather_raw_nodes(&j);
@@ -448,7 +448,7 @@ struct RawGatherData {
 }
 
 /// Helper 1: Przechodzi po dysku, kategoryzuje i zbiera surowe węzły
-fn gather_raw_nodes(j: &job::ValidPreparedJobConfig) -> RawGatherData {
+fn gather_raw_nodes(j: &job::ValidPreparedJobParams) -> RawGatherData {
 	let mut files = Vec::new();
 	let mut dirs_raw = Vec::new();
 	let mut symlink_counts = HashMap::new();

@@ -17,7 +17,7 @@ pub struct FormattedRow {
 // ============================================================================
 
 pub fn engine_step2_data_formater(
-	j: &job::ValidPreparedJobConfig,
+	j: &job::ValidPreparedJobParams,
 	tab: &job::ValidResultMainTab, // ⚡ Zmiana typu
 ) -> Vec<FormattedRow> {
 	let item_cfg = &j.item;
@@ -37,14 +37,14 @@ pub fn engine_step2_data_formater(
 
 		for col in &col_cfg.columns {
 			let cell_str = match col {
-				job::ValidTableColumnsParse::Date => date_cfg.format_date(row.dt_modified),
-				job::ValidTableColumnsParse::Time => time_cfg.format_time(row.dt_modified),
-				job::ValidTableColumnsParse::Size => size_cfg.format_size(row.size_real),
-				job::ValidTableColumnsParse::Item => {
+				job::ValidTableColumnsFlags::Date => date_cfg.format_date(row.dt_modified),
+				job::ValidTableColumnsFlags::Time => time_cfg.format_time(row.dt_modified),
+				job::ValidTableColumnsFlags::Size => size_cfg.format_size(row.size_real),
+				job::ValidTableColumnsFlags::Item => {
 					let u_params = (i, num_width, tab.tier_max, tab.name_len_max);
 					item_cfg.format_item(u_params, row, &tab.rows)
 				}
-				job::ValidTableColumnsParse::Path => {
+				job::ValidTableColumnsFlags::Path => {
 					let mut p_str = row.node.path.str.clone();
 
 					// ⚡ PROPAGACJA: Jeśli Item ma włączone wyrównanie (ws-show), wyrównujemy też ścieżkę

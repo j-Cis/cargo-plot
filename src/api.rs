@@ -1,26 +1,5 @@
 pub mod lib {
-	pub mod job {
-		pub mod config;
-		pub use config::*;
-		//pub mod step0;
-		//pub use step0::*;
-		pub mod step1;
-		pub use step1::*;
-		pub mod gens {
-			pub mod item_icon;
-			pub mod item_list;
-			pub use item_icon::*;
-			pub use item_list::*;
-			pub mod mock_render;
-			pub use mock_render::*;
-		}
-		pub mod step2;
-		pub use step2::*;
-		pub mod step3;
-		pub use step3::*;
-		pub mod step6;
-		pub use step6::*;
-	}
+	pub mod job;
 	pub mod logic {
 		pub mod anchored_paths_datum;
 		pub use anchored_paths_datum::{AnchoredPathsDatum, PathNode};

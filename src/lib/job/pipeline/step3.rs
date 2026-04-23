@@ -1,14 +1,14 @@
 use std::collections::BTreeMap;
 
-use crate::lib::{job, job::config::ConfigGetSetup};
+use crate::lib::{job, job::TraitConfigGetSetup};
 
 // ============================================================================
 // SORTER (Step 3) - UKŁADACZ ELEMENTÓW W WORKU
 // ============================================================================
 
 pub fn engine_step3_data_sort<'a>(
-	sort_cfg: &job::ValidSortByConfig,
-	item_cfg: &job::ValidColumnItemConfig,
+	sort_cfg: &job::ValidSortByParams,
+	item_cfg: &job::ValidColumnItemParams,
 	table: &'a mut job::ValidResultMainTab, // ⚡ Zostawiamy referencję mutowalną!
 ) -> &'a mut job::ValidResultMainTab {
 	// ⚡ Zwracamy referencję mutowalną!

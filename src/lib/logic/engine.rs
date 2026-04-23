@@ -1,7 +1,7 @@
 /*
  *  use crate::lib::{
  * 	job::{
- * 		ValidTablePartParse,
+ * 		ValidTablePartFlags,
  * 		job_engine_step0_datum_anchor,
  * 		job_engine_step1_path_scanner,
  * 		job_engine_step2_data_formater,
@@ -34,7 +34,7 @@
  * impl JobEngine {
  * 	pub fn new(scan: ScanSpec) -> Self {
  * 		let a = job_engine_step0_datum_anchor(scan.work_path);
- * 		let b = job_engine_step1_path_scanner(scan, ValidTablePartParse::parse_vec(["md", "mf"]));
+ * 		let b = job_engine_step1_path_scanner(scan, ValidTablePartFlags::parse_vec(["md", "mf"]));
  * 		let c = job_engine_step2_data_formater(b);
  * 		// let mut tab = PartitioningResult::new(partition_scanned, patterns_queries)
  * 		//    .sort(spec.sort_by, spec.sort_order, spec.structure)

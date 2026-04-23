@@ -56,7 +56,7 @@ impl AsScannedNode for logic::ScannedDirNode {
 // ============================================================================
 
 /// Przechodzi po całej partycji, konwertuje generyczne węzły i uderza do dysku po metadane.
-fn piece_gather<L>(j: &job::ValidPreparedJobConfig, p: &logic::Partition<L>) -> Vec<job::ValidResultMainRow>
+fn piece_gather<L>(j: &job::ValidPreparedJobParams, p: &logic::Partition<L>) -> Vec<job::ValidResultMainRow>
 where
 	L: logic::MatchLabel,
 	L::Node: AsScannedNode, //  Wymagamy, aby węzeł w partycji potrafił stać się ScannedNode
@@ -71,7 +71,7 @@ where
 }
 
 /// Zderza zunifikowany węzeł z fizycznym dyskiem i buduje ostateczny wiersz.
-fn data_inspect(j: &job::ValidPreparedJobConfig, scanned_node: logic::ScannedNode) -> Result<job::ValidResultMainRow> {
+fn data_inspect(j: &job::ValidPreparedJobParams, scanned_node: logic::ScannedNode) -> Result<job::ValidResultMainRow> {
 	// 1. Ustalenie fizycznej ścieżki absolutnej
 	// ⁉️ poco ponownie ustalamy
 	let clean_rel = scanned_node.path.str.strip_prefix("./").unwrap_or(&scanned_node.path.str);
@@ -102,9 +102,9 @@ fn get_dir_size(path: &Path) -> u64 {
 }
 
 //============================================================================
-//job::ValidTablePartConfig
+//job::ValidTablePartParams
 
-pub fn data_gather(j: &job::ValidPreparedJobConfig, b: &logic::PartitionScanned) -> job::ValidResultMainTab {
+pub fn data_gather(j: &job::ValidPreparedJobParams, b: &logic::PartitionScanned) -> job::ValidResultMainTab {
 	let mut final_rows = Vec::new();
 	let mut t_max = 0;
 	let mut n_max = 0;
@@ -143,7 +143,7 @@ pub fn data_gather(j: &job::ValidPreparedJobConfig, b: &logic::PartitionScanned)
 }
 //============================================================================
 /// [Step 1] Skaner - teraz przyjmuje konfiguratory zamiast surowych struktur Job
-pub fn engine_step1_scanner(j: &job::ValidPreparedJobConfig) -> job::ValidResultMainTab {
+pub fn engine_step1_scanner(j: &job::ValidPreparedJobParams) -> job::ValidResultMainTab {
 	// 2. Bezpośrednie wywołanie skanera z logiki
 	let partition_scanned = logic::PartitionScanned::scan(&j);
 

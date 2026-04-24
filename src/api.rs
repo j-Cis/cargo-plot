@@ -1,198 +1,132 @@
 pub mod lib {
-	pub mod job;
-	pub mod logic {
-		pub mod anchored_paths_datum;
-		pub use anchored_paths_datum::{AnchoredPathsDatum, PathNode};
-		pub mod path_patterns;
-		pub use path_patterns::{PattEnvIndex, PattExp, PattRaw, PatternsQueries};
-		pub mod path_context;
-		pub use path_context::PathContext;
-		pub mod fs_scanner;
-		pub use fs_scanner::{
-			MatchLabel,
-			MatchedDir,
-			MatchedFile,
-			MismatchedDir,
-			MismatchedFile,
-			NodeIs,
-			Partition,
-			PartitionScanned,
-			ScannedDirNode,
-			ScannedFileNode,
-			ScannedNode,
-			StatsPartitioning,
-			StatsScannedTreeFs,
-			is_binary_file,
+	pub mod core {
+		mod help;
+		pub use help::{print_help_for_pattern_syntax_and_semantics, print_help_for_toml_config};
+		mod job_presets;
+		pub use job_presets::{
+			DEFAULT_DIR_FIRST,
+			DEFAULT_FOR_DATE,
+			DEFAULT_FOR_SIZE,
+			DEFAULT_FOR_TIME,
+			DEFAULT_IGNORE_CASE,
+			DEFAULT_MIRROR,
+			DEFAULT_NAME,
+			DEFAULT_NAME_IS_FIRST,
+			DEFAULT_REVERSE,
+			DEFAULT_SAME_NAME_DIRS_AND_FILES_NEARBY,
+			DEFAULT_SAVE_SEPARATELY,
+			DEFAULT_TITLE,
+			TOML_DEFAULT_MINIMAL,
+			default_attributes_select,
+			default_config_path,
+			default_explorer_parts,
+			default_explorer_patterns,
+			default_for_item,
+			default_out_dir,
+			default_run_modes,
+			default_string_strategy,
+			default_workspace_dir,
+			execution_dir,
 		};
-		pub mod path_sort;
-		pub use path_sort::SortQueries;
-		// pub mod paths_table;
-		// pub use paths_table::{FileKind, TableData, TableRow, TableSotcTreeOutput};
-		// pub mod paths_result;
-		// pub use paths_result::{Matched, Mismatched,PartitioningResult};
-
-		pub mod specification;
-		pub use specification::{
-			JobMode,
-			JobSpec,
-			ScanSpec,
-			TabColumn,
-			TabPathStructure,
-			TabSortBy,
-			TabSortOrder,
-			TabSpec,
-		};
-		pub mod tag_time;
-		pub use tag_time::{TagTime, tag_time};
-		pub mod mapper_lang_type;
-		pub use mapper_lang_type::LangMapper;
-		// pub mod engine;
-		// pub use engine::{JobEngine, MX, RenderFlags};
-		// pub mod engine_multiple;
-		// pub use engine_multiple::DocEngineMultiple;
-		pub mod config_model;
-		pub use config_model::{
-			ConfigExport,
-			ConfigJob,
-			ConfigLayout,
-			ConfigManifest,
-			ConfigSpec,
-			ConfigTrimming,
-			ScanRawJobNew,
-		};
-		pub mod file_toml_config;
-		pub use file_toml_config::IoConfig;
+		mod job_init;
+		pub use job_init::{AnchoredRuntime, start, start_blank};
 	}
-	// pub mod command {
-	// 	pub mod args;
-	// 	pub mod help;
-	// }
-	pub mod display {
-
-		pub mod anchored_paths_datum;
-		pub mod config;
-		pub mod job_spec;
-		// pub mod fs_scanner;
-		// pub mod paths_patterns;
-		// pub mod paths_result;
-		// pub mod table_data;
-
-		use colored::*;
-
-		pub struct Color;
-		impl Color {
-			pub fn tree(s: &str) -> ColoredString { s.truecolor(41, 211, 152) }
-			pub fn num(s: &str) -> ColoredString { s.bright_magenta() }
-			pub fn size(s: &str) -> ColoredString { s.cyan() }
-			pub fn date(s: &str) -> ColoredString { s.truecolor(140, 120, 100) }
-			pub fn time(s: &str) -> ColoredString { s.truecolor(100, 70, 100) }
-			pub fn folder(s: &str) -> ColoredString { s.truecolor(200, 200, 50).bold() }
-			pub fn file(s: &str) -> ColoredString { s.bright_white() }
-			pub fn binary(s: &str) -> ColoredString { s.bright_red() }
-			pub fn border(s: &str) -> ColoredString { s.truecolor(20, 20, 20).dimmed() }
-		}
-
-		/// [POL]: Scentralizowane symbole formatowania dla projektu.
-		pub struct Icon;
-
-		impl Icon {
-			pub const EMPTY: &'static str = "⭕";
-			// --- Symbole zasobów ---
-			pub const ENTRY: &'static str = "🗃️ ";
-			// --- Symbole dla Entry (Twój styl z obrazka) ---
-			pub const EXPAND: &'static str = "🔀";
-			pub const BOOL_FALSE: &'static str = "✖️ ";
-			pub const FILE: &'static str = "📝";
-			pub const FOLDER: &'static str = "📂";
-			// --- Symbole sekcji ---
-			pub const H2: &'static str = "📚";
-			pub const FILE2: &'static str = "📄";
-			pub const FILE2_HIDDEN: &'static str = "⚙️ ";
-			// ⚡ --- Symbole zasobów (Rozszerzone - z wersji OLD) ---
-			pub const FOLDER2: &'static str = "📁";
-			pub const FOLDER2_HIDDEN: &'static str = "🗃️";
-			pub const LANG_RUST: &'static str = "🦀";
-			// --- Symbole logiczne (Bool) ---
-			pub const BOOL_TRUE: &'static str = "✔️ ";
-
-			#[inline]
-			pub fn bool(val: bool) -> &'static str { if val { Self::BOOL_TRUE } else { Self::BOOL_FALSE } }
-		}
-
-		/// [POL]: Rozszerzenie dla bool, aby pisać `val.as_symbol()`.
-		pub trait BoolExt {
-			fn as_symbol(&self) -> &'static str;
-		}
-
-		impl BoolExt for bool {
-			fn as_symbol(&self) -> &'static str { Icon::bool(*self) }
-		}
-		pub struct TreeLast;
-		impl TreeLast {
-			pub const DIR_NO_CHILDREN: &'static str = "└───";
-			pub const DIR_WITH_CHILDREN: &'static str = "└──┬";
-			pub const FILE: &'static str = "└──•";
-			pub const INDENT: &'static str = "   ";
-		}
-		pub struct TreeMid;
-		impl TreeMid {
-			pub const DIR_NO_CHILDREN: &'static str = "├───";
-			pub const DIR_WITH_CHILDREN: &'static str = "├──┬";
-			pub const FILE: &'static str = "├──•";
-			pub const INDENT: &'static str = "│  ";
-		}
-
-		pub struct DrawTree;
-		impl DrawTree {
-			pub const ENTRY_BRANCH: &'static str = "  ├───";
-			// view::fs::entry
-			pub const ENTRY_TERMINAL: &'static str = "  └───";
-			// view::fs::entry
-			pub const ITEM: &'static str = "     •";
-			// view::path::pattern
-			pub const ITEM_BETWEEN: &'static str = "  ├──•";
-			// self
-			pub const ITEM_FIRST: &'static str = "  ┌──•";
-			// view::fs::filter
-			pub const ITEM_LAST: &'static str = "  └──•";
-			// self
-			pub const ITEM_ONEFOLD: &'static str = "   ──•";
-
-			// self
-
-			/// Automatycznie dobiera symbol gałęzi na podstawie indeksu i
-			/// rozmiaru listy.
-			pub fn list(index: usize, total: usize) -> &'static str {
-				if total == 1 {
-					Self::ITEM_ONEFOLD
-				} else if index == 0 {
-					Self::ITEM_FIRST
-				} else if index == total - 1 {
-					Self::ITEM_LAST
-				} else {
-					Self::ITEM_BETWEEN
-				}
-			}
-
-			/// Zwraca krotkę: (symbol_gałęzi_dla_siebie, wcięcie_dla_dzieci)
-			pub fn tree(is_dir: bool, is_last: bool, has_children: bool) -> (&'static str, &'static str) {
-				let branch = if is_dir {
-					match (is_last, has_children) {
-						(true, true) => TreeLast::DIR_WITH_CHILDREN,
-						(false, true) => TreeMid::DIR_WITH_CHILDREN,
-						(true, false) => TreeLast::DIR_NO_CHILDREN,
-						(false, false) => TreeMid::DIR_NO_CHILDREN,
-					}
-				} else if is_last {
-					TreeLast::FILE
-				} else {
-					TreeMid::FILE
-				};
-
-				let next_indent = if is_last { TreeLast::INDENT } else { TreeMid::INDENT };
-
-				(branch, next_indent)
-			}
-		}
+	pub mod logic {
+		mod tag_time;
+		pub use tag_time::{TagTime, tag_from_time, tag_from_time_now, tag_to_time};
+		mod fs_file;
+		pub use fs_file::{file_backup, file_ensure, file_remove, file_save_force, file_save_safe, file_save_safe_if_changed};
+		mod fs_scanner;
+		pub use fs_scanner::{
+			ScanAsMetadataNode,
+			//PathNode,
+			//PattEnvIndex,
+			ScanMatchLabel,
+			ScanMatchedDir,
+			ScanMatchedFile,
+			ScanMismatchedDir,
+			ScanMismatchedFile,
+			ScanNodeDirScanned,
+			ScanNodeFileScanned,
+			ScanNodeIs,
+			ScanNodeScanned,
+			ScanPartition,
+			ScanPartitionScanned,
+			ScanStatsPartitioning,
+			ScanStatsTreeFsScanned,
+			scan_file_is_binary,
+		};
+		mod fs_anchored_datum;
+		pub use fs_anchored_datum::{AnchoredPathsDatum, PathNode};
+		mod path_context;
+		pub use path_context::PathContext;
+		mod path_patterns;
+		pub use path_patterns::{PattEnvIndex, PattExp, PattRaw, PatternsQueries};
+	}
+	pub mod schema {
+		mod job_raw_toml;
+		pub use job_raw_toml::{
+			RawTomlFileJobs,
+			RawTomlJob,
+			RawTomlJobAttributes,
+			RawTomlJobAttributesOptions,
+			RawTomlJobExplorer,
+			RawTomlJobExport,
+			RawTomlJobPileMode,
+			RawTomlJobSortNum,
+			RawTomlJobSortTex,
+			RawTomlJobStringStrategy,
+			RawTomlJobTuples,
+			RawTomlJobTuplesPile,
+			RawTomlJobTuplesSort,
+			RawTomlJobs,
+			RawTomlValidJob,
+			RawTomlValidJobs,
+			SharedJobAttributeToSelect,
+			SharedJobOptForAttrItem,
+			SharedJobOptForAttrSize,
+			SharedJobPart,
+			SharedJobRunMode,
+			SharedJobStringMode,
+		};
+		mod job_raw_cli;
+		pub use job_raw_cli::{CargoCliRoot, RawCliJob};
+		mod job_ready;
+		pub use job_ready::{
+			ReadyJob,
+			ReadyJobAttributes,
+			ReadyJobExplorer,
+			ReadyJobExport,
+			ReadyJobPileMode,
+			ReadyJobSortNum,
+			ReadyJobSortTex,
+			ReadyJobTuples,
+			ReadyJobTuplesPile,
+			ReadyJobTuplesSort,
+		};
+		mod job_pipeline;
+		pub use job_pipeline::{PipelineJobRow, PipelineJobTab};
+	}
+	pub mod mapping {
+		mod prepare_job_raw_toml_to_ready;
+		pub use prepare_job_raw_toml_to_ready::prepare;
+		mod middleware_translate_to_job_raw_from_cli;
+		pub use middleware_translate_to_job_raw_from_cli::translate;
+		mod engine_cli;
+		pub use engine_cli::route_and_execute;
+		mod mapper_lang_type;
+		pub use mapper_lang_type::LangMapper;
+	}
+	pub mod pipelines {
+		mod step1;
+		pub use step1::engine_step1_scanner;
+		mod step2;
+		pub use step2::{FormattedRow, engine_step2_data_formater, render_table};
+		mod step6;
+		pub use step6::engine_step6_data_save;
+		mod step7;
+		pub use step7::engine_step7_data_view;
+		//pub mod step3;
+		//pub mod step6;
 	}
 }

@@ -9,15 +9,14 @@ use std::{
 use memchr::memchr;
 use walkdir::WalkDir;
 
-use crate::lib::job;
-// Upewnij się, że PatternsQueries i PattEnvIndex są zaimportowane poprawnie
-use crate::lib::logic::{PathNode, PattEnvIndex};
+use super::{PathNode, PattEnvIndex};
+use crate::lib::{logic::PatternsQueries, schema::ReadyJobExplorer};
 
 const CHUNK_SIZE: usize = 4096;
 const MAX_SCAN: usize = 16 * 1024; // 16 KB wystarcza w 99.9%
 
 #[inline(always)]
-pub fn is_binary_file(path: &str) -> io::Result<bool> {
+pub fn scan_file_is_binary(path: &str) -> io::Result<bool> {
 	let mut file = fs::File::open(path)?;
 	let mut buf = [0u8; CHUNK_SIZE];
 
@@ -61,43 +60,43 @@ fn is_control_byte(b: u8) -> bool { matches!(b, 0x00..=0x08 | 0x0B | 0x0C | 0x0E
 // PARTITIONS & MARKERS
 // ============================================================================
 
-pub trait MatchLabel {
+pub trait ScanMatchLabel {
 	type Node;
 	fn label() -> &'static str;
 }
 
 #[derive(Debug, Clone)]
-pub struct MatchedFile;
+pub struct ScanMatchedFile;
 #[derive(Debug, Clone)]
-pub struct MismatchedFile;
+pub struct ScanMismatchedFile;
 #[derive(Debug, Clone)]
-pub struct MatchedDir;
+pub struct ScanMatchedDir;
 #[derive(Debug, Clone)]
-pub struct MismatchedDir;
+pub struct ScanMismatchedDir;
 
-impl MatchLabel for MatchedFile {
-	type Node = ScannedFileNode; // Związane z węzłem pliku!
+impl ScanMatchLabel for ScanMatchedFile {
+	type Node = ScanNodeFileScanned; // Związane z węzłem pliku!
 	fn label() -> &'static str { "✔F" } // ✔️📄
 }
 
-impl MatchLabel for MismatchedFile {
-	type Node = ScannedFileNode; // Związane z węzłem pliku!
+impl ScanMatchLabel for ScanMismatchedFile {
+	type Node = ScanNodeFileScanned; // Związane z węzłem pliku!
 	fn label() -> &'static str { "✖F" } // ✖️📄
 }
 
-impl MatchLabel for MatchedDir {
-	type Node = ScannedDirNode; // Związane z węzłem katalogu!
+impl ScanMatchLabel for ScanMatchedDir {
+	type Node = ScanNodeDirScanned; // Związane z węzłem katalogu!
 	fn label() -> &'static str { "✔D" } // ✔️📂
 }
 
-impl MatchLabel for MismatchedDir {
-	type Node = ScannedDirNode; // Związane z węzłem katalogu!
+impl ScanMatchLabel for ScanMismatchedDir {
+	type Node = ScanNodeDirScanned; // Związane z węzłem katalogu!
 	fn label() -> &'static str { "✖D" } // ✖️📂
 }
 
 #[derive(Debug, Clone)]
-pub struct Partition<L: MatchLabel> {
-	pub nodes: Vec<L::Node>, // Kompilator sam podstawi tu ScannedFileNode lub ScannedDirNode
+pub struct ScanPartition<L: ScanMatchLabel> {
+	pub nodes: Vec<L::Node>, // Kompilator sam podstawi tu ScanNodeFileScanned lub ScanNodeDirScanned
 	pub label: &'static str,
 	pub tier_max: usize,
 	pub name_len_max: usize,
@@ -106,10 +105,10 @@ pub struct Partition<L: MatchLabel> {
 	_marker: PhantomData<L>,
 }
 
-impl<L: MatchLabel> Partition<L> {
+impl<L: ScanMatchLabel> ScanPartition<L> {
 	// Pomocniczy trait-like look dla L::Node, aby dobrać się do pól tier i name
 	pub fn calculate_metadata(nodes: &[L::Node]) -> (usize, usize, usize)
-	where L::Node: AsMetadataNode // Musimy zdefiniować ten pomocniczy trait poniżej
+	where L::Node: ScanAsMetadataNode // Musimy zdefiniować ten pomocniczy trait poniżej
 	{
 		let t_max = nodes.iter().map(|n| n.get_tier()).max().unwrap_or(0);
 		let n_max = nodes.iter().map(|n| n.get_name().chars().count()).max().unwrap_or(0);
@@ -117,20 +116,20 @@ impl<L: MatchLabel> Partition<L> {
 		(t_max, n_max, p_max)
 	}
 }
-// Dodaj ten pomocniczy trait w fs_scanner.rs, aby Partition mogło operować na typach generycznych
-pub trait AsMetadataNode {
+// Dodaj ten pomocniczy trait w fs_scanner.rs, aby ScanPartition mogło operować na typach generycznych
+pub trait ScanAsMetadataNode {
 	fn get_tier(&self) -> usize;
 	fn get_name(&self) -> &str;
 	fn get_path_len(&self) -> usize;
 }
 
-impl AsMetadataNode for ScannedFileNode {
+impl ScanAsMetadataNode for ScanNodeFileScanned {
 	fn get_tier(&self) -> usize { self.tier }
 	fn get_name(&self) -> &str { &self.name }
 	fn get_path_len(&self) -> usize { self.path.str.chars().count() }
 }
 
-impl AsMetadataNode for ScannedDirNode {
+impl ScanAsMetadataNode for ScanNodeDirScanned {
 	fn get_tier(&self) -> usize { self.tier }
 	fn get_name(&self) -> &str { &self.name }
 	fn get_path_len(&self) -> usize { self.path.str.chars().count() }
@@ -140,7 +139,7 @@ impl AsMetadataNode for ScannedDirNode {
 // ============================================================================
 
 #[derive(Debug, Clone)]
-pub struct StatsScannedTreeFs {
+pub struct ScanStatsTreeFsScanned {
 	pub count_dirs: usize,
 	pub count_dirs_empty: usize,
 	pub count_files: usize,
@@ -151,7 +150,7 @@ pub struct StatsScannedTreeFs {
 }
 
 #[derive(Debug, Clone)]
-pub struct StatsPartitioning {
+pub struct ScanStatsPartitioning {
 	pub count_m: usize,
 	pub count_x: usize,
 	pub count_m_f: usize,
@@ -161,16 +160,16 @@ pub struct StatsPartitioning {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum NodeIs {
+pub enum ScanNodeIs {
 	File,
 	Dir,
 }
 
 #[derive(Debug, Clone)]
-pub struct ScannedNode {
+pub struct ScanNodeScanned {
 	pub name: String,
 	pub path: PathNode,
-	pub node: NodeIs,
+	pub node: ScanNodeIs,
 	pub tier: usize,
 	pub id_self: usize,      // ⚡ Własne ID
 	pub id_path: Vec<usize>, // ⚡ Ścieżka przodków [0, 1, 5...]
@@ -183,7 +182,7 @@ pub struct ScannedNode {
 }
 
 #[derive(Debug, Clone)]
-pub struct ScannedDirNode {
+pub struct ScanNodeDirScanned {
 	pub name: String,
 	pub path: PathNode,
 	pub tier: usize,
@@ -196,7 +195,7 @@ pub struct ScannedDirNode {
 }
 
 #[derive(Debug, Clone)]
-pub struct ScannedFileNode {
+pub struct ScanNodeFileScanned {
 	pub name: String,
 	pub path: PathNode,
 	pub tier: usize,
@@ -243,24 +242,24 @@ impl<'a> PattEnvIndex for EnvIndex<'a> {
 
 /// Skaner i filter systemu plików (Zunifikowane)
 #[derive(Debug, Clone)]
-pub struct PartitionScanned {
-	// Rozbite na konkretne typy partycje (pozbywamy się sztucznego markera Partition)
-	pub m_f: Partition<MatchedFile>,
-	pub x_f: Partition<MismatchedFile>,
-	pub m_d: Partition<MatchedDir>,
-	pub x_d: Partition<MismatchedDir>,
+pub struct ScanPartitionScanned {
+	// Rozbite na konkretne typy partycje (pozbywamy się sztucznego markera ScanPartition)
+	pub m_f: ScanPartition<ScanMatchedFile>,
+	pub x_f: ScanPartition<ScanMismatchedFile>,
+	pub m_d: ScanPartition<ScanMatchedDir>,
+	pub x_d: ScanPartition<ScanMismatchedDir>,
 
-	pub stat_scan: StatsScannedTreeFs,
-	pub stat_part: StatsPartitioning,
+	pub stat_scan: ScanStatsTreeFsScanned,
+	pub stat_part: ScanStatsPartitioning,
 	pub stat_patt: Vec<String>,
 	pub stat_work: String,
 }
 
-impl PartitionScanned {
-	pub fn scan(j: &job::ValidPreparedJobParams) -> Self {
-		let q = j.patt.get(j.work.ignore_case);
+impl ScanPartitionScanned {
+	pub fn scan(explorer: &ReadyJobExplorer) -> Self {
+		let q = PatternsQueries::new(explorer.patterns(), explorer.ignore_case());
 		// ░░░░░░░░░░░░░░░ 🅰️ ZBIERANIE DANYCH ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-		let raw_data = gather_raw_nodes(&j);
+		let raw_data = gather_raw_nodes(explorer);
 		let files = raw_data.files;
 		let dirs = build_directory_nodes(&raw_data.dirs_raw, &files, &raw_data.symlink_counts);
 		let stat_scan = raw_data.stat_scan;
@@ -303,7 +302,7 @@ impl PartitionScanned {
 		}
 
 		// ░░░░░░░░░░░░░░░ 🅾️ MONTOWANIE WYNIKU ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-		let stat_part = StatsPartitioning {
+		let stat_part = ScanStatsPartitioning {
 			count_m: vec_m_f.len() + vec_m_d.len(),
 			count_x: vec_x_f.len() + vec_x_d.len(),
 			count_m_f: vec_m_f.len(),
@@ -312,42 +311,42 @@ impl PartitionScanned {
 			count_x_d: vec_x_d.len(),
 		};
 
-		let (mf_t, mf_n, mf_p) = Partition::<MatchedFile>::calculate_metadata(&vec_m_f);
-		let (xf_t, xf_n, xf_p) = Partition::<MismatchedFile>::calculate_metadata(&vec_x_f);
-		let (md_t, md_n, md_p) = Partition::<MatchedDir>::calculate_metadata(&vec_m_d);
-		let (xd_t, xd_n, xd_p) = Partition::<MismatchedDir>::calculate_metadata(&vec_x_d);
+		let (mf_t, mf_n, mf_p) = ScanPartition::<ScanMatchedFile>::calculate_metadata(&vec_m_f);
+		let (xf_t, xf_n, xf_p) = ScanPartition::<ScanMismatchedFile>::calculate_metadata(&vec_x_f);
+		let (md_t, md_n, md_p) = ScanPartition::<ScanMatchedDir>::calculate_metadata(&vec_m_d);
+		let (xd_t, xd_n, xd_p) = ScanPartition::<ScanMismatchedDir>::calculate_metadata(&vec_x_d);
 
 		Self {
-			m_f: Partition {
+			m_f: ScanPartition {
 				nodes: vec_m_f,
-				label: MatchedFile::label(),
+				label: ScanMatchedFile::label(),
 				tier_max: mf_t,
 				name_len_max: mf_n,
 				path_len_max: mf_p,
 				count: stat_part.count_m_f,
 				_marker: PhantomData,
 			},
-			x_f: Partition {
+			x_f: ScanPartition {
 				nodes: vec_x_f,
-				label: MismatchedFile::label(),
+				label: ScanMismatchedFile::label(),
 				tier_max: xf_t,
 				name_len_max: xf_n,
 				path_len_max: xf_p,
 				count: stat_part.count_x_f,
 				_marker: PhantomData,
 			},
-			m_d: Partition {
+			m_d: ScanPartition {
 				nodes: vec_m_d,
-				label: MatchedDir::label(),
+				label: ScanMatchedDir::label(),
 				tier_max: md_t,
 				name_len_max: md_n,
 				path_len_max: md_p,
 				count: stat_part.count_m_d,
 				_marker: PhantomData,
 			},
-			x_d: Partition {
+			x_d: ScanPartition {
 				nodes: vec_x_d,
-				label: MismatchedDir::label(),
+				label: ScanMismatchedDir::label(),
 				tier_max: xd_t,
 				name_len_max: xd_n,
 				path_len_max: xd_p,
@@ -357,13 +356,7 @@ impl PartitionScanned {
 			stat_scan,
 			stat_part,
 			stat_patt: q.patterns.0.clone(),
-			stat_work: j
-				.work
-				.workspace_dir
-				.clone()
-				.into_os_string()
-				.into_string()
-				.expect("Ścieżka nie jest poprawnym UTF-8"),
+			stat_work: explorer.workspace_dir().to_string_lossy().into_owned(),
 		}
 	}
 
@@ -371,15 +364,15 @@ impl PartitionScanned {
 	// HELPER
 	// =========================================================================
 
-	/// Zwraca połączone i posortowane struktury ScannedNode (pliki + katalogi).
-	pub fn to_scanned_nodes(&self) -> Vec<ScannedNode> {
+	/// Zwraca połączone i posortowane struktury ScanNodeScanned (pliki + katalogi).
+	pub fn to_scanned_nodes(&self) -> Vec<ScanNodeScanned> {
 		let total_len = self.stat_part.count_m + self.stat_part.count_x;
 		let mut unified = Vec::with_capacity(total_len);
 
-		let map_dir = |d: &ScannedDirNode| ScannedNode {
+		let map_dir = |d: &ScanNodeDirScanned| ScanNodeScanned {
 			name: d.name.clone(), // NOWE
 			path: d.path.clone(),
-			node: NodeIs::Dir,
+			node: ScanNodeIs::Dir,
 			tier: d.tier,
 			id_self: d.id_self,         // ⚡
 			id_path: d.id_path.clone(), // ⚡
@@ -391,10 +384,10 @@ impl PartitionScanned {
 			file_is_empty: None,
 		};
 
-		let map_file = |f: &ScannedFileNode| ScannedNode {
+		let map_file = |f: &ScanNodeFileScanned| ScanNodeScanned {
 			name: f.name.clone(), // NOWE
 			path: f.path.clone(),
-			node: NodeIs::File,
+			node: ScanNodeIs::File,
 			tier: f.tier,
 			id_self: f.id_self,         // ⚡
 			id_path: f.id_path.clone(), // ⚡
@@ -417,7 +410,7 @@ impl PartitionScanned {
 	// HELPERY I ITERATORY
 	// =========================================================================
 
-	pub fn iter_nodes(&self) -> impl Iterator<Item = ScannedNode> + '_ { self.to_scanned_nodes().into_iter() }
+	pub fn iter_nodes(&self) -> impl Iterator<Item = ScanNodeScanned> + '_ { self.to_scanned_nodes().into_iter() }
 
 	pub fn iter_file_paths(&self) -> impl Iterator<Item = &str> + '_ {
 		self.m_f.nodes.iter().chain(self.x_f.nodes.iter()).map(|n| n.path.str.as_str())
@@ -441,14 +434,14 @@ struct RawDirNode {
 	id_path: Vec<usize>,
 }
 struct RawGatherData {
-	files: Vec<ScannedFileNode>,
+	files: Vec<ScanNodeFileScanned>,
 	dirs_raw: Vec<RawDirNode>,
 	symlink_counts: HashMap<String, usize>,
-	stat_scan: StatsScannedTreeFs,
+	stat_scan: ScanStatsTreeFsScanned,
 }
 
 /// Helper 1: Przechodzi po dysku, kategoryzuje i zbiera surowe węzły
-fn gather_raw_nodes(j: &job::ValidPreparedJobParams) -> RawGatherData {
+fn gather_raw_nodes(explorer: &ReadyJobExplorer) -> RawGatherData {
 	let mut files = Vec::new();
 	let mut dirs_raw = Vec::new();
 	let mut symlink_counts = HashMap::new();
@@ -461,14 +454,14 @@ fn gather_raw_nodes(j: &job::ValidPreparedJobParams) -> RawGatherData {
 	let mut count_files_binary = 0;
 	let mut count_symlinks_skipped = 0;
 
-	// ⚡ REJESTR ID I ŚCIEŻEK (Materialized Path)
+	// REJESTR ID I ŚCIEŻEK (Materialized Path)
 	let mut current_id = 1; // Zaczynamy od 1, bo 0 to workspace_dir
 	let mut path_registry: HashMap<std::path::PathBuf, (usize, Vec<usize>)> = HashMap::new();
 
 	// Inicjalizujemy korzeń (workspace_dir) z ID 0 i pustą ścieżką przodków
-	path_registry.insert(j.work.workspace_dir.clone(), (0, vec![]));
+	path_registry.insert(explorer.workspace_dir().clone(), (0, vec![]));
 
-	for e in WalkDir::new(&j.work.workspace_dir).into_iter().filter_map(|e| e.ok()) {
+	for e in WalkDir::new(explorer.workspace_dir()).into_iter().filter_map(|e| e.ok()) {
 		if e.depth() == 0 {
 			continue;
 		}
@@ -477,7 +470,7 @@ fn gather_raw_nodes(j: &job::ValidPreparedJobParams) -> RawGatherData {
 
 		if e.path_is_symlink() {
 			count_symlinks_skipped += 1;
-			if let Some(parent) = e.path().strip_prefix(&j.work.workspace_dir).ok().and_then(|p| p.parent()) {
+			if let Some(parent) = e.path().strip_prefix(explorer.workspace_dir()).ok().and_then(|p| p.parent()) {
 				let parent_str = parent.to_string_lossy().replace('\\', "/");
 				let formatted = if parent_str.is_empty() { "./".to_string() } else { format!("./{}/", parent_str) };
 				*symlink_counts.entry(formatted).or_insert(0usize) += 1;
@@ -503,7 +496,7 @@ fn gather_raw_nodes(j: &job::ValidPreparedJobParams) -> RawGatherData {
 			path_registry.insert(e.path().to_path_buf(), (id_self, id_path.clone()));
 		}
 
-		let Ok(rel_path) = e.path().strip_prefix(&j.work.workspace_dir) else {
+		let Ok(rel_path) = e.path().strip_prefix(explorer.workspace_dir()) else {
 			continue;
 		};
 		let mut path = rel_path.to_string_lossy().replace('\\', "/");
@@ -533,7 +526,7 @@ fn gather_raw_nodes(j: &job::ValidPreparedJobParams) -> RawGatherData {
 			if is_empty {
 				count_files_empty += 1;
 			} else {
-				is_binary = is_binary_file(abs_path.to_str().unwrap_or("")).unwrap_or(false);
+				is_binary = scan_file_is_binary(abs_path.to_str().unwrap_or("")).unwrap_or(false);
 				if is_binary {
 					count_files_binary += 1;
 				} else {
@@ -541,7 +534,7 @@ fn gather_raw_nodes(j: &job::ValidPreparedJobParams) -> RawGatherData {
 				}
 			}
 
-			files.push(ScannedFileNode {
+			files.push(ScanNodeFileScanned {
 				name: abs_path.file_name().unwrap_or_default().to_string_lossy().to_string(),
 				path: PathNode::new(format!("./{}", path).into()),
 				id_self,
@@ -557,7 +550,7 @@ fn gather_raw_nodes(j: &job::ValidPreparedJobParams) -> RawGatherData {
 	files.sort_unstable_by(|a, b| a.path.str.cmp(&b.path.str));
 	dirs_raw.sort_unstable_by(|a, b| a.path.str.cmp(&b.path.str));
 
-	let stat_scan = StatsScannedTreeFs {
+	let stat_scan = ScanStatsTreeFsScanned {
 		count_dirs,
 		count_dirs_empty,
 		count_files,
@@ -570,12 +563,12 @@ fn gather_raw_nodes(j: &job::ValidPreparedJobParams) -> RawGatherData {
 	RawGatherData { files, dirs_raw, symlink_counts, stat_scan }
 }
 
-/// Helper 2: Analizuje relacje rodzic-dziecko i buduje pełne ScannedDirNode
+/// Helper 2: Analizuje relacje rodzic-dziecko i buduje pełne ScanNodeDirScanned
 fn build_directory_nodes(
 	dirs_raw: &[RawDirNode],
-	files: &[ScannedFileNode],
+	files: &[ScanNodeFileScanned],
 	symlink_counts: &HashMap<String, usize>,
-) -> Vec<ScannedDirNode> {
+) -> Vec<ScanNodeDirScanned> {
 	let mut dirs = Vec::with_capacity(dirs_raw.len());
 
 	for i in 0..dirs_raw.len() {
@@ -611,7 +604,7 @@ fn build_directory_nodes(
 			}
 		}
 
-		dirs.push(ScannedDirNode {
+		dirs.push(ScanNodeDirScanned {
 			name: raw.path.str.trim_end_matches('/').split('/').next_back().unwrap_or("").to_string(),
 			path: raw.path.clone(),
 			id_self: raw.id_self,         // ⚡ PRZEPISANIE ID

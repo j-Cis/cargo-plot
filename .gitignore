@@ -1,4 +1,3 @@
 /target/
 *.lock
-/.cargo-plot/
 /temp/

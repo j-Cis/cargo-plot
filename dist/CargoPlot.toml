@@ -1,0 +1,126 @@
+[[job]]
+id = "default_job"
+description = "【ENG】 Standard Rust project snapshot / 【POL】 Standardowy zrzut projektu Rust"
+run-mode = [
+    "save",
+    "print-only-warning",
+]
+
+[job.explorer]
+workspace-dir = "."
+ignore-case = false
+patterns = [
+    "./{.rustfmt,Cargo,rust-toolchain,Makefile}.toml&/",
+    "./**/*.rs&/",
+    "!./target/**",
+    "!./temp/**",
+    "!./.git/**",
+    "./.{gitattributes,gitignore}",
+    "./.github/workflows/*.yml&/",
+    "./.vscode/settings.json&/",
+    "./{API,ARCHITECTURE,AUTHORS,CHANGELOG,README,ROADMAP,TODO}.md",
+    "./dist/{**/*,*}.{bat,exe}&/",
+]
+parts = [
+    "MD",
+    "MF",
+]
+
+[job.export]
+out-dir = "./target/.cargo-plot/out/"
+title = "Rust Project Snapshot"
+name = "Snapshot"
+name-is-first = true
+save-separately = false
+
+[job.attributes]
+select = [
+    "date",
+    "time",
+    "size",
+    "item",
+    "path",
+]
+for-item = [
+    "list-tree",
+    "icons-lite",
+    "num-list-aft",
+]
+for-date = "%Y W%V %u-%a"
+for-time = "%H:%M:%S.%3f"
+for-size = "binary"
+
+[job.tuples.pile]
+type = "name" # none ma być
+dir-first = false
+same-name-dirs-and-files-nearby = false
+
+[job.tuples.sort]
+type = "name" # none ma być
+reverse = false
+mirror = false
+string-strategy = [
+    "AaZz",
+    "Num",
+    "Spec",
+]
+
+[[job]]
+id = "doc"
+description = "【Docs of CargoPlot】 Generate documentation directly from Cargo / 【Dokumentacja CargoPlot】 Generowanie dokumentacji bezpośrednio z Cargo"
+run-mode = [
+    "save",
+]
+
+[job.explorer]
+workspace-dir = "."
+ignore-case = false
+patterns = [
+    "./{.rustfmt,Cargo}.toml&/",
+    "./src/**{/*.rs,/}&/"
+]
+parts = [
+    "MD",
+    "MF",
+]
+
+[job.export]
+out-dir = "./CHANGELOG/dump/"
+title = "CargoPlot v0.3.0-XX"
+name = "CargoPlot-0-3-0-XX"
+name-is-first = true
+save-separately = false
+
+[job.attributes]
+select = [
+    "date",
+    "time",
+    "size",
+    "item",
+    "path",
+]
+for-item = [
+    "list-tree",
+    "icons-more",
+    "num-list-aft",
+]
+for-date = "%Y W%V %u-%a"
+for-time = "%H:%M:%S.%3f"
+for-size = "binary"
+
+[job.tuples.pile]
+# none ma być
+type = "name" 
+dir-first = false
+same-name-dirs-and-files-nearby = false
+
+[job.tuples.sort]
+# none ma być
+type = "name"
+reverse = false
+mirror = false
+string-strategy = [
+    "AaZz",
+    "Num",
+    "Spec",
+]

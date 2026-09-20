@@ -1,5 +1,9 @@
 # cargo-plot
 
+[![Crates.io](https://img.shields.io/crates/v/cargo-plot.svg)](https://crates.io/crates/cargo-plot)
+[![Docs.rs](https://docs.rs/cargo-plot/badge.svg)](https://docs.rs/cargo-plot)
+[![License](https://img.shields.io/badge/license-MIT%20OR%20Unlicense-blue.svg)](LICENSE)
+
 **cargo-plot** (v0.2.0) to wszechstronny „szwajcarski scyzoryk” dewelopera napisany w języku Rust (edycja 2024). Służy do zaawansowanej wizualizacji struktur projektów, audytu zajętości miejsca oraz automatycznego generowania dokumentacji technicznej bezpośrednio z poziomu Cargo.
 
 **cargo-plot** (v0.2.0) is a versatile developer's "Swiss Army knife" written in Rust (2024 edition). It is used for advanced project structure visualization, disk space auditing, and automatic technical documentation generation directly from Cargo.

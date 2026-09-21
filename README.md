@@ -2,58 +2,74 @@
 
 [![Crates.io](https://img.shields.io/crates/v/cargo-plot.svg)](https://crates.io/crates/cargo-plot)
 [![Docs.rs](https://docs.rs/cargo-plot/badge.svg)](https://docs.rs/cargo-plot)
-[![License](https://img.shields.io/badge/license-MIT%20OR%20Unlicense-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](LICENSE)
 
-**cargo-plot** (v0.2.0) to wszechstronny „szwajcarski scyzoryk” dewelopera napisany w języku Rust (edycja 2024). Służy do zaawansowanej wizualizacji struktur projektów, audytu zajętości miejsca oraz automatycznego generowania dokumentacji technicznej bezpośrednio z poziomu Cargo.
+**cargo-plot** (v1.0.0) to potężna wtyczka Cargo do błyskawicznego skanowania systemu plików, wizualizacji strukturalnej drzewa projektu oraz automatycznego generowania migawek (snapshots) w formacie Markdown. Wersja 1.0.0 całkowicie porzuca narzut plików TOML na rzecz w 100% sterowanego z konsoli, modularnego ekosystemu.
 
-**cargo-plot** (v0.2.0) is a versatile developer's "Swiss Army knife" written in Rust (2024 edition). It is used for advanced project structure visualization, disk space auditing, and automatic technical documentation generation directly from Cargo.
+**cargo-plot** (v1.0.0) is a powerful Cargo plugin for blazing-fast filesystem scanning, structural tree visualization, and automated Markdown snapshot generation. Version 1.0.0 drops TOML configuration overhead in favor of a 100% CLI-driven, modular ecosystem.
 
 🔗 **Crates.io**: [crates.io/crates/cargo-plot](https://crates.io/crates/cargo-plot)
 🔗 **GitHub**: [github.com/j-Cis/cargo-plot](https://github.com/j-Cis/cargo-plot)
 
 ```text
-[KiB 174.4] └──┬ 📂 cargo-plot-2                   ./cargo-plot-2/
-[KiB 1.380]    ├──• ⚙️ Cargo.toml                 ./Cargo.toml
-[KiB 173.0]    └──┬ 📂 src                         ./src/
-[  B 70.00]       ├──• 🦀 addon.rs                 ./src/addon.rs
-[KiB 2.431]       ├──┬ 📂 addon                    ./src/addon/
-[KiB 2.431]       │  └──• 🦀 time_tag.rs           ./src/addon/time_tag.rs
-[  B 120.0]       ├──• 🦀 core.rs                  ./src/core.rs
-[KiB 65.85]       ├──┬ 📂 core                     ./src/core/
-[KiB 1.117]       │  ├──• 🦀 file_stats.rs         ./src/core/file_stats.rs
-[KiB 3.177]       │  ├──┬ 📂 file_stats            ./src/core/file_stats/
-[KiB 3.177]       │  │  └──• 🦀 weight.rs          ./src/core/file_stats/weight.rs
-[  B 285.0]       │  ├──• 🦀 path_matcher.rs       ./src/core/path_matcher.rs
-[KiB 23.00]       │  ├──┬ 📂 path_matcher          ./src/core/path_matcher/
-[KiB 14.65]       │  │  ├──• 🦀 matcher.rs         ./src/core/path_matcher/matcher.rs
-[KiB 4.501]       │  │  ├──• 🦀 sort.rs            ./src/core/path_matcher/sort.rs
-[KiB 3.845]       │  │  └──• 🦀 stats.rs           ./src/core/path_matcher/stats.rs
+[KiB 149.7] └──┬ 📂 cargo-plot                                                 ./cargo-plot/
+[KiB 2.238]    ├──• ⚙️ Cargo.toml                                              ./Cargo.toml
+[KiB 8.519]    ├──• 📝 README.md                                               ./README.md
+[KiB 136.6]    └──┬ 📂 src                                                     ./src/
+[KiB 3.262]       ├──• 🦀 cli.rs                                               ./src/cli.rs
+[KiB 2.388]       └──• 🦀 main.rs                                              ./src/main.rs
+
+```
+
+**UŻYCIE / USAGE**
+
+```powershell
+  PS > cargo run -- -d ./ -p "./{examples|tests|src}/{*.rs|**/*.rs}" -p "./{Cargo.toml|README.md}" -c "H W D P" --dir-weight matched -Y "WYYY-WW-D hh:mm:ss" --ignore-leading-dot -o "./CHANGELOG" --max-file-size 262144 --file-name "CargoPlot-1-0-0_{VERSION}.md" --version-pattern "WYYYWWDSSShhmmssttqq"
+```
+
+**OR / LUB** 
+
+```powershell
+  PS > cargo plot -d ./ -p "./{examples|tests|src}/{*.rs|**/*.rs}" -p "./{Cargo.toml|README.md}" -c "H W D P" --dir-weight matched -Y "WYYY-WW-D hh:mm:ss" --ignore-leading-dot -o "./CHANGELOG" --max-file-size 262144 --file-name "CargoPlot-1-0-0_{VERSION}.md" --version-pattern "WYYYWWDSSShhmmssttqq"
 ```
 
 ---
 
 ## 🚀 Główne Funkcje / Key Features
 
-* **Silnik Wzorców 2.0 / Pattern Engine 2.0**: Zaawansowane filtrowanie strukturalne z użyciem flag relacyjnych: `@` (rodzeństwo), `$` (sierota) oraz `+` (głęboki skan). Wspiera również rozwijanie klamer `{a,b}`.
-  * **Structural Flags**: Advanced filtering using relational flags: `@` (sibling), `$` (orphan), and `+` (deep scan). Also supports brace expansion `{a,b}`.
-* **Audyt Miejsca / Disk Audit**: Obliczanie wag w systemach binarnym (IEC) i dziesiętnym (SI). Flaga `-a` pozwala na odczyt rzeczywistego fizycznego rozmiaru folderów z dysku.
-  * **Weight Systems**: Calculate sizes in Binary (IEC) and Decimal (SI) systems. The `-a` flag enables reading the actual physical directory size from the disk.
-* **Trzy Interfejsy / Triple Interface**: Pełna swoboda pracy dzięki natywnej aplikacji GUI (`egui`), interaktywnemu TUI (`cliclack 0.5.0`) oraz klasycznemu CLI.
-  * **Multi-Modal**: Full workflow flexibility with a native GUI (`egui`), interactive TUI (`cliclack 0.5.0`), and classic CLI.
-* **Automatyczna Dokumentacja / Auto-Doc**: Generowanie raportów Markdown i pełnych archiwów kodu źródłowego z profesjonalną tabelaryczną stopką metadanych.
-  * **Technical Reporting**: Generate Markdown reports and full source code archives with professional tabular metadata footers.
+* **Silnik Wzorców 2.0 (querypath)**: Zero-alokacyjny system dopasowywania wzorców w pamięci. Obsługuje zaawansowane globbingi, rozwijanie klamer separatorami pipe `{a|b}`, wstrzykiwanie surowych wyrażeń regularnych (`re:`) oraz modyfikatory relacyjne (sierota/rodzeństwo).
+* **Pattern Engine**: Zero-allocation in-memory pattern matching. Supports advanced globbing, pipe-separated brace expansion `{a|b}`, raw regex injection (`re:`), and relational modifiers (orphan/sibling).
+
+
+* **Inteligentny Audyt Wagi (querypath-fmt)**: Katalogi otrzymują podwójne rozliczenie rozmiaru — `real_size` (fizyczna waga całego katalogu na dysku) oraz `matched_size` (waga wyłącznie plików spełniających kryteria wyszukiwania).
+* **Smart Weight Audit**: Directories receive dual size accounting — `real_size` (total physical disk weight) and `matched_size` (weight of only the files matching search criteria).
+
+
+* **100% CLI Driven**: Pozbawiony narzutu konfiguracji TOML i interfejsów graficznych. Pełna kontrola nad kolumnami, priorytetami sortowania i widokiem z poziomu flag (np. `-c "W H D P"`).
+* **Pure CLI Workflow**: Stripped of TOML overhead. Full control over columns, sorting priorities, and views via flags (e.g. `-c "W H D P"`).
+
+
+* **Zrzuty Kodu i Dokumentacja (querypath-snapshot)**: Automatyczne generowanie raportów Markdown z pełnym kodem źródłowym, odrzucające pliki binarne oraz pliki przekraczające dozwolony limit bajtów. Raporty tagowane są autorskim silnikiem `temporal-fmt`.
+* **Code Snapshots**: Automated generation of Markdown reports containing full source code, ignoring binary files and oversized payloads.
+
+
 
 ---
 
 ## 🔍 Składnia Wzorców / Pattern Syntax
 
+Architektura `cargo-plot` wspiera zaawansowany system prefiksów i modyfikatorów, które aplikowane są *przed* kompilacją wzorca.
+
 | Symbol | Opis (PL) | Description (ENG) |
-| :--- | :--- | :--- |
-| `src/{lib,bin}` | Rozwijanie klamer | Brace expansion |
+| --- | --- | --- |
+| `*` / `**` | Pojedynczy / Wielopoziomowy Wildcard | Single / Multi-level Wildcard |
+| `src/{lib | bin}` | Rozwijanie klamer (separator `|`) |
 | `!*test*` | Twarde Weto (Negacja) | Hard Veto (Negation) |
-| `src/+` | Tryb głęboki (rekurencja) | Deep mode (recursive) |
-| `@tui` | Rodzeństwo (wymaga plik+dir) | Sibling (requires file+dir) |
-| `$core` | Sierota (tylko brak pary) | Orphan (only if pair is missing) |
+| `@core` | Rodzeństwo (wymaga pary plik + katalog) | Sibling (requires file + dir pair) |
+| `$core` | Sierota (tylko brak odpowiadającej pary) | Orphan (only if pair is missing) |
+| `re:^v\d+` | Bezpośrednie wyrażenie regularne | Direct Raw Regex evaluation |
+| `./src/` | Kotwiczenie do korzenia projektu | Anchoring to project root |
+| `.../` | Wymuszenie dopasowania tylko do katalogów | Forces matching directories only |
 
 ---
 
@@ -63,56 +79,31 @@
 
 ```bash
 cargo install cargo-plot
+
 ```
 
 **Budowanie deweloperskie / Development build:**
 
 ```bash
-git clone https://github.com/j-Cis/cargo-plot.git
+git clone [https://github.com/j-Cis/cargo-plot.git](https://github.com/j-Cis/cargo-plot.git)
 cd cargo-plot
 cargo build --release
+
 ```
 
 ---
 
 ## Zestawienie Różnic / Comparison Table
 
-| Cecha / Feature | Wersja / Version 0.1.5 | Wersja / Version 0.2.0 |
-| :--- | :--- | :--- |
-| **Architektura**<br>**Architecture** | **[PL]** Płaska struktura biblioteki (`src/lib/*.rs`).<br>**[ENG]** Flat library structure (`src/lib/*.rs`). | **[PL]** Modularna struktura „Core + Interfaces” (Porty i Adaptery).<br>**[ENG]** Modular "Core + Interfaces" structure (Ports & Adapters). |
-| **Interfejsy**<br>**Interfaces** | **[PL]** Klasyczne CLI oraz uproszczone TUI.<br>**[ENG]** Classic CLI and simplified TUI. | **[PL]** Trio: CLI, TUI (v0.5.0) oraz natywne GUI (egui).<br>**[ENG]** Triple: CLI, TUI (v0.5.0), and native GUI (egui). |
-| **Silnik Wzorców**<br>**Pattern Engine** | **[PL]** Proste filtrowanie oparte na maskach Glob.<br>**[ENG]** Simple filtering based on Glob masks. | **[PL]** Regex + flagi relacyjne: `@` (rodzeństwo), `$` (sierota), `+` (głęboki skan).<br>**[ENG]** Regex + relational flags: `@` (sibling), `$` (orphan), `+` (deep scan). |
-| **Statystyki**<br>**Statistics** | **[PL]** Brak lub tylko sumaryczna waga projektu.<br>**[ENG]** None or only total project weight. | **[PL]** Live Update: podział na pliki tekstowe (Txt), binarne (Bin) i błędy (Err).<br>**[ENG]** Live Update: split into Text (Txt), Binary (Bin), and Errors (Err). |
-| **Raportowanie**<br>**Reporting** | **[PL]** Rozbudowana, opisowa stopka tekstowa.<br>**[ENG]** Long, descriptive text footer. | **[PL]** Profesjonalna tabela metadanych w bloku Markdown.<br>**[ENG]** Professional metadata table in a Markdown block. |
-| **System Wag**<br>**Weight System** | **[PL]** Podstawowe obliczenia (SI/IEC).<br>**[ENG]** Basic calculations (SI/IEC). | **[PL]** SI/IEC + flaga `-a` (fizyczny rozmiar folderów z dysku).<br>**[ENG]** SI/IEC + `-a` flag (actual physical folder size from disk). |
-| **Bezpieczeństwo**<br>**Safety** | **[PL]** Standardowe mechanizmy Rusta.<br>**[ENG]** Standard Rust mechanisms. | **[PL]** Rygorystyczny zakaz używania bloków `unsafe`.<br>**[ENG]** Strict prohibition of `unsafe` blocks. |
-| **Logika Widoku**<br>**View Logic** | **[PL]** Zduplikowana w plikach `tree.rs` i `grid.rs`.<br>**[ENG]** Duplicated in `tree.rs` and `grid.rs` files. | **[PL]** Zunifikowane budowanie struktury w `shared.rs` (DRY).<br>**[ENG]** Unified structure building in `shared.rs` (DRY). |
-| **Internacjonalizacja**<br>**i18n** | **[PL]** Tylko twardo zakodowane teksty.<br>**[ENG]** Hardcoded texts only. | **[PL]** Pełne wsparcie PL/EN we wszystkich modułach i interfejsach.<br>**[ENG]** Full PL/EN support across all modules and interfaces. |
-
----
-
-## Kluczowe usprawnienia techniczne / Key Technical Enhancements
-
-* **[PL] Precyzja wagi korzenia:** W wersji 0.2.0 wyeliminowano błąd wyświetlania wagi `0` dla głównego folderu; teraz korzeń dumnie reprezentuje sumę całego skanowania.
-* **[ENG] Root weight precision:** Version 0.2.0 eliminates the bug displaying `0` weight for the main folder; now the root proudly represents the sum of the entire scan.
-* **[PL] Izolacja procesów GUI:** Dzięki nowej architekturze, generowanie podglądu kodu w GUI odbywa się tylko dla żądanej sekcji, co drastycznie optymalizuje zużycie pamięci.
-* **[ENG] GUI process isolation:** Thanks to the new architecture, code preview generation in the GUI occurs only for the requested section, drastically optimizing memory usage.
-* **[PL] Modernizacja TUI:** Pełna przesiadka na `cliclack 0.5.0` oraz integracja z `shlex` zapewniają bezbłędne parsowanie złożonych komend CLI wewnątrz interfejsu interaktywnego.
-* **[ENG] TUI Modernization:** Full transition to `cliclack 0.5.0` and `shlex` integration ensures flawless parsing of complex CLI commands within the interactive interface.
-
----
-
-## 🌍 Wspierane Systemy / Supported Systems
-
-| System | Target Triple |
-| :--- | :--- |
-| **Windows 64-bit** | `x86_64-pc-windows-msvc` |
-| **Linux 64-bit** | `x86_64-unknown-linux-gnu` |
-| **macOS (Intel/M1)** | `x86_64-apple-darwin` / `aarch64-apple-darwin` |
-
----
-
-> 🚀 **cargo-plot** | Wygenerowano przez cargo-plot v0.2.0 | [GitHub](https://github.com/j-Cis/cargo-plot)
-> 🚀 **cargo-plot** | Generated by cargo-plot v0.2.0 | [GitHub](https://github.com/j-Cis/cargo-plot)
+| Cecha / Feature | Wersja / Version 0.2.0 | Wersja / Version 1.0.0 |
+| --- | --- | --- |
+| **Architektura** | **[PL]** Monolityczna struktura `src/lib`. | **[PL]** Ekosystem 4 niezależnych mikro-bibliotek (`querypath`). |
+| **Architecture** | **[ENG]** Monolithic `src/lib` structure.  | **[ENG]** Ecosystem of 4 independent micro-crates. |
+| **Interfejsy**   | **[PL]** Wiele interfejsów: CLI, TUI, GUI (egui).    | **[PL]** W 100% oparte na czystym i elastycznym CLI. |
+| **Interfaces**   | **[ENG]** Multiple interfaces: CLI, TUI, GUI (egui). | **[ENG]** 100% Pure & flexible CLI driven. |
+| **Konfiguracja**  | **[PL]** Złożone schematy plików konfiguracyjnych TOML. | **[PL]** Sterowanie argumentami `clap` (np. `--group-order`). |
+| **Configuration** | **[ENG]** Complex TOML configuration schemas.           |**[ENG]** Controlled by `clap` arguments (e.g. `--group-order`). |
+| **Pamięć / I/O** | **[PL]** Częste odpytywanie dysku przy analizie relacji.  | **[PL]** Zero-I/O weryfikacja oparta na indeksie `WalkEnvIndex`.|
+| **Memory / I/O** | **[ENG]** Frequent disk polling during relation analysis. | **[ENG]** Zero-I/O verification based on `WalkEnvIndex`. |
 
 ---

@@ -170,8 +170,8 @@ fn run_engine(cli: PlotArgs) -> Result<()> {
         let snapshot = Snapshot::new()
             .title(cli.title)
             .output_dir(out_dir)
-            .version_pattern("WYYY-WW-SSS-D_hhmmssttqq")
-            .file_name_pattern("snapshot_{VERSION}.md")
+            .version_pattern(cli.version_pattern)
+            .file_name_pattern(cli.file_name)
             .max_single_file_size(cli.max_file_size);
 
         let saved_path = snapshot.generate_and_save(&results, &fmt)?;

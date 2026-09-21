@@ -109,6 +109,14 @@ pub struct PlotArgs {
     #[arg(short = 'u', long = "title", default_value = "CODE SNAPSHOT")]
     pub title: String,
 
+	/// Wzorzec nazwy pliku wyjściowego
+    #[arg(long = "file-name", default_value = "snapshot_{VERSION}.md")]
+    pub file_name: String,
+
+    /// Wzorzec tagu czasowego dla wersji
+    #[arg(long = "version-pattern", default_value = "WYYY-WW-SSS-D_hhmmssttqq")]
+    pub version_pattern: String,
+
     /// Maksymalny rozmiar pojedynczego pliku tekstowego (w bajtach) dołączanego do raportu
     #[arg(long = "max-file-size", default_value_t = 524288)]
     pub max_file_size: u64,

@@ -1,1 +1,0 @@
-dist\release\examples\v0.3.0-beta.4\try.exe

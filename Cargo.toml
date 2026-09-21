@@ -1,6 +1,6 @@
 [package]
 name = "cargo-plot"
-version = "1.0.0-rc"
+version = "1.0.0"
 authors = ["Jan Roman Cisowski „j-Cis”"]
 edition = "2024"
 rust-version = "1.96.0"

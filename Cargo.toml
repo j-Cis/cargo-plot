@@ -1,6 +1,6 @@
 [package]
 name = "cargo-plot"
-version = "1.0.0-dev.1"
+version = "1.0.0-rc"
 authors = ["Jan Roman Cisowski „j-Cis”"]
 edition = "2024"
 rust-version = "1.96.0"
@@ -38,11 +38,6 @@ targets = [
     "x86_64-apple-darwin",
     "aarch64-apple-darwin"
 ]
-
-[lib]
-name = "plot"        
-path = "src/api.rs" 
-
 
 [dependencies]
 querypath = "1.0.0"

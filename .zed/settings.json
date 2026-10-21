@@ -1,0 +1,79 @@
+{
+
+  // --- TABULATORY I FORMATOWANIE ---
+  "tab_size": 4,
+  "hard_tabs": true,
+
+  // --- STRUKTURA I PROWADNICE EDYTORA ---
+  "preferred_line_length": 100,
+  "show_whitespaces": "boundary",
+  "indent_guides": {
+    "background_coloring": "indent_aware",
+    "enabled": true
+  },
+
+  // --- WYKLUCZENIA ZE SKANOWANIA I WYSZUKIWARKI ---
+  "file_scan_exclusions": [
+    "**/.git",
+    "**/.prompt",
+    "**/target",
+    "**/*.lock",
+    "**/Thumbs.db",
+    "./dump/",
+    "./.vscode/"
+  ],
+
+  // --- PODPOWIEDZI W KODZIE (INLAY HINTS) ---
+  "inlay_hints": {
+    "enabled": true,
+    "show_type_hints": true,
+    "show_parameter_hints": true,
+    "show_other_hints": true
+  },
+
+  // --- USTAWIENIA DLA KONKRETNYCH JĘZYKÓW ---
+  "languages": {
+    "Rust": {
+      "format_on_save": "on",
+      "tab_size": 4,
+      "hard_tabs": true
+    },
+    "Markdown": {
+      "preferred_line_length": 100
+    }
+  },
+
+  // --- RUST-ANALYZER (LSP) ---
+  "lsp": {
+    "rust-analyzer": {
+    	"enable_lsp_tasks": true,
+	    "fetch": {
+	    	"pre_release": true
+	    },
+      	"initialization_options": {
+       			// get more cargo-less diagnostics from rust-analyzer,
+                // which might include false-positives (those can be turned off by their names)
+                "diagnostics": {
+	                "experimental": {
+	                    "enable": true
+	                }
+               },
+	      	"inlayHints": {
+		      	"maxLength": null,
+		        // "lifetimeElisionHints": {
+			    //     "enable": "skip_trivial",
+			    //     "useParameterNames": true
+		        // },
+		        "chainingHints": { "enable": true },
+		        "closureReturnTypeHints": { "enable": "always" },
+		        "parameterHints": { "enable": true },
+		        "typeHints": { "enable": true }
+	     },
+        "checkOnSave": true,
+        "check": {
+          "command": "check"
+        },
+      }
+    }
+  }
+}

@@ -1,5 +1,10 @@
 # .cargo/config.toml
 
+[alias]
+x = "x-do"
+xtask = "x-do"
+
+
 # Wymuszenie statycznego linkowania bibliotek C (CRT) dla Windows.
 # Dzięki temu plik .exe będzie działał na czystym Windows 7/8/10/11
 # bez konieczności instalowania "Visual C++ Redistributable".

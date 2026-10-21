@@ -1,29 +1,36 @@
 [package]
+edition = "2024"
+rust-version = "1.99.0"
 name = "cargo-plot"
 version = "1.0.0"
 authors = ["Jan Roman Cisowski „j-Cis”"]
-edition = "2024"
-rust-version = "1.96.0"
-description = "A powerful Cargo plugin for blazing-fast filesystem scanning, structural tree visualization, and automated Markdown snapshot generation."
-license = "MIT OR Apache-2.0"
-readme = "README.md"
-repository = "https://github.com/j-Cis/cargo-plot"
-
-keywords = [ "cargo",  "tree",  "markdown",  "filesystem", "documentation"]
-categories = [ "development-tools::cargo-plugins",  "command-line-utilities", "command-line-interface", "text-processing",]
-resolver = "3"
-
 include = [
     "src/**/*",
     "examples/**/*",
     "Cargo.toml",
     "Cargo.lock",
     "README.md",
-    "CHANGELOG/**/*",
-    "CHANGELOG.md",
     "LICENSE-APACHE",
-    "LICENSE-MIT"
+    "LICENSE-MIT",
 ]
+description = "A powerful Cargo plugin for blazing-fast filesystem scanning, structural tree visualization, and automated Markdown snapshot generation."
+readme = "README.md"
+keywords = [
+    "cargo",
+    "tree",
+    "markdown",
+    "filesystem",
+    "documentation",
+]
+categories = [
+    "development-tools::cargo-plugins",
+    "command-line-utilities",
+    "command-line-interface",
+    "text-processing",
+]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/j-Cis/cargo-plot"
+resolver = "3"
 
 [package.metadata.cargo]
 edition = "2024"
@@ -36,21 +43,58 @@ targets = [
     "x86_64-unknown-linux-musl",
     "i686-unknown-linux-gnu",
     "x86_64-apple-darwin",
-    "aarch64-apple-darwin"
+    "aarch64-apple-darwin",
 ]
 
-[dependencies]
-querypath = "1.0.0"
-querypath-fmt = "1.0.0"
-querypath-snapshot = "1.0.0"
-temporal-fmt = "0.1.1"
-anyhow = "1.0.102"
-clap = { version = "4.6.1", features = ["derive", "cargo", "unicode", "wrap_help", "string", "env", "unstable-doc", "unstable-markdown", "unstable-styles"] }
+# [[bin]]
+# name = "cargo-plot"
+# path = "src/main.rs"
 
+[dependencies.anyhow]
+version = "1.0.104"
+
+[dependencies.crossterm]
+version = "0.29.0"
+
+[dependencies.inquire]
+version = "0.9.4"
+
+[dependencies.regex]
+version = "1.13.1"
+
+[dependencies.crossterm]
+version = "0.29.0"
+
+[dependencies.clap]
+version = "4.6.7"
+features = [
+    "derive",
+    "cargo",
+    "unicode",
+    "wrap_help",
+    "string",
+    "env",
+    "unstable-doc",
+    "unstable-markdown",
+    "unstable-styles",
+]
+
+[dependencies.serde]
+version = "1.0.229"
+features = [
+    "derive"
+]
+
+[dependencies.toml]
+version = "1.1.8"
+
+[dependencies.walkdir]
+version = "2.5.0"
 
 [lints.rust]
+dead_code = "allow"
 unsafe_code = "forbid"
 
 [lints.clippy]
-too_many_arguments = "allow"
 bool_comparison = "allow"
+too_many_arguments = "allow"

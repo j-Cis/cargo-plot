@@ -1,33 +1,18 @@
-//! Path: `src/libs/temporal/types/enums.rs`
-//! Last significant modified: 2026-W43-1 15:44:13 CEST (UTC+02:00)
-//! Author: Jan Roman Cisowski (j-Cis, code@cisowscy.com)
-//! Repository: https://github.com/j-Cis/cargo-plot.git
-//! ORCID: https://orcid.org/0009-0009-2907-3792
 
-use super::days::*;
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum WeekDayWhrSunIs7 {
-	Mon = 1,
-	Tue = 2,
-	Wed = 3,
-	Thu = 4,
-	Fri = 5,
-	Sat = 6,
-	Sun = 7,
-}
+use super::structs::{
+	MonthWith28Day, MonthWith29Day, MonthWith30Day, MonthWith31Day, 
+	
+	YearWith365Day, YearWith366Day,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum WeekDayWhrSunIs0 {
-	Sun = 0,
-	Mon = 1,
-	Tue = 2,
-	Wed = 3,
-	Thu = 4,
-	Fri = 5,
-	Sat = 6,
+pub enum WeekFirstDay {
+	Mon,
+	Sun,
 }
 
+
+// ------------------------------------------------------------ TYDZIEŃ
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Week {
 	W01 = 1,
@@ -85,8 +70,9 @@ pub enum Week {
 	W53 = 53,
 }
 
+// ------------------------------------------------------------ MIESIĄC
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Month {
+pub enum Months {
 	Jan = 1,
 	Feb = 2,
 	Mar = 3,
@@ -101,12 +87,27 @@ pub enum Month {
 	Dec = 12,
 }
 
+// ------------------------------------------------------------ DZIEŃ W TYGODNIU
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum WeekDay {
+	Mon,
+	Tue,
+	Wed,
+	Thu,
+	Fri,
+	Sat,
+	Sun,
+}
+
+// ------------------------------------------------------------ DZIEŃ W ROKU
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum YearDay {
 	Y365D(YearWith365Day),
 	Y366D(YearWith366Day),
 }
 
+
+// ------------------------------------------------------------ DZIEŃ W MIESIĄCU
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum MonthDay {
 	M31D(MonthWith31Day),
@@ -115,6 +116,7 @@ pub enum MonthDay {
 	M28D(MonthWith28Day),
 }
 
+// ------------------------------------------------------------ PORA ROKU
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Season {
 	Aut = 1,
@@ -122,7 +124,7 @@ pub enum Season {
 	Spr = 3,
 	Sum = 4,
 }
-
+// ------------------------------------------------------------ ĆWIARTKA ROKU
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Quater {
 	JanFebMar = 1,

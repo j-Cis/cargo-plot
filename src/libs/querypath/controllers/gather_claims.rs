@@ -66,10 +66,10 @@ pub struct ClaimPatterns {
 	pub patterns_all_matched: Vec<String>,
 	pub patterns_no_numerate: Vec<String>,
 	pub patterns_no_copypast: Vec<String>,
+	pub case_sensitive: bool,
 	pub pattern_temporal_in_tree: &'static str,
 	pub pattern_temporal_in_text: &'static str,
 	pub pattern_temporal_in_name: &'static str,
-	pub case_sensitive: bool,
 }
 
 impl ClaimPatterns {

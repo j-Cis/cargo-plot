@@ -5,7 +5,7 @@
 //! ORCID: https://orcid.org/0009-0009-2907-3792
 
 use anyhow::Result;
-use snapshot2::querypath::controllers::gather_claims::{ClaimPatterns, DebugVerboses, GatherClaims};
+use cargo_plot::querypath::controllers::gather_claims::{ClaimPatterns, DebugVerboses, GatherClaims};
 
 fn main() -> Result<()> {
 	println!("🚀 Start ETAPU-1: Konfiguracja i Walidacja\n");

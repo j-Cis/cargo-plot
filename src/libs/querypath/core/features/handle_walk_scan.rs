@@ -203,7 +203,7 @@ impl HandleWalkScan {
 		}
 
 		instance.sort_and_dedup_all();
-		
+
 		// Bezpośrednie wyłączenie szufladek wewnątrz skanera
 		instance.refine(refining, debug);
 
@@ -240,7 +240,16 @@ impl HandleWalkScan {
 			if entry.file_type().is_dir() {
 				let is_empty = entry.path().read_dir().map(|mut r| r.next().is_none()).unwrap_or(false);
 				let dir_str = format!("./{}/", clean_rel.trim_end_matches('/'));
-				let node = PathNode::new(PathBuf::from(dir_str));
+				let mut node = PathNode::new(
+					PathBuf::from(dir_str),
+					true,     // is_dir
+					is_empty, // is_empty
+					is_dot,   // is_doted
+					false,    // is_binary
+					false,    // has_extension
+				);
+				// Foldery na start otrzymują no_copypast = true
+				node.set_no_copypast();
 
 				match (is_empty, is_dot) {
 					(true, false) => self.dirs_empty.push(node),
@@ -260,7 +269,19 @@ impl HandleWalkScan {
 				};
 
 				let file_str = format!("./{}", clean_rel);
-				let node = PathNode::new(PathBuf::from(file_str));
+				let mut node = PathNode::new(
+					PathBuf::from(file_str),
+					false,    // is_dir
+					is_empty, // is_empty
+					is_dot,   // is_doted
+					is_bin,   // is_binary
+					has_ext,  // has_extension
+				);
+
+				// Pliki puste oraz pliki binarne na start otrzymują no_copypast = true
+				if is_empty || is_bin {
+					node.set_no_copypast();
+				}
 
 				match (is_empty, is_bin, is_dot, has_ext) {
 					(true, _, false, false) => self.files_empty_no_ext.push(node),
@@ -338,21 +359,8 @@ impl VerboseDisplay for HandleWalkScan {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
 		writeln!(f, "1c📕 [ structs: HandleWalkScan ] 🔰\n")?;
 
-		let total_dirs =
-			self.count_dirs_empty + self.count_dotdirs_empty + self.count_dirs_no_empty + self.count_dotdirs_no_empty;
-
-		let total_files = self.count_files_empty_no_ext
-			+ self.count_dotfiles_empty_no_ext
-			+ self.count_files_empty_has_ext
-			+ self.count_dotfiles_empty_has_ext
-			+ self.count_files_binary_no_ext
-			+ self.count_dotfiles_binary_no_ext
-			+ self.count_files_binary_has_ext
-			+ self.count_dotfiles_binary_has_ext
-			+ self.count_files_text_no_empty_no_ext
-			+ self.count_dotfiles_text_no_empty_no_ext
-			+ self.count_files_text_no_empty_has_ext
-			+ self.count_dotfiles_text_no_empty_has_ext;
+		let total_dirs = self.count_all_dirs();
+		let total_files = self.count_all_files();
 
 		// --- PODSUMOWANIE KATALOGÓW ---
 		writeln!(f, "📁 TOTAL {} DIRECTORIES SCANNED", total_dirs)?;
@@ -381,38 +389,22 @@ impl VerboseDisplay for HandleWalkScan {
 		writeln!(f, "  ▪️ INCLUDING {} TEXT, HIDDEN (DOT), WITH EXTENSION", self.count_dotfiles_text_no_empty_has_ext)?;
 		writeln!(f)?;
 
-		// --- SZCZEGÓŁOWE WYKAZY ---
-		macro_rules! print_list {
-			($title:expr, $list:expr) => {
-				if !$list.is_empty() {
-					writeln!(f, "🗃️  LIST OF {}", $title)?;
-					for item in &$list {
-						writeln!(f, "  {}", item.str)?;
-					}
-					writeln!(f)?;
-				}
-			};
+		// --- JEDNOLITY WYKAZ WSZYSTKICH WĘZŁÓW ---
+		let mut all_items: Vec<&PathNode> = self.iter_all_dirs().chain(self.iter_all_files()).collect();
+		all_items.sort_unstable_by(|a, b| a.str.cmp(&b.str));
+
+		for item in all_items {
+			writeln!(
+				f,
+				"{}{}{}{}  🛤️ {}",
+				if item.is_doted { "🕳️" } else { "👁️" },
+				if item.is_empty { "🕸️" } else { "📦" },//🫙
+				if item.is_dir { "📁" } else if item.is_binary { "🧊" } else { "📄" },
+				if item.has_extension { "🏷️ " } else { "❔" },
+				item.str,
+			)?;
 		}
-
-		print_list!("📁 EMPTY DIRECTORIES, NOT HIDDEN", self.dirs_empty);
-		print_list!("📁 EMPTY DIRECTORIES, HIDDEN (DOT)", self.dotdirs_empty);
-		print_list!("📁 NOT EMPTY DIRECTORIES, NOT HIDDEN", self.dirs_no_empty);
-		print_list!("📁 NOT EMPTY DIRECTORIES, HIDDEN (DOT)", self.dotdirs_no_empty);
-
-		print_list!("📄 EMPTY FILES, NO EXTENSION", self.files_empty_no_ext);
-		print_list!("📄 EMPTY FILES, HIDDEN (DOT), NO EXTENSION", self.dotfiles_empty_no_ext);
-		print_list!("📄 EMPTY FILES, WITH EXTENSION", self.files_empty_has_ext);
-		print_list!("📄 EMPTY FILES, HIDDEN (DOT), WITH EXTENSION", self.dotfiles_empty_has_ext);
-
-		print_list!("📄 BINARY FILES, NO EXTENSION", self.files_binary_no_ext);
-		print_list!("📄 BINARY FILES, HIDDEN (DOT), NO EXTENSION", self.dotfiles_binary_no_ext);
-		print_list!("📄 BINARY FILES, WITH EXTENSION", self.files_binary_has_ext);
-		print_list!("📄 BINARY FILES, HIDDEN (DOT), WITH EXTENSION", self.dotfiles_binary_has_ext);
-
-		print_list!("📄 TEXT FILES, NO EXTENSION", self.files_text_no_empty_no_ext);
-		print_list!("📄 TEXT FILES, HIDDEN (DOT), NO EXTENSION", self.dotfiles_text_no_empty_no_ext);
-		print_list!("📄 TEXT FILES, WITH EXTENSION", self.files_text_no_empty_has_ext);
-		print_list!("📄 TEXT FILES, HIDDEN (DOT), WITH EXTENSION", self.dotfiles_text_no_empty_has_ext);
+		writeln!(f)?;
 
 		writeln!(f, "1c📕 [ structs: HandleWalkScan ] 🏁")?;
 		Ok(())

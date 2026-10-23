@@ -133,7 +133,7 @@ impl GatherClaims {
 			.as_ref()
 			.context("ETAP-1 [Błąd sekwencji]: Brak drzewa katalogów przed filtrowaniem!")?;
 
-		let execute = crate::libs::querypath::core::features::step04_execute_query::QueryExecute::apply(
+		let execute = crate::querypath::core::features::HandleCorpus::apply(
 			&patts.all_matched,
 			walk,
 			self.creating.keep_parent,

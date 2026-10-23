@@ -1,4 +1,4 @@
-# CargoPlot v0.2.0 (v.2026W12D6H03M32S35T29Q09)
+# CargoPlot@r26W12D6H03M32S35T29@v0-2-0
 
 ## INDEX [SOTC - Structure of the content] (v.2026W12D6H03M32S35T29Q09)
 

@@ -1,6 +1,6 @@
-# CargoPlot v0.3.0-beta.4 (v:R2026W16D6H12M56S48T32Q14)
+# CargoPlot@r26W16D6H12M56S48T32@v0-3-0-beta-4
 
-## INDEX [SOTC - Structure of the content] (v:R2026W16D6H12M56S48T32Q14)
+## INDEX [SOTC - Structure of the content]
 
 ```plaintext
 2026 W14 3-Wed 06:23:24.897 |     20 B  | ├──• 📝  1. .gitattributes                      | ./.gitattributes                               | 🆔📃[619] 🔙📂[0]

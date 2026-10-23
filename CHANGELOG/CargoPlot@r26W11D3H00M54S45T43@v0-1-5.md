@@ -1,6 +1,6 @@
-# CargoPlot v0.1.5 (v:R2026W11D3H00M54S45T43Q01)
+# CargoPlot@r26W11D3H00M54S45T43@v0-1-5
 
-## INDEX [SOTC - Structure of the content] (v.R2026W11D3H00M54S45T43Q01)
+## INDEX [SOTC - Structure of the content]
 
 **Wywołana komenda:**
 ```bash

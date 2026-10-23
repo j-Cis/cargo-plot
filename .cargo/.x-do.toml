@@ -1,11 +1,11 @@
 [snapshot]
-title = "PROJECT (CODE SNAPSHOT) v:"
+title = "CargoPlot v2.0.0-dev."
 title_sufix_date = true
-title_sufix_date_fmt = "WYYY-WW-D::hh:mm:ss:tt:qq"
-name = "project_"
+title_sufix_date_fmt = "WYYY-WWW-D::hh:mm:ss:tt:qq"
+name = "CargoPlot-2-0-0-dev-"
 name_sufix_date = true
-name_sufix_date_fmt = "WYYYWW-Dhhmm-ssttqq"
-output_dir = "./dump"
+name_sufix_date_fmt = "WYWWWDhh-mmssttqq"
+output_dir = "./CHANGELOG"
 max_single_file_size = 524288
 add_footer_summary_setups = true
 add_header_customize_text = "\nGenerated via cargo-x-do\n"

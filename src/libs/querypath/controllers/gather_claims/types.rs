@@ -40,6 +40,7 @@ pub struct ClaimRefining {
 	pub skip_nodot_dirs_empty: bool,
 	pub skip_doted_dirs_laden: bool,
 	pub skip_nodot_dirs_laden: bool,
+
 	pub skip_doted_noext_files_empty: bool,
 	pub skip_doted_withext_files_empty: bool,
 	pub skip_nodoted_noext_files_empty: bool,
@@ -116,7 +117,7 @@ pub struct GatherClaims {
 	pub step1b_val_entry: Option<HandleVerifiedDirs>,
 	pub step1a_val_patts: Option<HandlePreparedPatterns>,
 	pub step1c_val_walk: Option<HandleWalkScan>,
-	pub step1d_val_execute: Option<crate::libs::querypath::core::features::step04_execute_query::QueryExecute>,
+	pub step1d_val_execute: Option<crate::querypath::core::features::HandleCorpus>,
 	// step03_val_sorts
 	// step04_val_filtr
 	// step05_val_add_index

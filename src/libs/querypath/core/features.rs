@@ -8,11 +8,12 @@ mod handle_formatted_time;
 mod handle_prepared_patterns;
 mod handle_verified_dirs;
 mod handle_walk_scan;
-pub mod step04_execute_query;
+mod handle_corpus;
 mod verbose_display;
 
+pub use verbose_display::*;
 pub use handle_formatted_time::*;
 pub use handle_prepared_patterns::*;
 pub use handle_verified_dirs::*;
 pub use handle_walk_scan::*;
-pub use verbose_display::*;
+pub use handle_corpus::*;

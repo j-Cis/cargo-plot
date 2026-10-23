@@ -1,6 +1,6 @@
-# CargoPlot v0.3.0-beta.5 (v:R2026W17D5H15M20S50T16Q19)
+# CargoPlot@r26W17D5H15M20S50T16@v0-3-0-beta-5
 
-## INDEX [SOTC - Structure of the content] (v:R2026W17D5H15M20S50T16Q19)
+## INDEX [SOTC - Structure of the content]
 
 ```plaintext
 2026 W16 2-Tue 22:59:05.745 |   3.63 kB | ├──• 📝  1. .rustfmt.toml                                        | ./.rustfmt.toml                                              

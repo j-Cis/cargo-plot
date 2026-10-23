@@ -1,6 +1,6 @@
-# CargoPlot v0.3.0-beta.1 (v.R2026W16D3H10M42S30T00Q12)
+# CargoPlot@r26W16D3H10M42S30T00@v0-3-0-beta-1
 
-## INDEX [SOTC - Structure of the content] (v.R2026W16D3H10M42S30T00Q12)
+## INDEX [SOTC - Structure of the content] 
 
 
 ```plaintext

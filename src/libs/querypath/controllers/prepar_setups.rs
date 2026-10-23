@@ -6,7 +6,7 @@
 
 use super::gather_claims::types::{ClaimCreating, ClaimOrdering, DebugVerboses};
 use crate::libs::querypath::core::features::{
-	HandlePreparedPatterns, HandleVerifiedDirs, HandleWalkScan, step04_execute_query::QueryExecute,
+	HandlePreparedPatterns, HandleVerifiedDirs, HandleWalkScan, HandleCorpus,
 };
 
 /// Twardy, zwalidowany stan, z którego korzystać będą potoki tworzenia i
@@ -15,7 +15,7 @@ pub struct PreparedSetup {
 	pub entry: HandleVerifiedDirs,
 	pub patts: HandlePreparedPatterns,
 	pub walk: HandleWalkScan,
-	pub execute: QueryExecute,
+	pub execute: HandleCorpus,
 	pub ordering: ClaimOrdering,
 	pub creating: ClaimCreating,
 	pub verboses: DebugVerboses,

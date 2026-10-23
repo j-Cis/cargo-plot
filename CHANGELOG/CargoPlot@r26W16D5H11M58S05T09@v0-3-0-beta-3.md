@@ -1,11 +1,11 @@
-# CargoPlot v0.3.0-beta.2 (v.R2026W16D4H20M01S21T14Q27)
+# CargoPlot@r26W16D5H11M58S05T09@v0-3-0-beta-3
 
-## INDEX [SOTC - Structure of the content] (v.R2026W16D4H20M01S21T14Q27)
+## INDEX [SOTC - Structure of the content] 
 
 ```plaintext
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-📊 | 📝 3096 | 📂 575 | ⭕ 15 | ✔️  59 | ✖️  3612 |
-🔎 ["./{.rustfmt,Cargo,rust-toolchain,Makefile}.toml&/", "./**/*.rs&/", "!./target/**", "!./temp/**", "!./.git/**", "./.{gitattributes,gitignore}", "./.github/workflows/*.yml&/", "./.vscode/settings.json&/", "./{API,ARCHITECTURE,AUTHORS,CHANGELOG,README,ROADMAP,TODO}.md", "./dist/**"]
+📊 | 📝 3769 | 📂 628 | ⭕ 15 | ✔️  61 | ✖️  4336 |
+🔎 ["./{.rustfmt,Cargo,rust-toolchain,Makefile}.toml&/", "./**/*.rs&/", "!./target/**", "!./temp/**", "!./.git/**", "./.{gitattributes,gitignore}", "./.github/workflows/*.yml&/", "./.vscode/settings.json&/", "./{API,ARCHITECTURE,AUTHORS,CHANGELOG,README,ROADMAP,TODO}.md", "./dist/{**/*,*}.{bat,exe}&/"]
 🗃️  "A:/A-JAN/git-rust/j-Cis/libs-util/cargo-plot"
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 | 2026 W12 Sat 04:03:40.032 | [    7.44 kB ] ├──┬ 📂  1. ./.github/
@@ -14,20 +14,20 @@
 | 2026 W12 Sat 04:03:40.034 | [    2.51 kB ] │     └──• 📝  4. ./.github/workflows/rust.yml
 | 2026 W16 Tue 07:49:09.250 | [  200.63 kB ] ├──┬ 📂  5. ./.vscode/
 | 2026 W15 Tue 08:58:48.931 | [    4.77 kB ] │  └──• 📝  6. ./.vscode/settings.json
-| 2026 W16 Thu 16:59:28.778 | [   12.97 MB ] ├──┬ 📂  7. ./dist/release/
-| 2026 W16 Thu 16:55:56.527 | [   12.97 MB ] │  └──┬ 📂  8. ./dist/release/examples/
-| 2026 W16 Wed 21:17:06.349 | [      210 B ] │     ├──• 📝  9. ./dist/release/examples/demo.d
-| 2026 W16 Wed 18:29:07.713 | [      205 B ] │     ├──• 📝 10. ./dist/release/examples/fmt.d
-| 2026 W16 Wed 21:17:06.706 | [    2.44 MB ] │     ├──• 💾 11. ./dist/release/examples/demo.exe
-| 2026 W16 Wed 21:17:06.722 | [    5.52 MB ] │     ├──• 💾 12. ./dist/release/examples/demo.pdb
-| 2026 W16 Wed 18:29:08.218 | [  370.00 kB ] │     ├──• 💾 13. ./dist/release/examples/fmt.exe
-| 2026 W16 Wed 18:29:08.220 | [    4.64 MB ] │     └──• 💾 14. ./dist/release/examples/fmt.pdb
-| 2026 W16 Thu 17:11:35.539 | [    7.54 kB ] ├──┬ 📂 15. ./examples/
+| 2026 W16 Fri 08:54:13.530 | [   12.97 MB ] ├──┬ 📂  7. ./dist/
+| 2026 W16 Thu 16:59:28.778 | [   12.97 MB ] │  ├──┬ 📂  8. ./dist/release/
+| 2026 W16 Fri 00:37:49.658 | [   12.97 MB ] │  │  └──┬ 📂  9. ./dist/release/examples/
+| 2026 W16 Fri 00:37:49.658 | [   12.97 MB ] │  │     └──┬ 📂 10. ./dist/release/examples/v0.3.0-beta.1/
+| 2026 W16 Wed 21:17:06.706 | [    2.44 MB ] │  │        ├──• 💾 11. ./dist/release/examples/v0.3.0-beta.1/demo.exe
+| 2026 W16 Wed 18:29:08.218 | [  370.00 kB ] │  │        └──• 💾 12. ./dist/release/examples/v0.3.0-beta.1/fmt.exe
+| 2026 W16 Fri 08:53:29.688 | [       44 B ] │  ├──• 📝 13. ./dist/run_doc.bat
+| 2026 W16 Fri 08:51:38.705 | [       43 B ] │  └──• 📝 14. ./dist/run_fmt.bat
+| 2026 W16 Thu 17:11:35.539 | [    7.68 kB ] ├──┬ 📂 15. ./examples/
 | 2026 W16 Wed 20:53:49.249 | [    1.89 kB ] │  ├──• 📝 16. ./examples/demo.rs
 | 2026 W16 Wed 18:29:09.235 | [    2.36 kB ] │  ├──• 📝 17. ./examples/fmt.rs
-| 2026 W16 Thu 19:59:51.143 | [    3.30 kB ] │  └──• 📝 18. ./examples/try-step2.rs
-| 2026 W16 Tue 13:29:41.436 | [  127.77 kB ] ├──┬ 📂 19. ./src/
-| 2026 W16 Thu 05:42:14.747 | [  121.84 kB ] │  ├──┬ 📂 20. ./src/lib/
+| 2026 W16 Fri 11:52:38.972 | [    3.44 kB ] │  └──• 📝 18. ./examples/try-step2.rs
+| 2026 W16 Tue 13:29:41.436 | [  150.69 kB ] ├──┬ 📂 19. ./src/
+| 2026 W16 Thu 05:42:14.747 | [  144.67 kB ] │  ├──┬ 📂 20. ./src/lib/
 | 2026 W16 Wed 16:09:14.448 | [   17.47 kB ] │  │  ├──┬ 📂 21. ./src/lib/display/
 | 2026 W16 Wed 13:16:55.145 | [    1.22 kB ] │  │  │  ├──• 📝 22. ./src/lib/display/anchored_paths_datum.rs
 | 2026 W16 Wed 18:29:09.251 | [      983 B ] │  │  │  ├──• 📝 23. ./src/lib/display/config.rs
@@ -36,37 +36,39 @@
 | 2026 W16 Thu 00:00:58.306 | [    1.58 kB ] │  │  │  ├──• 📝 26. ./src/lib/display/paths_patterns.rs
 | 2026 W16 Thu 16:59:52.673 | [      840 B ] │  │  │  ├──• 📝 27. ./src/lib/display/paths_result.rs
 | 2026 W16 Thu 16:59:52.673 | [    8.55 kB ] │  │  │  └──• 📝 28. ./src/lib/display/table_data.rs
-| 2026 W16 Thu 19:56:55.819 | [   30.32 kB ] │  │  ├──┬ 📂 29. ./src/lib/job/
-| 2026 W16 Thu 16:20:15.534 | [    3.94 kB ] │  │  │  ├──┬ 📂 30. ./src/lib/job/gens/
-| 2026 W16 Thu 16:59:53.361 | [      635 B ] │  │  │  │  ├──• 📝 31. ./src/lib/job/gens/item_icon.rs
-| 2026 W16 Thu 18:56:20.494 | [    3.32 kB ] │  │  │  │  └──• 📝 32. ./src/lib/job/gens/item_list.rs
-| 2026 W16 Thu 19:59:51.164 | [   18.04 kB ] │  │  │  ├──• 📝 33. ./src/lib/job/config.rs
-| 2026 W16 Thu 19:59:51.167 | [    6.24 kB ] │  │  │  ├──• 📝 34. ./src/lib/job/step1.rs
-| 2026 W16 Thu 18:56:20.498 | [    2.10 kB ] │  │  │  └──• 📝 35. ./src/lib/job/step2.rs
-| 2026 W16 Thu 06:37:21.654 | [   74.05 kB ] │  │  └──┬ 📂 36. ./src/lib/logic/
-| 2026 W16 Thu 17:08:04.805 | [    5.77 kB ] │  │     ├──• 📝 37. ./src/lib/logic/anchored_paths_datum.rs
-| 2026 W16 Thu 12:20:43.509 | [    1.49 kB ] │  │     ├──• 📝 38. ./src/lib/logic/config_model.rs
-| 2026 W16 Thu 16:59:52.682 | [    6.29 kB ] │  │     ├──• 📝 39. ./src/lib/logic/engine.rs
-| 2026 W16 Wed 20:53:49.265 | [    4.17 kB ] │  │     ├──• 📝 40. ./src/lib/logic/engine_multiple.rs
-| 2026 W16 Thu 17:13:52.433 | [    4.83 kB ] │  │     ├──• 📝 41. ./src/lib/logic/file_toml_config.rs
-| 2026 W16 Thu 18:56:20.504 | [   15.06 kB ] │  │     ├──• 📝 42. ./src/lib/logic/fs_scanner.rs
-| 2026 W16 Tue 20:46:02.228 | [    1.51 kB ] │  │     ├──• 📝 43. ./src/lib/logic/mapper_lang_type.rs
-| 2026 W16 Mon 16:22:45.374 | [    1.45 kB ] │  │     ├──• 📝 44. ./src/lib/logic/path_context.rs
-| 2026 W16 Thu 00:00:58.306 | [    8.57 kB ] │  │     ├──• 📝 45. ./src/lib/logic/path_patterns.rs
-| 2026 W16 Thu 10:32:02.922 | [    7.49 kB ] │  │     ├──• 📝 46. ./src/lib/logic/paths_result.rs
-| 2026 W16 Thu 16:59:52.684 | [    6.00 kB ] │  │     ├──• 📝 47. ./src/lib/logic/paths_table.rs
-| 2026 W16 Thu 17:14:02.972 | [   10.14 kB ] │  │     ├──• 📝 48. ./src/lib/logic/specification.rs
-| 2026 W16 Thu 16:59:53.377 | [    1.27 kB ] │  │     └──• 📝 49. ./src/lib/logic/tag_time.rs
-| 2026 W16 Thu 19:57:11.957 | [    5.88 kB ] │  ├──• 📝 50. ./src/api.rs
-| 2026 W15 Sun 12:23:34.582 | [       42 B ] │  └──• 📝 51. ./src/main.rs
-| 2026 W16 Tue 23:07:10.678 | [  923.63 MB ] ├─── 📂 52. ./target/
-| 2026 W16 Wed 11:23:49.949 | [    4.28 MB ] ├─── 📂 53. ./temp/
-| 2026 W14 Wed 06:23:24.897 | [       20 B ] ├──• 📝 54. ./.gitattributes
-| 2026 W16 Wed 11:11:00.277 | [       46 B ] ├──• 📝 55. ./.gitignore
-| 2026 W16 Tue 22:59:05.745 | [    3.55 kB ] ├──• 📝 56. ./.rustfmt.toml
-| 2026 W12 Sat 04:03:40.035 | [    9.49 kB ] ├──• 📝 57. ./CHANGELOG.md
-| 2026 W16 Thu 20:01:08.198 | [    1.82 kB ] ├──• 📝 58. ./Cargo.toml
-| 2026 W12 Sat 04:03:40.042 | [    8.37 kB ] └──• 📝 59. ./README.md
+| 2026 W16 Thu 21:11:09.197 | [   46.74 kB ] │  │  ├──┬ 📂 29. ./src/lib/job/
+| 2026 W16 Thu 16:20:15.534 | [    5.24 kB ] │  │  │  ├──┬ 📂 30. ./src/lib/job/gens/
+| 2026 W16 Thu 23:54:08.667 | [      680 B ] │  │  │  │  ├──• 📝 31. ./src/lib/job/gens/item_icon.rs
+| 2026 W16 Fri 08:50:13.750 | [    4.58 kB ] │  │  │  │  └──• 📝 32. ./src/lib/job/gens/item_list.rs
+| 2026 W16 Fri 11:52:38.993 | [   29.56 kB ] │  │  │  ├──• 📝 33. ./src/lib/job/config.rs
+| 2026 W16 Fri 11:52:38.996 | [    5.75 kB ] │  │  │  ├──• 📝 34. ./src/lib/job/step1.rs
+| 2026 W16 Fri 11:57:16.495 | [    2.79 kB ] │  │  │  ├──• 📝 35. ./src/lib/job/step2.rs
+| 2026 W16 Fri 08:50:13.755 | [    3.39 kB ] │  │  │  └──• 📝 36. ./src/lib/job/step3.rs
+| 2026 W16 Fri 00:23:44.573 | [   80.46 kB ] │  │  └──┬ 📂 37. ./src/lib/logic/
+| 2026 W16 Thu 17:08:04.805 | [    5.77 kB ] │  │     ├──• 📝 38. ./src/lib/logic/anchored_paths_datum.rs
+| 2026 W16 Thu 12:20:43.509 | [    1.49 kB ] │  │     ├──• 📝 39. ./src/lib/logic/config_model.rs
+| 2026 W16 Thu 23:30:59.956 | [    6.30 kB ] │  │     ├──• 📝 40. ./src/lib/logic/engine.rs
+| 2026 W16 Wed 20:53:49.265 | [    4.17 kB ] │  │     ├──• 📝 41. ./src/lib/logic/engine_multiple.rs
+| 2026 W16 Fri 09:17:42.773 | [    4.84 kB ] │  │     ├──• 📝 42. ./src/lib/logic/file_toml_config.rs
+| 2026 W16 Fri 11:52:39.007 | [   18.24 kB ] │  │     ├──• 📝 43. ./src/lib/logic/fs_scanner.rs
+| 2026 W16 Tue 20:46:02.228 | [    1.51 kB ] │  │     ├──• 📝 44. ./src/lib/logic/mapper_lang_type.rs
+| 2026 W16 Mon 16:22:45.374 | [    1.45 kB ] │  │     ├──• 📝 45. ./src/lib/logic/path_context.rs
+| 2026 W16 Fri 09:18:42.390 | [    8.92 kB ] │  │     ├──• 📝 46. ./src/lib/logic/path_patterns.rs
+| 2026 W16 Fri 08:50:13.764 | [    2.84 kB ] │  │     ├──• 📝 47. ./src/lib/logic/path_sort.rs
+| 2026 W16 Thu 10:32:02.922 | [    7.49 kB ] │  │     ├──• 📝 48. ./src/lib/logic/paths_result.rs
+| 2026 W16 Thu 16:59:52.684 | [    6.00 kB ] │  │     ├──• 📝 49. ./src/lib/logic/paths_table.rs
+| 2026 W16 Fri 09:17:56.268 | [   10.16 kB ] │  │     ├──• 📝 50. ./src/lib/logic/specification.rs
+| 2026 W16 Thu 16:59:53.377 | [    1.27 kB ] │  │     └──• 📝 51. ./src/lib/logic/tag_time.rs
+| 2026 W16 Fri 08:50:13.741 | [    5.97 kB ] │  ├──• 📝 52. ./src/api.rs
+| 2026 W15 Sun 12:23:34.582 | [       42 B ] │  └──• 📝 53. ./src/main.rs
+| 2026 W16 Tue 23:07:10.678 | [ 1038.43 MB ] ├─── 📂 54. ./target/
+| 2026 W16 Thu 20:03:49.503 | [    4.28 MB ] ├─── 📂 55. ./temp/
+| 2026 W14 Wed 06:23:24.897 | [       20 B ] ├──• 📝 56. ./.gitattributes
+| 2026 W16 Wed 11:11:00.277 | [       46 B ] ├──• 📝 57. ./.gitignore
+| 2026 W16 Tue 22:59:05.745 | [    3.55 kB ] ├──• 📝 58. ./.rustfmt.toml
+| 2026 W12 Sat 04:03:40.035 | [    9.49 kB ] ├──• 📝 59. ./CHANGELOG.md
+| 2026 W16 Fri 11:57:45.031 | [    1.82 kB ] ├──• 📝 60. ./Cargo.toml
+| 2026 W12 Sat 04:03:40.042 | [    8.37 kB ] └──• 📝 61. ./README.md
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 📚 | [Crates.io](https://crates.io/crates/cargo-plot) |
 📚 | [GitHub](https://github.com/j-Cis/cargo-plot/releases) |
@@ -74,7 +76,9 @@
 
 ```
 
-## 003: `./.github/workflows/release.yml`
+## FILES [COTS - Content of the structure] (v.R2026W16D5H11M58S05T09Q4)
+
+### 003: `./.github/workflows/release.yml`
 
 ```yaml
 # Plik konfiguracyjny CD (Continuous Deployment) dla narzędzia cargo-plot.
@@ -226,7 +230,7 @@ jobs:
 
 ```
 
-## 004: `./.github/workflows/rust.yml`
+### 004: `./.github/workflows/rust.yml`
 
 ```yaml
 # Plik konfiguracyjny CI (Continuous Integration) dla narzędzia cargo-plot.
@@ -314,7 +318,7 @@ jobs:
 
 ```
 
-## 006: `./.vscode/settings.json`
+### 006: `./.vscode/settings.json`
 
 ```json
 {
@@ -485,45 +489,27 @@ jobs:
 }
 ```
 
-## 009: `./dist/release/examples/demo.d`
+### 011: `./dist/release/examples/v0.3.0-beta.1/demo.exe`
+
+> *(Plik binarny/graficzny - pominięto zawartość)*
+
+### 012: `./dist/release/examples/v0.3.0-beta.1/fmt.exe`
+
+> *(Plik binarny/graficzny - pominięto zawartość)*
+
+### 013: `./dist/run_doc.bat`
 
 ```text
-A:\A-JAN\git-rust\j-Cis\libs-util\cargo-plot\target\release\examples\demo.d: examples\demo.rs
-
-A:\A-JAN\git-rust\j-Cis\libs-util\cargo-plot\target\release\examples\demo.exe: examples\demo.rs
-
-examples\demo.rs:
-
+dist\release\examples\v0.3.0-beta.1\demo.exe
 ```
 
-## 010: `./dist/release/examples/fmt.d`
+### 014: `./dist/run_fmt.bat`
 
 ```text
-A:\A-JAN\git-rust\j-Cis\libs-util\cargo-plot\target\release\examples\fmt.d: examples\fmt.rs
-
-A:\A-JAN\git-rust\j-Cis\libs-util\cargo-plot\target\release\examples\fmt.exe: examples\fmt.rs
-
-examples\fmt.rs:
-
+dist\release\examples\v0.3.0-beta.1\fmt.exe
 ```
 
-## 011: `./dist/release/examples/demo.exe`
-
-> *(Plik binarny/graficzny - pominięto zawartość)*
-
-## 012: `./dist/release/examples/demo.pdb`
-
-> *(Plik binarny/graficzny - pominięto zawartość)*
-
-## 013: `./dist/release/examples/fmt.exe`
-
-> *(Plik binarny/graficzny - pominięto zawartość)*
-
-## 014: `./dist/release/examples/fmt.pdb`
-
-> *(Plik binarny/graficzny - pominięto zawartość)*
-
-## 016: `./examples/demo.rs`
+### 016: `./examples/demo.rs`
 
 ```rust
 // ./examples/demo.rs
@@ -586,7 +572,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ```
 
-## 017: `./examples/fmt.rs`
+### 017: `./examples/fmt.rs`
 
 ```rust
 // examples/whitespace-cleaner.rs
@@ -680,7 +666,7 @@ impl WhitespaceCleaner {
 
 ```
 
-## 018: `./examples/try-step2.rs`
+### 018: `./examples/try-step2.rs`
 
 ```rust
 use plot::lib::job;
@@ -692,17 +678,17 @@ fn main() {
     // STEP 0: Inicjalizacja
     // =========================================================================
 
-    let ws_cfg = job::ValidWorkspace::parse_vec_as_config(["."]);
-    let pt_cfg = job::ValidPattern::parse_vec_as_config(Vec::<&str>::new(), None);
-    // let pt_cfg = job::ValidPattern::parse_vec_as_config::<[&str; 0]>([], None);
+    let ws_cfg = job::ValidWorkspaceParse::parse_vec_as_config(["."]);
+    let pt_cfg = job::ValidPatternParse::parse_vec_as_config(Vec::<&str>::new(), None);
+    // let pt_cfg = job::ValidPatternParse::parse_vec_as_config::<[&str; 0]>([], None);
 
     // =========================================================================
     // STEP 1: Skanowanie i pobranie metadanych z dysku
     // =========================================================================
-    let part_cfg = job::ValidTablePart::parse_vec_as_config(["md", "mf"]);
+    let part_cfg = job::ValidTablePartParse::parse_vec_as_config(["md", "mf"]);
     let raw_rows = job::engine_step1_scanner(part_cfg, &ws_cfg, &pt_cfg);
 
-    println!("Skanowanie zakończone. Zabrano wierszy (RawRow): {}\n", raw_rows.rows.len());
+    println!("Skanowanie zakończone. Zabrano wierszy (ValidResultMainRow): {}\n", raw_rows.rows.len());
 
     // =========================================================================
     // STEP 2: Formatowanie komórek
@@ -710,13 +696,13 @@ fn main() {
 
     // Ustawiamy dość bogatą konfigurację, żeby przetestować wszystkie mechanizmy
     let item_cfg =
-        job::ValidColumnItem::parse_vec_as_config(["list-tree", "name-show", "ws-show", "icons-lite"]).unwrap();
+        job::ValidColumnItemParse::parse_vec_as_config(["list-tree", "name-show", "ws-show", "icons-lite"]).unwrap();
 
-    let cols_cfg = job::ValidTableColumns::parse_vec_as_config(["date", "time", "size", "item", "path"]);
+    let cols_cfg = job::ValidTableColumnsParse::parse_vec_as_config(["date", "time", "size", "item", "path"]);
 
-    let date_cfg = job::ValidColumnDate::parse_vec_as_config(["default"]);
-    let time_cfg = job::ValidColumnTime::parse_vec_as_config(["default"]);
-    let size_cfg = job::ValidColumnSize::parse_vec_as_config(["dec"]);
+    let date_cfg = job::ValidColumnDateParse::parse_vec_as_config(["default"]);
+    let time_cfg = job::ValidColumnTimeParse::parse_vec_as_config(["default"]);
+    let size_cfg = job::ValidColumnSizeParse::parse_vec_as_config(["dec"]);
 
     let formatted_rows =
         job::engine_step2_data_formater((&item_cfg, &cols_cfg), (&date_cfg, &time_cfg, &size_cfg), &raw_rows);
@@ -740,16 +726,18 @@ fn mock_render(rows: &[job::FormattedRow], cols_cfg: &job::ValidTableColumnsConf
         for (col_idx, cell) in row.cells.iter().enumerate() {
             line.push_str(cell);
 
-            // Jeśli to nie jest ostatnia kolumna, dodajemy separator
+            // Jeśli to nie jest ostatnia komórka, dodajemy separator
             if col_idx < row.cells.len() - 1 {
-                let current_col = &cols_cfg.columns[col_idx];
-                let next_col = &cols_cfg.columns[col_idx + 1];
+                // Używamy bezpiecznego .get(), bo kolumny debug nie mają swojej definicji w configu
+                let current_col = cols_cfg.columns.get(col_idx);
+                let next_col = cols_cfg.columns.get(col_idx + 1);
 
-                // ⚡ Magia: Jeśli obok siebie stoją Data i Czas (w dowolnej kolejności),
-                // rezygnujemy z pionowej kreski na rzecz zwykłej spacji.
-                let is_date_time_pair = (current_col == &job::ValidTableColumns::Date
-                    && next_col == &job::ValidTableColumns::Time)
-                    || (current_col == &job::ValidTableColumns::Time && next_col == &job::ValidTableColumns::Date);
+                // ⚡ Magia: Jeśli obok siebie stoją Data i Czas (w dowolnej kolejności)
+                let is_date_time_pair = match (current_col, next_col) {
+                    (Some(job::ValidTableColumnsParse::Date), Some(job::ValidTableColumnsParse::Time)) => true,
+                    (Some(job::ValidTableColumnsParse::Time), Some(job::ValidTableColumnsParse::Date)) => true,
+                    _ => false,
+                };
 
                 if is_date_time_pair {
                     line.push_str(" "); // Sklejenie Daty i Czasu
@@ -764,7 +752,7 @@ fn mock_render(rows: &[job::FormattedRow], cols_cfg: &job::ValidTableColumnsConf
 
 ```
 
-## 022: `./src/lib/display/anchored_paths_datum.rs`
+### 022: `./src/lib/display/anchored_paths_datum.rs`
 
 ```rust
 use super::DrawTree;
@@ -802,7 +790,7 @@ impl std::fmt::Display for AnchoredPathsDatum {
 
 ```
 
-## 023: `./src/lib/display/config.rs`
+### 023: `./src/lib/display/config.rs`
 
 ```rust
 use super::{Color, Icon};
@@ -840,7 +828,7 @@ impl std::fmt::Display for ConfigManifest {
 
 ```
 
-## 024: `./src/lib/display/fs_scanner.rs`
+### 024: `./src/lib/display/fs_scanner.rs`
 
 ```rust
 // use super::Icon;
@@ -871,7 +859,7 @@ impl std::fmt::Display for ConfigManifest {
 
 ```
 
-## 025: `./src/lib/display/job_spec.rs`
+### 025: `./src/lib/display/job_spec.rs`
 
 ```rust
 use super::Color;
@@ -965,7 +953,7 @@ impl std::fmt::Display for JobSpec {
 
 ```
 
-## 026: `./src/lib/display/paths_patterns.rs`
+### 026: `./src/lib/display/paths_patterns.rs`
 
 ```rust
 use super::{BoolExt, DrawTree, Icon};
@@ -1021,7 +1009,7 @@ impl std::fmt::Display for PatternsQueries {
 
 ```
 
-## 027: `./src/lib/display/paths_result.rs`
+### 027: `./src/lib/display/paths_result.rs`
 
 ```rust
 // use super::{DrawTree, Icon};
@@ -1048,7 +1036,7 @@ impl std::fmt::Display for PatternsQueries {
 
 ```
 
-## 028: `./src/lib/display/table_data.rs`
+### 028: `./src/lib/display/table_data.rs`
 
 ```rust
 // use colored::Colorize;
@@ -1305,21 +1293,21 @@ impl std::fmt::Display for PatternsQueries {
 
 ```
 
-## 031: `./src/lib/job/gens/item_icon.rs`
+### 031: `./src/lib/job/gens/item_icon.rs`
 
 ```rust
-use crate::lib::{job::ValidModeItemIcons, logic::NodeIs};
+use crate::lib::{job::ModeIconsForValidColumnItem, logic::NodeIs};
 
-pub fn draw_icon(mode: &ValidModeItemIcons, node_type: &NodeIs, name: &str) -> &'static str {
+pub fn draw_icon(mode: &ModeIconsForValidColumnItem, node_type: &NodeIs, name: &str) -> &'static str {
     match mode {
-        ValidModeItemIcons::Lite => {
+        ModeIconsForValidColumnItem::Lite => {
             if *node_type == NodeIs::Dir {
                 "📂"
             } else {
                 "📝"
             }
         }
-        ValidModeItemIcons::More => {
+        ModeIconsForValidColumnItem::More => {
             if *node_type == NodeIs::Dir {
                 "📁"
             } else if name.ends_with(".rs") {
@@ -1332,28 +1320,28 @@ pub fn draw_icon(mode: &ValidModeItemIcons, node_type: &NodeIs, name: &str) -> &
                 "📄"
             }
         }
-        ValidModeItemIcons::None => unreachable!("None jest obsługiwane lokalnie przed wywołaniem"),
+        ModeIconsForValidColumnItem::None => unreachable!("None jest obsługiwane lokalnie przed wywołaniem"),
     }
 }
 
 ```
 
-## 032: `./src/lib/job/gens/item_list.rs`
+### 032: `./src/lib/job/gens/item_list.rs`
 
 ```rust
-use crate::lib::job::ValidModeItemList;
-// pub fn draw_list(mode: &ValidModeItemList, node: &ScannedNode) -> String {
+use crate::lib::job::ModeListForValidColumnItem;
+// pub fn draw_list(mode: &ModeListForValidColumnItem, node: &ScannedNode) -> String {
 //     match mode {
-//         ValidModeItemList::Flat => "•".to_string(),
-//         ValidModeItemList::Tree => {
+//         ModeListForValidColumnItem::Flat => "•".to_string(),
+//         ModeListForValidColumnItem::Tree => {
 //             // Tier 1 (root) nie ma wcięcia, Tier 2 ma jedno, itd.
 //             let indent = "│  ".repeat(node.tier.saturating_sub(1));
 //             format!("{}├──", indent)
 //         }
-//         ValidModeItemList::None => unreachable!("None jest obsługiwane lokalnie przed wywołaniem"),
+//         ModeListForValidColumnItem::None => unreachable!("None jest obsługiwane lokalnie przed wywołaniem"),
 //     }
 // }
-use crate::lib::{job::RawRow, logic::NodeIs};
+use crate::lib::{job::ValidResultMainRow, logic::NodeIs};
 
 pub struct TreeLast;
 impl TreeLast {
@@ -1361,6 +1349,9 @@ impl TreeLast {
     pub const DIR_WITH_CHILDREN: &'static str = "└──┬";
     pub const FILE: &'static str = "└──•";
     pub const INDENT: &'static str = "   ";
+    pub const BRIDGE_START: &'static str = "└──•";
+    pub const BRIDGE_NEXT: &'static str = "──•";
+    pub const BRIDGE_LAST: &'static str = "───";
 }
 
 pub struct TreeMid;
@@ -1369,6 +1360,9 @@ impl TreeMid {
     pub const DIR_WITH_CHILDREN: &'static str = "├──┬";
     pub const FILE: &'static str = "├──•";
     pub const INDENT: &'static str = "│  ";
+    pub const BRIDGE_START: &'static str = "├──•";
+    pub const BRIDGE_NEXT: &'static str = "──•";
+    pub const BRIDGE_LAST: &'static str = "───";
 }
 
 pub struct DrawTree;
@@ -1391,15 +1385,19 @@ impl DrawTree {
     }
 }
 
-pub fn draw_list(mode: &ValidModeItemList, index: usize, tab: &[RawRow], _tier_max: usize) -> String {
+pub fn draw_list(
+    mode: &ModeListForValidColumnItem,
+    index: usize,
+    tab: &[ValidResultMainRow],
+    _tier_max: usize,
+) -> String {
     match mode {
-        ValidModeItemList::Flat => DrawTree::list(index, tab.len()).to_string(),
-        ValidModeItemList::Tree => {
+        ModeListForValidColumnItem::Flat => DrawTree::list(index, tab.len()).to_string(),
+        ModeListForValidColumnItem::Tree => {
             let node = &tab[index].node;
             let t = node.tier;
 
-            // 1. Sprawdzamy czy ma wyrenderowane dzieci (Lookahead O(1))
-            // Jeśli następny element ma większy tier, to znaczy, że wpadł "do środka" tego folderu.
+            // 1. Logika Lookahead O(1) - dzieci w tabeli
             let is_dir = node.node == NodeIs::Dir;
             let has_children = if is_dir {
                 if index + 1 < tab.len() { tab[index + 1].node.tier > t } else { false }
@@ -1407,7 +1405,7 @@ pub fn draw_list(mode: &ValidModeItemList, index: usize, tab: &[RawRow], _tier_m
                 false
             };
 
-            // 2. Lookahead O(n): obliczamy `is_last` dla węzła i wszystkich jego przodków
+            // 2. Logika Lookahead O(n) - obliczanie is_last
             let mut is_last = vec![true; t + 1];
             let mut active_levels = t;
 
@@ -1422,17 +1420,38 @@ pub fn draw_list(mode: &ValidModeItemList, index: usize, tab: &[RawRow], _tier_m
                 }
             }
 
-            // 3. Generujemy wcięcia (indents) dla przodków (od poziomu 1 do T-1)
-            let mut result = String::new();
-            for l in 1..t {
-                if is_last[l] {
-                    result.push_str(TreeLast::INDENT);
-                } else {
-                    result.push_str(TreeMid::INDENT);
+            // --- DETEKCJA NAJBLIŻSZEGO WIDOCZNEGO RODZICA (Dla mostka) ---
+            let mut vis_parent_tier = 0;
+            for i_prev in (0..index).rev() {
+                if node.path.str.starts_with(&tab[i_prev].node.path.str) && tab[i_prev].node.node == NodeIs::Dir {
+                    vis_parent_tier = tab[i_prev].node.tier;
+                    break;
                 }
             }
 
-            // 4. Dobieramy odpowiedni symbol gałęzi końcowej
+            let mut result = String::new();
+            let has_bridge = t > vis_parent_tier + 1;
+
+            // 3. Generujemy wcięcia LUB segmenty mostka (poziomy 1 do T-1)
+            for l in 1..t {
+                if has_bridge && l > vis_parent_tier {
+                    // Rysujemy segmenty mostka (Jumping Bridge)
+                    if l == vis_parent_tier + 1 {
+                        result.push_str(if is_last[l] { TreeLast::BRIDGE_START } else { TreeMid::BRIDGE_START });
+                    } else {
+                        result.push_str(TreeMid::BRIDGE_NEXT);
+                    }
+                } else {
+                    // Twoja ORYGINALNA logika wcięć (Indents)
+                    if is_last[l] {
+                        result.push_str(TreeLast::INDENT);
+                    } else {
+                        result.push_str(TreeMid::INDENT);
+                    }
+                }
+            }
+
+            // 4. Dobieramy odpowiedni symbol gałęzi końcowej (Twoja ORYGINALNA logika)
             let am_i_last = is_last[t];
             let branch = if is_dir {
                 match (am_i_last, has_children) {
@@ -1447,16 +1466,24 @@ pub fn draw_list(mode: &ValidModeItemList, index: usize, tab: &[RawRow], _tier_m
                 TreeMid::FILE
             };
 
-            result.push_str(branch);
+            // 5. Łączymy gałąź z ewentualnym mostkiem
+            if has_bridge {
+                let tail: String = branch.chars().skip(1).collect();
+                result.push_str(""); // błąd "─") // Łącznik łączący kropkę mostka z gałęzią
+                result.push_str(&tail);
+            } else {
+                result.push_str(branch);
+            }
+
             result
         }
-        ValidModeItemList::None => unreachable!("None jest obsługiwane lokalnie przed wywołaniem"),
+        ModeListForValidColumnItem::None => unreachable!("None jest obsługiwane lokalnie przed wywołaniem"),
     }
 }
 
 ```
 
-## 033: `./src/lib/job/config.rs`
+### 033: `./src/lib/job/config.rs`
 
 ```rust
 use std::{path::PathBuf, process};
@@ -1467,11 +1494,49 @@ use crate::lib::{
     job::{self},
     logic::{self},
 };
-// ===================================================================
-// CONFIG VALID: TABLE-PART
-// ===================================================================
 
-pub enum ValidTablePart {
+pub const IS_DEBUG: bool = true; // ⚡ GLOBALNA FLAGA DEBUGOWANIA
+// ============================================================================
+// OSTATECZNY WIERSZ DANYCH (Zhydratowany)
+// ============================================================================
+
+/// Reprezentuje finalny wiersz gotowy do tabeli, zawierający wszystkie
+/// zgromadzone metadane z dysku i z etapu skanowania.
+#[derive(Debug, Clone)]
+pub struct ValidResultMainRow {
+    pub dt_modified: chrono::DateTime<chrono::Local>,
+    pub name_with_ext: String,
+    pub size_real: u64,
+    pub node: logic::ScannedNode,
+}
+
+#[derive(Debug, Clone)]
+pub struct ValidResultMainTab {
+    pub rows: Vec<ValidResultMainRow>,
+    pub tier_max: usize,
+    pub name_len_max: usize,
+    pub path_len_max: usize,
+}
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+/*
+ * 🧠 KAŻDY `Valid<NAZWA>Parse` posiada parę `Valid<NAZWA>Config` i odwrotnie.
+ *
+ * 🧠 KAŻDY `Valid<NAZWA>Parse` ma metodę `parse_vec_as_config` - automatyczne wywołanie bliźniaka
+ *
+ * 🧠 KAŻDY `Valid<NAZWA>Config` ma metodę `get` - pobiera znormalizowaną konfiguracje
+ *
+ * 🧠 DODATKI DLA `Valid<NAZWA><Config|Parse>` mają nazwę `<ZASTOSOWANIE>ForValid<NAZWA>`
+ *
+ * 🧠 CELEM NINIESZJEGO PLIKU JEST ZAPEWNIANIE PRAWIDŁOWEJ KONFIGURACJI,
+ *          CIĘŻKA LOGIKA POWINNA BYĆ W `Crate::lib::logic::*`;
+ *             W ETAPACH KOLEJNYCH W `Crate::lib::job::engine_step*` W GŁÓWNEJ FUNKCJI - ARGUMENTY SĄ
+ *          ZAWSZE TYPU `&job::Valid<NAZWA>Config`
+ *  */
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+// CONFIG VALID: TABLE-PART
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+pub enum ValidTablePartParse {
     MD,
     MF,
     XD,
@@ -1486,13 +1551,13 @@ pub struct ValidTablePartConfig {
     pub xf: bool,
 }
 
-impl ValidTablePart {
+impl ValidTablePartParse {
     pub fn parse(s: &str) -> Result<Self, String> {
         match s.trim().to_lowercase().as_str() {
-            "MD" | "md" | "match-dirs" => Ok(ValidTablePart::MD),
-            "MF" | "mf" | "match-files" => Ok(ValidTablePart::MF),
-            "XD" | "xd" | "mismatch-dirs" => Ok(ValidTablePart::XD),
-            "XF" | "xf" | "mismatch-files" => Ok(ValidTablePart::XF),
+            "MD" | "md" | "match-dirs" => Ok(ValidTablePartParse::MD),
+            "MF" | "mf" | "match-files" => Ok(ValidTablePartParse::MF),
+            "XD" | "xd" | "mismatch-dirs" => Ok(ValidTablePartParse::XD),
+            "XF" | "xf" | "mismatch-files" => Ok(ValidTablePartParse::XF),
             _ => Err(format!("Nieprawidłowa nazwa: '{}'. Dostępne: md, mf, xd, xf", s.trim())),
         }
     }
@@ -1506,7 +1571,7 @@ impl ValidTablePart {
     where
         I: IntoIterator,
         I::Item: AsRef<str>, {
-        inputs.into_iter().map(|s| Self::parse(s.as_ref()).expect("invalid ValidTablePart input")).collect()
+        inputs.into_iter().map(|s| Self::parse(s.as_ref()).expect("invalid ValidTablePartParse input")).collect()
     }
     pub fn parse_vec_as_config<I>(inputs: I) -> ValidTablePartConfig
     where
@@ -1524,10 +1589,10 @@ impl ValidTablePart {
             if let Ok(parsed) = Self::parse(item.as_ref()) {
                 has_any_valid = true;
                 match parsed {
-                    ValidTablePart::MD => md = true,
-                    ValidTablePart::MF => mf = true,
-                    ValidTablePart::XD => xd = true,
-                    ValidTablePart::XF => xf = true,
+                    ValidTablePartParse::MD => md = true,
+                    ValidTablePartParse::MF => mf = true,
+                    ValidTablePartParse::XD => xd = true,
+                    ValidTablePartParse::XF => xf = true,
                 }
             }
         }
@@ -1542,11 +1607,11 @@ impl ValidTablePart {
     }
 }
 
-// ===================================================================
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 // CONFIG VALID: COLUMN-ITEM
-// ===================================================================
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-pub enum ValidColumnItem {
+pub enum ValidColumnItemParse {
     ListNone,
     ListTree,
     ListFlat,
@@ -1564,48 +1629,48 @@ pub enum ValidColumnItem {
 
 #[derive(Debug)]
 pub struct ValidColumnItemConfig {
-    pub list: ValidModeItemList,
-    pub icons: ValidModeItemIcons,
+    pub list: ModeListForValidColumnItem,
+    pub icons: ModeIconsForValidColumnItem,
     pub name: bool,
     pub align_end: bool,
     pub num_is_first: bool,
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub enum ValidModeItemList {
+pub enum ModeListForValidColumnItem {
     None,
     Flat,
     Tree,
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub enum ValidModeItemIcons {
+pub enum ModeIconsForValidColumnItem {
     Lite,
     More,
     None,
 }
 
-impl ValidColumnItem {
+impl ValidColumnItemParse {
     pub fn parse(s: &str) -> Result<Self, String> {
         match s.trim().to_lowercase().as_str() {
-            "list-none" => Ok(ValidColumnItem::ListNone),
-            "list-flat" => Ok(ValidColumnItem::ListFlat),
-            "list-tree" => Ok(ValidColumnItem::ListTree),
+            "list-none" => Ok(ValidColumnItemParse::ListNone),
+            "list-flat" => Ok(ValidColumnItemParse::ListFlat),
+            "list-tree" => Ok(ValidColumnItemParse::ListTree),
 
-            "icons-lite" => Ok(ValidColumnItem::IconsLite),
-            "icons-more" => Ok(ValidColumnItem::IconsMore),
-            "icons-none" => Ok(ValidColumnItem::IconsNone),
+            "icons-lite" => Ok(ValidColumnItemParse::IconsLite),
+            "icons-more" => Ok(ValidColumnItemParse::IconsMore),
+            "icons-none" => Ok(ValidColumnItemParse::IconsNone),
 
-            "num-prefix" => Ok(ValidColumnItem::NumPrefix),
-            "num-suffix" => Ok(ValidColumnItem::NumSuffix),
+            "num-prefix" => Ok(ValidColumnItemParse::NumPrefix),
+            "num-suffix" => Ok(ValidColumnItemParse::NumSuffix),
 
-            "name-none" => Ok(ValidColumnItem::NameNone),
-            "name-show" => Ok(ValidColumnItem::NameShow),
+            "name-none" => Ok(ValidColumnItemParse::NameNone),
+            "name-show" => Ok(ValidColumnItemParse::NameShow),
 
-            "ws-none" | "whitespace-none" => Ok(ValidColumnItem::WhitespaceTrailNone),
-            "ws-show" | "whitespace-show" => Ok(ValidColumnItem::WhitespaceTrailShow),
+            "ws-none" | "whitespace-none" => Ok(ValidColumnItemParse::WhitespaceTrailNone),
+            "ws-show" | "whitespace-show" => Ok(ValidColumnItemParse::WhitespaceTrailShow),
 
-            _ => Err(format!("Nieznany ValidColumnItem: '{}'", s.trim())),
+            _ => Err(format!("Nieznany ValidColumnItemParse: '{}'", s.trim())),
         }
     }
 
@@ -1626,9 +1691,9 @@ impl ValidColumnItem {
 }
 
 impl ValidColumnItemConfig {
-    pub fn get(items: Vec<ValidColumnItem>) -> Self {
-        let mut list: Option<ValidModeItemList> = None;
-        let mut icons: Option<ValidModeItemIcons> = None;
+    pub fn get(items: Vec<ValidColumnItemParse>) -> Self {
+        let mut list: Option<ModeListForValidColumnItem> = None;
+        let mut icons: Option<ModeIconsForValidColumnItem> = None;
         let mut num_is_first: Option<bool> = None;
         let mut name: Option<bool> = None;
         let mut align_end: Option<bool> = None;
@@ -1642,59 +1707,59 @@ impl ValidColumnItemConfig {
         for item in items {
             match item {
                 // LIST
-                ValidColumnItem::ListNone => {
-                    list = Some(ValidModeItemList::None);
+                ValidColumnItemParse::ListNone => {
+                    list = Some(ModeListForValidColumnItem::None);
                     list_count += 1;
                 }
-                ValidColumnItem::ListFlat => {
-                    list = Some(ValidModeItemList::Flat);
+                ValidColumnItemParse::ListFlat => {
+                    list = Some(ModeListForValidColumnItem::Flat);
                     list_count += 1;
                 }
-                ValidColumnItem::ListTree => {
-                    list = Some(ValidModeItemList::Tree);
+                ValidColumnItemParse::ListTree => {
+                    list = Some(ModeListForValidColumnItem::Tree);
                     list_count += 1;
                 }
 
                 // NUM
-                ValidColumnItem::NumPrefix => {
+                ValidColumnItemParse::NumPrefix => {
                     num_is_first = Some(true);
                     num_count += 1;
                 }
-                ValidColumnItem::NumSuffix => {
+                ValidColumnItemParse::NumSuffix => {
                     num_is_first = Some(false);
                     num_count += 1;
                 }
 
                 // ICONS
-                ValidColumnItem::IconsLite => {
-                    icons = Some(ValidModeItemIcons::Lite);
+                ValidColumnItemParse::IconsLite => {
+                    icons = Some(ModeIconsForValidColumnItem::Lite);
                     icons_count += 1;
                 }
-                ValidColumnItem::IconsMore => {
-                    icons = Some(ValidModeItemIcons::More);
+                ValidColumnItemParse::IconsMore => {
+                    icons = Some(ModeIconsForValidColumnItem::More);
                     icons_count += 1;
                 }
-                ValidColumnItem::IconsNone => {
-                    icons = Some(ValidModeItemIcons::None);
+                ValidColumnItemParse::IconsNone => {
+                    icons = Some(ModeIconsForValidColumnItem::None);
                     icons_count += 1;
                 }
 
                 // NAME
-                ValidColumnItem::NameNone => {
+                ValidColumnItemParse::NameNone => {
                     name = Some(false);
                     name_count += 1;
                 }
-                ValidColumnItem::NameShow => {
+                ValidColumnItemParse::NameShow => {
                     name = Some(true);
                     name_count += 1;
                 }
 
                 // WHITESPACE (ALIGN_END)
-                ValidColumnItem::WhitespaceTrailNone => {
+                ValidColumnItemParse::WhitespaceTrailNone => {
                     align_end = Some(false);
                     ws_count += 1;
                 }
-                ValidColumnItem::WhitespaceTrailShow => {
+                ValidColumnItemParse::WhitespaceTrailShow => {
                     align_end = Some(true);
                     ws_count += 1;
                 }
@@ -1702,9 +1767,9 @@ impl ValidColumnItemConfig {
         }
 
         Self {
-            list: if list_count == 1 { list.unwrap() } else { ValidModeItemList::Tree },
+            list: if list_count == 1 { list.unwrap() } else { ModeListForValidColumnItem::Tree },
 
-            icons: if icons_count == 1 { icons.unwrap() } else { ValidModeItemIcons::Lite },
+            icons: if icons_count == 1 { icons.unwrap() } else { ModeIconsForValidColumnItem::Lite },
 
             num_is_first: if num_count == 1 { num_is_first.unwrap() } else { false },
 
@@ -1720,14 +1785,19 @@ impl ValidColumnItemConfig {
     where
         I: IntoIterator,
         I::Item: AsRef<str>, {
-        // 1. Parsujemy stringi na wektor enumów ValidColumnItem
-        let parsed_items = ValidColumnItem::parse_vec(inputs)?;
+        // 1. Parsujemy stringi na wektor enumów ValidColumnItemParse
+        let parsed_items = ValidColumnItemParse::parse_vec(inputs)?;
 
         // 2. Budujemy i zwracamy ostateczny config
         Ok(Self::get(parsed_items))
     }
 
-    pub fn format_item(&self, u: (usize, usize, usize, usize), row: &job::RawRow, tab: &[job::RawRow]) -> String {
+    pub fn format_item(
+        &self,
+        u: (usize, usize, usize, usize),
+        row: &job::ValidResultMainRow,
+        tab: &[job::ValidResultMainRow],
+    ) -> String {
         let (index, num_width, tier_max, name_len_max) = u;
         let mut parts = Vec::new();
         let num_str = format!("{:>width$}.", index + 1, width = num_width);
@@ -1738,13 +1808,13 @@ impl ValidColumnItemConfig {
         }
 
         // 2. Struktura Listy
-        if self.list != ValidModeItemList::None {
+        if self.list != ModeListForValidColumnItem::None {
             let l = job::gens::item_list::draw_list(&self.list, index, tab, tier_max);
             parts.push(l);
         }
 
         // 3. Ikony
-        if self.icons != ValidModeItemIcons::None {
+        if self.icons != ModeIconsForValidColumnItem::None {
             let ic = job::gens::draw_icon(&self.icons, &row.node.node, &row.name_with_ext);
             parts.push(ic.to_string());
         }
@@ -1772,12 +1842,12 @@ impl ValidColumnItemConfig {
     }
 }
 
-// ===================================================================
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 // CONFIG VALID: TABLE-COLUMNS
-// ===================================================================
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum ValidTableColumns {
+pub enum ValidTableColumnsParse {
     Date,
     Time,
     Size,
@@ -1787,17 +1857,17 @@ pub enum ValidTableColumns {
 
 #[derive(Debug, Clone)]
 pub struct ValidTableColumnsConfig {
-    pub columns: Vec<ValidTableColumns>,
+    pub columns: Vec<ValidTableColumnsParse>,
 }
 
-impl ValidTableColumns {
+impl ValidTableColumnsParse {
     pub fn parse(s: &str) -> Result<Self, String> {
         match s.trim().to_lowercase().as_str() {
-            "date" => Ok(ValidTableColumns::Date),
-            "time" => Ok(ValidTableColumns::Time),
-            "size" => Ok(ValidTableColumns::Size),
-            "item" => Ok(ValidTableColumns::Item),
-            "path" => Ok(ValidTableColumns::Path),
+            "date" => Ok(ValidTableColumnsParse::Date),
+            "time" => Ok(ValidTableColumnsParse::Time),
+            "size" => Ok(ValidTableColumnsParse::Size),
+            "item" => Ok(ValidTableColumnsParse::Item),
+            "path" => Ok(ValidTableColumnsParse::Path),
             _ => Err(format!("Nieprawidłowa nazwa kolumny: '{}'. Dostępne: date, time, size, item, path", s.trim())),
         }
     }
@@ -1827,33 +1897,33 @@ impl ValidTableColumns {
             if let Ok(parsed) = Self::parse(item.as_ref()) {
                 has_any_valid = true;
                 match parsed {
-                    ValidTableColumns::Date => {
+                    ValidTableColumnsParse::Date => {
                         if !has_date {
-                            columns.push(ValidTableColumns::Date);
+                            columns.push(ValidTableColumnsParse::Date);
                             has_date = true;
                         }
                     }
-                    ValidTableColumns::Time => {
+                    ValidTableColumnsParse::Time => {
                         if !has_time {
-                            columns.push(ValidTableColumns::Time);
+                            columns.push(ValidTableColumnsParse::Time);
                             has_time = true;
                         }
                     }
-                    ValidTableColumns::Size => {
+                    ValidTableColumnsParse::Size => {
                         if !has_size {
-                            columns.push(ValidTableColumns::Size);
+                            columns.push(ValidTableColumnsParse::Size);
                             has_size = true;
                         }
                     }
-                    ValidTableColumns::Item => {
+                    ValidTableColumnsParse::Item => {
                         if !has_item {
-                            columns.push(ValidTableColumns::Item);
+                            columns.push(ValidTableColumnsParse::Item);
                             has_item = true;
                         }
                     }
-                    ValidTableColumns::Path => {
+                    ValidTableColumnsParse::Path => {
                         if !has_path {
-                            columns.push(ValidTableColumns::Path);
+                            columns.push(ValidTableColumnsParse::Path);
                             has_path = true;
                         }
                     }
@@ -1865,44 +1935,44 @@ impl ValidTableColumns {
         if !has_any_valid {
             return ValidTableColumnsConfig {
                 columns: vec![
-                    ValidTableColumns::Date,
-                    ValidTableColumns::Time,
-                    ValidTableColumns::Size,
-                    ValidTableColumns::Item,
-                    ValidTableColumns::Path,
+                    ValidTableColumnsParse::Date,
+                    ValidTableColumnsParse::Time,
+                    ValidTableColumnsParse::Size,
+                    ValidTableColumnsParse::Item,
+                    ValidTableColumnsParse::Path,
                 ],
             };
         }
 
         // Jeśli podano cokolwiek poprawnego, ale brakuje 'Item', doklejamy na koniec
         if !has_item {
-            columns.push(ValidTableColumns::Item);
+            columns.push(ValidTableColumnsParse::Item);
         }
 
         ValidTableColumnsConfig { columns }
     }
 }
 
-// ===================================================================
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 // CONFIG VALID: COLUMN-SIZE
-// ===================================================================
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ValidColumnSize {
+pub enum ValidColumnSizeParse {
     Decimal, // System SI (podstawa 1000)
     Binary,  // System IEC (podstawa 1024)
 }
 
 #[derive(Debug, Clone)]
 pub struct ValidColumnSizeConfig {
-    pub mode: ValidColumnSize,
+    pub mode: ValidColumnSizeParse,
 }
 
-impl ValidColumnSize {
+impl ValidColumnSizeParse {
     pub fn parse(s: &str) -> Result<Self, String> {
         match s.trim().to_lowercase().as_str() {
-            "dec" | "decimal" => Ok(ValidColumnSize::Decimal),
-            "bin" | "binary" => Ok(ValidColumnSize::Binary),
+            "dec" | "decimal" => Ok(ValidColumnSizeParse::Decimal),
+            "bin" | "binary" => Ok(ValidColumnSizeParse::Binary),
             _ => Err(format!("Nieznany system miar: '{}'. Dostępne: dec, bin", s.trim())),
         }
     }
@@ -1911,7 +1981,7 @@ impl ValidColumnSize {
     where
         I: IntoIterator,
         I::Item: AsRef<str>, {
-        let mut mode = ValidColumnSize::Decimal; // Domyślnie Dec
+        let mut mode = ValidColumnSizeParse::Decimal; // Domyślnie Dec
 
         for item in inputs {
             if let Ok(parsed) = Self::parse(item.as_ref()) {
@@ -1928,13 +1998,13 @@ impl ValidColumnSizeConfig {
     /// Metoda formatująca rozmiar w zależności od wybranego trybu (Dec/Bin)
     pub fn format_size(&self, bytes: u64) -> String {
         let base = match self.mode {
-            ValidColumnSize::Decimal => 1000.0,
-            ValidColumnSize::Binary => 1024.0,
+            ValidColumnSizeParse::Decimal => 1000.0,
+            ValidColumnSizeParse::Binary => 1024.0,
         };
 
         let suffix = match self.mode {
-            ValidColumnSize::Decimal => ["B ", "kB", "MB", "GB"],
-            ValidColumnSize::Binary => ["B ", "KiB", "MiB", "GiB"], // Lub kB/MB/GB wg preferencji
+            ValidColumnSizeParse::Decimal => ["B ", "kB", "MB", "GB"],
+            ValidColumnSizeParse::Binary => ["B ", "KiB", "MiB", "GiB"], // Lub kB/MB/GB wg preferencji
         };
 
         let bytes_f = bytes as f64;
@@ -1950,12 +2020,12 @@ impl ValidColumnSizeConfig {
         }
     }
 }
-// ===================================================================
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 // CONFIG VALID: COLUMN-DATE
-// ===================================================================
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ValidColumnDate {
+pub enum ValidColumnDateParse {
     Default,
 }
 
@@ -1964,10 +2034,10 @@ pub struct ValidColumnDateConfig {
     pub format: String,
 }
 
-impl ValidColumnDate {
+impl ValidColumnDateParse {
     pub fn parse(s: &str) -> Result<Self, String> {
         match s.trim().to_lowercase().as_str() {
-            "date-default" | "default" => Ok(ValidColumnDate::Default),
+            "date-default" | "default" => Ok(ValidColumnDateParse::Default),
             _ => Err(format!("Nieznany format daty: '{}'", s.trim())),
         }
     }
@@ -1993,12 +2063,12 @@ impl ValidColumnDateConfig {
     pub fn format_date(&self, dt: chrono::DateTime<chrono::Local>) -> String { dt.format(&self.format).to_string() }
 }
 
-// ===================================================================
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 // CONFIG VALID: COLUMN-TIME
-// ===================================================================
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ValidColumnTime {
+pub enum ValidColumnTimeParse {
     Default,
 }
 
@@ -2007,10 +2077,10 @@ pub struct ValidColumnTimeConfig {
     pub format: String,
 }
 
-impl ValidColumnTime {
+impl ValidColumnTimeParse {
     pub fn parse(s: &str) -> Result<Self, String> {
         match s.trim().to_lowercase().as_str() {
-            "time-default" | "default" => Ok(ValidColumnTime::Default),
+            "time-default" | "default" => Ok(ValidColumnTimeParse::Default),
             _ => Err(format!("Nieznany format czasu: '{}'", s.trim())),
         }
     }
@@ -2034,9 +2104,9 @@ impl ValidColumnTime {
 impl ValidColumnTimeConfig {
     pub fn format_time(&self, dt: chrono::DateTime<chrono::Local>) -> String { dt.format(&self.format).to_string() }
 }
-// ===================================================================
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 // CONFIG VALID: PATTERN
-// ===================================================================
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 #[derive(Debug, Clone)]
 pub struct ValidPatternConfig {
@@ -2053,9 +2123,9 @@ impl ValidPatternConfig {
     }
 }
 
-pub struct ValidPattern;
+pub struct ValidPatternParse;
 
-impl ValidPattern {
+impl ValidPatternParse {
     pub fn parse_vec_as_config<I>(inputs: I, ignore_case_sensitive: Option<bool>) -> ValidPatternConfig
     where
         I: IntoIterator,
@@ -2074,7 +2144,7 @@ impl ValidPattern {
                     "./.github/workflows/*.yml&/".to_string(),
                     "./.vscode/settings.json&/".to_string(),
                     "./{API,ARCHITECTURE,AUTHORS,CHANGELOG,README,ROADMAP,TODO}.md".to_string(),
-                    "./dist/**".to_string(),
+                    "./dist/{**/*,*}.{bat,exe}&/".to_string(),
                 ],
                 ignore_case: ignore_case_sensitive.unwrap_or(false),
             };
@@ -2084,9 +2154,9 @@ impl ValidPattern {
     }
 }
 
-// ===================================================================
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 // CONFIG VALID: WORKSPACE
-// ===================================================================
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 #[derive(Debug, Clone)]
 pub struct ValidWorkspaceConfig {
@@ -2122,9 +2192,9 @@ impl ValidWorkspaceConfig {
     }
 }
 
-pub struct ValidWorkspace;
+pub struct ValidWorkspaceParse;
 
-impl ValidWorkspace {
+impl ValidWorkspaceParse {
     pub fn parse_vec_as_config<I>(inputs: I) -> ValidWorkspaceConfig
     where
         I: IntoIterator,
@@ -2143,39 +2213,167 @@ impl ValidWorkspace {
         ValidWorkspaceConfig { workspace_dir }
     }
 }
-// ===================================================================
-// ===================================================================
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+// CONFIG VALID: SORT-BY
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+/* ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+ * dodajemy `ValidSortByParse`
+ *
+ * - "Date" -  `(Date:DateTime, Reverse:bool)`
+ * - "Size" -  `(Size:Num, Reverse:bool)`
+ * - "Name" -  `(Name:ModeSortName, Reverse:bool, FileGroup:ModeGroup)`
+ * - "Path" -  `(Name:ModeSortName, Reverse:bool, DirSplit:bool, FileGroup:ModeGroup)`
+ *
+ *
+ * `ModeSortName`
+ * - "[Spec][Num][AZaz]"
+ * - "[Spec][Num][azAZ]"
+ * - "[Spec][Num][aAzZ]"
+ * - "[Spec][Num][AaZz]"
+ * - "[Num][Spec][AZaz]"
+ * - "[Num][Spec][azAZ]"
+ * - "[Num][Spec][aAzZ]"
+ * - "[Num][Spec][AaZz]"
+ * - "[Spec][AZaz][Num]"
+ * - "[Spec][azAZ][Num]"
+ * - "[Spec][aAzZ][Num]"
+ * - "[Spec][AaZz][Num]"
+ * - "[Num][AZaz][Spec]"
+ * - "[Num][azAZ][Spec]"
+ * - "[Num][aAzZ][Spec]"
+ * - "[Num][AaZz][Spec]"
+ * - "[AZaz][Num][Spec]"
+ * - "[azAZ][Num][Spec]"
+ * - "[aAzZ][Num][Spec]"
+ * - "[AaZz][Num][Spec]"
+ * - "[AZaz][Spec][Num]"
+ * - "[azAZ][Spec][Num]"
+ * - "[aAzZ][Spec][Num]"
+ * - "[AaZz][Spec][Num]"
+ *
+ * `ModeGroup`
+ * - "Name"
+ * - "Exte"
+ * - "None"
+ *
+ * `Priority`
+ * - "FirstFile"
+ * - "FirstDir"
+ * - "None"
+ *
+ * ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+ * oraz dodajemy `ValidSortByConfig`
+ *
+ * ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+ * Tu kluczowe na metode sortowania będzie miał wpływ tryb `ValidColumnItemParse`
+ * - ValidColumnItemParse::ListTree
+ * - ValidColumnItemParse::ListFlat = ValidColumnItemParse::ListNone
+ *
+ * ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+ * */
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ModeFileGroupForValidSortBy {
+    Name,
+    Exte,
+    None,
+}
+
+#[derive(Debug, Clone)]
+pub enum StrategyForValidSortBy {
+    Date { reverse: bool },
+    Size { reverse: bool },
+    Name { mode: String, reverse: bool, file_group: ModeFileGroupForValidSortBy },
+    Path { mode: String, reverse: bool, dir_split: bool, file_group: ModeFileGroupForValidSortBy },
+}
+
+#[derive(Debug, Clone)]
+pub struct ValidSortByConfig {
+    pub strategy: StrategyForValidSortBy,
+}
+
+impl ValidSortByConfig {
+    /// Zwraca gotowy obiekt z warstwy logic:: (np. logic::SortQueries),
+    /// gdzie dopiero tam te proste stringi i bool'e zostaną przetworzone
+    /// w potężny algorytm (wspomniane 24 warianty).
+    pub fn get(&self) -> logic::SortQueries { logic::SortQueries::new(self.clone()) }
+}
+
+pub struct ValidSortByParse;
+
+impl ValidSortByParse {
+    pub fn parse_vec_as_config<I>(inputs: I) -> ValidSortByConfig
+    where
+        I: IntoIterator,
+        I::Item: AsRef<str>, {
+        // 1. Ustawienia domyślne
+        let mut strategy_name = "name";
+        let mut reverse = false;
+        let mut dir_split = true;
+        let mut file_group = ModeFileGroupForValidSortBy::None;
+        let mut mode_sort_name = "[Spec][Num][AZaz]".to_string();
+
+        // 2. Płaskie parsowanie CLI/TOML (bez wchodzenia w detale algorytmów)
+        for item in inputs {
+            let s = item.as_ref().trim();
+            let lower = s.to_lowercase();
+
+            match lower.as_str() {
+                "date" => strategy_name = "date",
+                "size" => strategy_name = "size",
+                "name" => strategy_name = "name",
+                "path" => strategy_name = "path",
+
+                "rev" | "reverse" => reverse = true,
+
+                "group-name" => file_group = ModeFileGroupForValidSortBy::Name,
+                "group-exte" => file_group = ModeFileGroupForValidSortBy::Exte,
+                "group-none" => file_group = ModeFileGroupForValidSortBy::None,
+
+                "dir-split-true" => dir_split = true,
+                "dir-split-false" => dir_split = false,
+
+                _ => {
+                    // Czyste przekazanie definicji maski (np. "[Num][Spec][azAZ]") do logiki
+                    if s.starts_with('[') && s.ends_with(']') {
+                        mode_sort_name = s.to_string();
+                    }
+                }
+            }
+        }
+
+        // 3. Budowa wariantu konfiguracji
+        let strategy = match strategy_name {
+            "date" => StrategyForValidSortBy::Date { reverse },
+            "size" => StrategyForValidSortBy::Size { reverse },
+            "path" => StrategyForValidSortBy::Path { mode: mode_sort_name, reverse, dir_split, file_group },
+            _ => StrategyForValidSortBy::Name { mode: mode_sort_name, reverse, file_group },
+        };
+
+        ValidSortByConfig { strategy }
+    }
+}
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+/*
+ * dodać ubsługe wyśfietlania ukrywania pustych folderów
+ * dodać ubsługe wyśfietlania ukrywania pustych plików
+ *
+ *
+ *  */
 
 ```
 
-## 034: `./src/lib/job/step1.rs`
+### 034: `./src/lib/job/step1.rs`
 
 ```rust
 use std::{fs, path::Path};
 
 use anyhow::{Context, Result};
-use chrono::{DateTime, Local};
+use chrono::DateTime;
 
 use crate::lib::{job, logic};
-
-// ============================================================================
-// OSTATECZNY WIERSZ DANYCH (Zhydratowany)
-// ============================================================================
-
-/// Reprezentuje finalny wiersz gotowy do tabeli, zawierający wszystkie
-/// zgromadzone metadane z dysku i z etapu skanowania.
-#[derive(Debug, Clone)]
-pub struct RawRow {
-    pub dt_modified: DateTime<Local>,
-    pub name_with_ext: String,
-    pub size_real: u64,
-    pub node: logic::ScannedNode,
-}
-pub struct ScannedTable {
-    pub rows: Vec<RawRow>,
-    pub tier_max: usize,
-    pub name_len_max: usize,
-}
 
 // ============================================================================
 // TRAIT POMOCNICZY (Unifikacja typów węzłów)
@@ -2193,6 +2391,8 @@ impl AsScannedNode for logic::ScannedFileNode {
             path: self.path.clone(),
             node: logic::NodeIs::File,
             tier: self.tier,
+            id_self: self.id_self,         // ⚡ PRZEPISANIE ID
+            id_path: self.id_path.clone(), // ⚡ PRZEPISANIE ŚCIEŻKI
             dir_has_subdirs: None,
             dir_has_files_binary: None,
             dir_has_files_text: None,
@@ -2210,6 +2410,8 @@ impl AsScannedNode for logic::ScannedDirNode {
             path: self.path.clone(),
             node: logic::NodeIs::Dir,
             tier: self.tier,
+            id_self: self.id_self,         // ⚡ PRZEPISANIE ID
+            id_path: self.id_path.clone(), // ⚡ PRZEPISANIE ŚCIEŻKI
             dir_has_subdirs: Some(self.has_subdirs),
             dir_has_files_binary: Some(self.has_files_binary),
             dir_has_files_text: Some(self.has_files_text),
@@ -2225,7 +2427,7 @@ impl AsScannedNode for logic::ScannedDirNode {
 // ============================================================================
 
 /// Przechodzi po całej partycji, konwertuje generyczne węzły i uderza do dysku po metadane.
-fn piece_gather<L>(a: &logic::AnchoredPathsDatum, p: &logic::Partition<L>) -> Vec<RawRow>
+fn piece_gather<L>(a: &logic::AnchoredPathsDatum, p: &logic::Partition<L>) -> Vec<job::ValidResultMainRow>
 where
     L: logic::MatchLabel,
     L::Node: AsScannedNode, //  Wymagamy, aby węzeł w partycji potrafił stać się ScannedNode
@@ -2240,7 +2442,7 @@ where
 }
 
 /// Zderza zunifikowany węzeł z fizycznym dyskiem i buduje ostateczny wiersz.
-fn data_inspect(a: &logic::AnchoredPathsDatum, scanned_node: logic::ScannedNode) -> Result<RawRow> {
+fn data_inspect(a: &logic::AnchoredPathsDatum, scanned_node: logic::ScannedNode) -> Result<job::ValidResultMainRow> {
     // 1. Ustalenie fizycznej ścieżki absolutnej
     // ⁉️ poco ponownie ustalamy
     let clean_rel = scanned_node.path.str.strip_prefix("./").unwrap_or(&scanned_node.path.str);
@@ -2256,7 +2458,7 @@ fn data_inspect(a: &logic::AnchoredPathsDatum, scanned_node: logic::ScannedNode)
 
     let size_real = if metadata.is_dir() { get_dir_size(&absolute_path) } else { metadata.len() };
 
-    Ok(RawRow { dt_modified, name_with_ext, size_real, node: scanned_node })
+    Ok(job::ValidResultMainRow { dt_modified, name_with_ext, size_real, node: scanned_node })
 }
 
 /// Oblicza faktyczny (fizyczny) rozmiar katalogu sumując wszystkie pliki wewnątrz.
@@ -2277,37 +2479,42 @@ pub fn data_gather(
     a: &logic::AnchoredPathsDatum,
     b: &logic::PartitionScanned,
     c: job::ValidTablePartConfig,
-) -> ScannedTable {
+) -> job::ValidResultMainTab {
     let mut final_rows = Vec::new();
     let mut t_max = 0;
     let mut n_max = 0;
+    let mut p_max = 0;
 
     // Leniwe pobieranie danych - uderzamy do dysku tylko po wybrane pule
     if c.md {
         final_rows.extend(piece_gather(a, &b.m_d));
         t_max = t_max.max(b.m_d.tier_max);
         n_max = n_max.max(b.m_d.name_len_max);
+        p_max = p_max.max(b.m_d.path_len_max);
     }
     if c.mf {
         final_rows.extend(piece_gather(a, &b.m_f));
         t_max = t_max.max(b.m_f.tier_max);
         n_max = n_max.max(b.m_f.name_len_max);
+        p_max = p_max.max(b.m_f.path_len_max);
     }
     if c.xd {
         final_rows.extend(piece_gather(a, &b.x_d));
         t_max = t_max.max(b.x_d.tier_max);
         n_max = n_max.max(b.x_d.name_len_max);
+        p_max = p_max.max(b.x_d.path_len_max);
     }
     if c.xf {
         final_rows.extend(piece_gather(a, &b.x_f));
         t_max = t_max.max(b.x_f.tier_max);
         n_max = n_max.max(b.x_f.name_len_max);
+        p_max = p_max.max(b.x_f.path_len_max);
     }
 
     // Sortujemy złączony wynik, aby przywrócić spójną strukturę drzewa po ścieżkach
     final_rows.sort_unstable_by(|row_a, row_b| row_a.node.path.str.cmp(&row_b.node.path.str));
 
-    ScannedTable { rows: final_rows, tier_max: t_max, name_len_max: n_max }
+    job::ValidResultMainTab { rows: final_rows, tier_max: t_max, name_len_max: n_max, path_len_max: p_max }
 }
 //============================================================================
 /// [Step 1] Skaner - teraz przyjmuje konfiguratory zamiast surowych struktur Job
@@ -2315,7 +2522,7 @@ pub fn engine_step1_scanner(
     c: job::ValidTablePartConfig,
     workspace: &job::ValidWorkspaceConfig, // Zamiast ScanRawJob
     patterns: &job::ValidPatternConfig,    // Zamiast ScanRawJob
-) -> ScannedTable {
+) -> job::ValidResultMainTab {
     // 1. Korzystamy z Twoich nowych metod .get() - one robią całą magię inicjalizacji i walidacji
     let anchored_paths_datum = workspace.get();
     let patterns_queries = patterns.get();
@@ -2327,28 +2534,23 @@ pub fn engine_step1_scanner(
     data_gather(&anchored_paths_datum, &partition_scanned, c)
 }
 
-//fn path_scanner(anchored_paths_datum: &logic::AnchoredPathsDatum, scan: job::ScanRawJob) -> logic::PartitionScanned {
-//    let ref_patterns: Vec<&str> = scan.patterns.iter().map(|s| s.as_str()).collect();
-//    let patterns_queries = logic::PatternsQueries::new(ref_patterns, scan.ignore_case);
-//    let partition_scanned = logic::PartitionScanned::scan(&anchored_paths_datum, &patterns_queries);
-//    partition_scanned
-//}
-
 ```
 
-## 035: `./src/lib/job/step2.rs`
+### 035: `./src/lib/job/step2.rs`
 
 ```rust
-use crate::lib::job::{self, RawRow};
-
+use crate::lib::{
+    job::{self, ValidResultMainRow},
+    logic,
+};
 // ============================================================================
 // STRUKTURA WYJŚCIOWA (Transport do kolejnych etapów)
 // ============================================================================
 
 #[derive(Debug, Clone)]
 pub struct FormattedRow {
-    pub raw: RawRow,        // Zachowujemy oryginał do sortowania (Step 3) i limitowania (Step 4)
-    pub cells: Vec<String>, // Sformatowane kolumny, każda jako niezależny String (dla Step 5)
+    pub raw: ValidResultMainRow, // Zachowujemy oryginał do sortowania (Step 3) i limitowania (Step 4)
+    pub cells: Vec<String>,      // Sformatowane kolumny, każda jako niezależny String (dla Step 5)
 }
 
 // ============================================================================
@@ -2358,7 +2560,7 @@ pub struct FormattedRow {
 pub fn engine_step2_data_formater(
     c: (&job::ValidColumnItemConfig, &job::ValidTableColumnsConfig),
     s: (&job::ValidColumnDateConfig, &job::ValidColumnTimeConfig, &job::ValidColumnSizeConfig),
-    tab: &job::ScannedTable, // ⚡ Zmiana typu
+    tab: &job::ValidResultMainTab, // ⚡ Zmiana typu
 ) -> Vec<FormattedRow> {
     let item_cfg = c.0;
     let col_cfg = c.1;
@@ -2377,16 +2579,34 @@ pub fn engine_step2_data_formater(
 
         for col in &col_cfg.columns {
             let cell_str = match col {
-                job::ValidTableColumns::Date => date_cfg.format_date(row.dt_modified),
-                job::ValidTableColumns::Time => time_cfg.format_time(row.dt_modified),
-                job::ValidTableColumns::Size => size_cfg.format_size(row.size_real),
-                job::ValidTableColumns::Item => {
+                job::ValidTableColumnsParse::Date => date_cfg.format_date(row.dt_modified),
+                job::ValidTableColumnsParse::Time => time_cfg.format_time(row.dt_modified),
+                job::ValidTableColumnsParse::Size => size_cfg.format_size(row.size_real),
+                job::ValidTableColumnsParse::Item => {
                     let u_params = (i, num_width, tab.tier_max, tab.name_len_max);
                     item_cfg.format_item(u_params, row, &tab.rows)
                 }
-                job::ValidTableColumns::Path => row.node.path.str.clone(),
+                job::ValidTableColumnsParse::Path => {
+                    let mut p_str = row.node.path.str.clone();
+
+                    // ⚡ PROPAGACJA: Jeśli Item ma włączone wyrównanie (ws-show), wyrównujemy też ścieżkę
+                    if item_cfg.align_end {
+                        let padding = tab.path_len_max.saturating_sub(p_str.chars().count());
+                        p_str.push_str(&" ".repeat(padding));
+                    }
+                    p_str
+                }
             };
             cells.push(cell_str);
+        }
+
+        if job::IS_DEBUG {
+            let type_node = match row.node.node {
+                logic::NodeIs::Dir => "📂",
+                logic::NodeIs::File => "📃",
+            };
+            // id_self (formatujemy jako [ 🆔 XXX ]) &&  id_path (formatujemy jako wektor ID [0, 1, ...])
+            cells.push(format!("🆔{}[{:?}] 🔙📂{:?}", type_node, row.node.id_self, row.node.id_path));
         }
 
         formatted_table.push(FormattedRow { raw: row.clone(), cells });
@@ -2401,7 +2621,108 @@ pub fn engine_step2_data_formater(
 
 ```
 
-## 037: `./src/lib/logic/anchored_paths_datum.rs`
+### 036: `./src/lib/job/step3.rs`
+
+```rust
+use std::{
+    collections::BTreeMap,
+    path::{Path, PathBuf},
+};
+
+use crate::lib::job;
+
+// ============================================================================
+// SORTER (Step 3) - UKŁADACZ ELEMENTÓW W WORKU
+// ============================================================================
+
+pub fn engine_step3_data_sort(
+    sort_cfg: &job::ValidSortByConfig,
+    item_cfg: &job::ValidColumnItemConfig,
+    table: &mut job::ValidResultMainTab,
+) {
+    if table.rows.is_empty() {
+        return;
+    }
+
+    // Wyciągamy informacje o trybie płaskim bezpośrednio z konfiguratora
+    let is_flat = match item_cfg.list {
+        job::ModeListForValidColumnItem::Flat => true,
+        job::ModeListForValidColumnItem::None => true,
+        job::ModeListForValidColumnItem::Tree => false,
+    };
+
+    // 1. Inicjalizacja ciężkiej logiki sortowania
+    let queries = sort_cfg.get();
+
+    if is_flat {
+        // --------------------------------------------------------------------
+        // JEDEN WOREK: Globalne sortowanie płaskiej listy
+        // --------------------------------------------------------------------
+        table.rows.sort_by(|a, b| queries.compare(a, b));
+    } else {
+        // --------------------------------------------------------------------
+        // WIELE WORKÓW: Sortowanie w obrębie własnych katalogów (Tree)
+        // --------------------------------------------------------------------
+        let clean_paths: Vec<PathBuf> =
+            table.rows.iter().map(|r| PathBuf::from(r.node.path.str.trim_end_matches('/'))).collect();
+
+        // Mapa powiązań (Klucz = Rodzic, Wartość = Indeksy dzieci)
+        let mut tree_map: BTreeMap<PathBuf, Vec<usize>> = BTreeMap::new();
+
+        for (i, p) in clean_paths.iter().enumerate() {
+            let parent = p.parent().map_or_else(|| PathBuf::from("."), Path::to_path_buf);
+            tree_map.entry(parent).or_default().push(i);
+        }
+
+        // Sortujemy zawartość wewnątrz każdego worka z osobna!
+        for indices in tree_map.values_mut() {
+            indices.sort_by(|&a, &b| queries.compare(&table.rows[a], &table.rows[b]));
+        }
+
+        // Szukamy "Korzeni" (Głównych worków)
+        let mut root_indices = Vec::new();
+        for (i, p) in clean_paths.iter().enumerate() {
+            let parent = p.parent().map_or_else(|| PathBuf::from("."), Path::to_path_buf);
+            let is_root = parent == Path::new(".") || parent == Path::new("") || !clean_paths.contains(&parent);
+            if is_root {
+                root_indices.push(i);
+            }
+        }
+
+        // Sortujemy same korzenie między sobą
+        root_indices.sort_by(|&a, &b| queries.compare(&table.rows[a], &table.rows[b]));
+
+        // Zwijamy wszystko z powrotem do płaskiego wektora w idealnej kolejności
+        let mut flat_indices = Vec::with_capacity(table.rows.len());
+        flatten(&root_indices, &tree_map, &clean_paths, &mut flat_indices);
+
+        // Błyskawiczna podmiana wierszy (in-place)
+        let total_rows = table.rows.len(); // Najpierw czytamy długość...
+        let old_rows = std::mem::replace(&mut table.rows, Vec::with_capacity(total_rows)); // ...potem mutujemy!
+
+        let mut temp_rows: Vec<Option<job::ValidResultMainRow>> = old_rows.into_iter().map(Some).collect();
+
+        for idx in flat_indices {
+            if let Some(row) = temp_rows[idx].take() {
+                table.rows.push(row);
+            }
+        }
+    }
+}
+
+/// Helper do rekurencyjnego opróżniania worków w ustalonej kolejności
+fn flatten(indices: &[usize], tree_map: &BTreeMap<PathBuf, Vec<usize>>, clean_paths: &[PathBuf], out: &mut Vec<usize>) {
+    for &idx in indices {
+        out.push(idx);
+        if let Some(children) = tree_map.get(&clean_paths[idx]) {
+            flatten(children, tree_map, clean_paths, out);
+        }
+    }
+}
+
+```
+
+### 038: `./src/lib/logic/anchored_paths_datum.rs`
 
 ```rust
 use std::{
@@ -2553,7 +2874,7 @@ impl AnchoredPathsDatum {
      *
      *         if LangMapper::is_blacklisted(&ext) {
      *             content.push_str(&format!(
-     *                 "## {:03}: `{}`\n\n> *(Plik binarny/graficzny - pominięto zawartość)*\n\n",
+     *                 "### {:03}: `{}`\n\n> *(Plik binarny/graficzny - pominięto zawartość)*\n\n",
      *                 actual_idx, p_str
      *             ));
      *             continue;
@@ -2563,13 +2884,13 @@ impl AnchoredPathsDatum {
      *             Ok(file_content) => {
      *                 let safe_content = file_content.replace('\t', "    ");
      *                 content.push_str(&format!(
-     *                     "## {:03}: `{}`\n\n```{}\n{}\n```\n\n",
+     *                     "### {:03}: `{}`\n\n```{}\n{}\n```\n\n",
      *                     actual_idx, p_str, lang, safe_content
      *                 ));
      *             }
      *             Err(_) => {
      *                 content.push_str(&format!(
-     *                     "## {:03}: `{}`\n\n> *(Błąd odczytu / plik nie jest UTF-8)*\n\n",
+     *                     "### {:03}: `{}`\n\n> *(Błąd odczytu / plik nie jest UTF-8)*\n\n",
      *                     actual_idx, p_str
      *                 ));
      *             }
@@ -2589,7 +2910,7 @@ impl AnchoredPathsDatum {
 
 ```
 
-## 038: `./src/lib/logic/config_model.rs`
+### 039: `./src/lib/logic/config_model.rs`
 
 ```rust
 use serde::Deserialize;
@@ -2660,13 +2981,13 @@ fn default_work_path() -> String { ".".to_string() }
 
 ```
 
-## 039: `./src/lib/logic/engine.rs`
+### 040: `./src/lib/logic/engine.rs`
 
 ```rust
 /*
  *  use crate::lib::{
  *     job::{
- *         ValidTablePart,
+ *         ValidTablePartParse,
  *         job_engine_step0_datum_anchor,
  *         job_engine_step1_path_scanner,
  *         job_engine_step2_data_formater,
@@ -2699,7 +3020,7 @@ fn default_work_path() -> String { ".".to_string() }
  * impl JobEngine {
  *     pub fn new(scan: ScanSpec) -> Self {
  *         let a = job_engine_step0_datum_anchor(scan.work_path);
- *         let b = job_engine_step1_path_scanner(scan, ValidTablePart::parse_vec(["md", "mf"]));
+ *         let b = job_engine_step1_path_scanner(scan, ValidTablePartParse::parse_vec(["md", "mf"]));
  *         let c = job_engine_step2_data_formater(b);
  *         // let mut tab = PartitioningResult::new(partition_scanned, patterns_queries)
  *         //    .sort(spec.sort_by, spec.sort_order, spec.structure)
@@ -2852,7 +3173,7 @@ fn default_work_path() -> String { ".".to_string() }
 
 ```
 
-## 040: `./src/lib/logic/engine_multiple.rs`
+### 041: `./src/lib/logic/engine_multiple.rs`
 
 ```rust
 use crate::lib::logic::{ConfigJob, ConfigManifest, IoConfig, JobEngine, JobMode, JobSpec, MX, RenderFlags};
@@ -2976,7 +3297,7 @@ impl DocEngineMultiple {
 
 ```
 
-## 041: `./src/lib/logic/file_toml_config.rs`
+### 042: `./src/lib/logic/file_toml_config.rs`
 
 ```rust
 use std::{fs, path::Path};
@@ -3033,7 +3354,7 @@ patterns = [
     "./.github/workflows/*.yml&/",
     "./.vscode/settings.json&/",
     "./{API,ARCHITECTURE,AUTHORS,CHANGELOG,README,ROADMAP,TODO}.md",
-    "./dist/**"
+    "./dist/{**/*,*}.{bat,exe}&/"
 ]
 ignore_case = false
 
@@ -3121,7 +3442,7 @@ title_cots = "Rust Project Snapshot"
 
 ```
 
-## 042: `./src/lib/logic/fs_scanner.rs`
+### 043: `./src/lib/logic/fs_scanner.rs`
 
 ```rust
 // 3
@@ -3226,34 +3547,39 @@ pub struct Partition<L: MatchLabel> {
     pub label: &'static str,
     pub tier_max: usize,
     pub name_len_max: usize,
+    pub path_len_max: usize,
     pub count: usize,
     _marker: PhantomData<L>,
 }
 
 impl<L: MatchLabel> Partition<L> {
     // Pomocniczy trait-like look dla L::Node, aby dobrać się do pól tier i name
-    pub fn calculate_metadata(nodes: &[L::Node]) -> (usize, usize)
+    pub fn calculate_metadata(nodes: &[L::Node]) -> (usize, usize, usize)
     where L::Node: AsMetadataNode // Musimy zdefiniować ten pomocniczy trait poniżej
     {
         let t_max = nodes.iter().map(|n| n.get_tier()).max().unwrap_or(0);
         let n_max = nodes.iter().map(|n| n.get_name().chars().count()).max().unwrap_or(0);
-        (t_max, n_max)
+        let p_max = nodes.iter().map(|n| n.get_path_len()).max().unwrap_or(0); // ⚡ NOWE
+        (t_max, n_max, p_max)
     }
 }
 // Dodaj ten pomocniczy trait w fs_scanner.rs, aby Partition mogło operować na typach generycznych
 pub trait AsMetadataNode {
     fn get_tier(&self) -> usize;
     fn get_name(&self) -> &str;
+    fn get_path_len(&self) -> usize;
 }
 
 impl AsMetadataNode for ScannedFileNode {
     fn get_tier(&self) -> usize { self.tier }
     fn get_name(&self) -> &str { &self.name }
+    fn get_path_len(&self) -> usize { self.path.str.chars().count() }
 }
 
 impl AsMetadataNode for ScannedDirNode {
     fn get_tier(&self) -> usize { self.tier }
     fn get_name(&self) -> &str { &self.name }
+    fn get_path_len(&self) -> usize { self.path.str.chars().count() }
 }
 // ============================================================================
 // STRUKTURY DANYCH I STATYSTYK
@@ -3292,6 +3618,8 @@ pub struct ScannedNode {
     pub path: PathNode,
     pub node: NodeIs,
     pub tier: usize,
+    pub id_self: usize,      // ⚡ Własne ID
+    pub id_path: Vec<usize>, // ⚡ Ścieżka przodków [0, 1, 5...]
     pub dir_has_subdirs: Option<usize>,
     pub dir_has_files_binary: Option<usize>,
     pub dir_has_files_text: Option<usize>,
@@ -3305,6 +3633,8 @@ pub struct ScannedDirNode {
     pub name: String,
     pub path: PathNode,
     pub tier: usize,
+    pub id_self: usize,      // ⚡
+    pub id_path: Vec<usize>, // ⚡
     pub has_subdirs: usize,
     pub has_files_binary: usize,
     pub has_files_text: usize,
@@ -3316,6 +3646,8 @@ pub struct ScannedFileNode {
     pub name: String,
     pub path: PathNode,
     pub tier: usize,
+    pub id_self: usize,      // ⚡
+    pub id_path: Vec<usize>, // ⚡
     pub is_binary: bool,
     pub is_empty: bool,
 }
@@ -3372,154 +3704,24 @@ pub struct PartitionScanned {
 
 impl PartitionScanned {
     pub fn scan(p: &AnchoredPathsDatum, q: &PatternsQueries) -> Self {
-        let mut files = Vec::new();
-        let mut dirs_raw = Vec::new();
-        let mut symlink_counts = HashMap::new();
+        // ░░░░░░░░░░░░░░░ 🅰️ ZBIERANIE DANYCH ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+        let raw_data = gather_raw_nodes(p);
+        let files = raw_data.files;
+        let dirs = build_directory_nodes(&raw_data.dirs_raw, &files, &raw_data.symlink_counts);
+        let stat_scan = raw_data.stat_scan;
 
-        let mut count_dirs = 0;
-        let mut count_dirs_empty = 0;
-        let mut count_files = 0;
-        let mut count_files_empty = 0;
-        let mut count_files_text = 0;
-        let mut count_files_binary = 0;
-        let mut count_symlinks_skipped = 0;
-
-        for e in WalkDir::new(&p.workspace_dir.buf).into_iter().filter_map(|e| e.ok()) {
-            if e.depth() == 0 {
-                continue;
-            }
-
-            let tier = e.depth();
-
-            if e.path_is_symlink() {
-                count_symlinks_skipped += 1;
-                if let Some(parent) = e.path().strip_prefix(&p.workspace_dir.buf).ok().and_then(|p| p.parent()) {
-                    let parent_str = parent.to_string_lossy().replace('\\', "/");
-                    let formatted = if parent_str.is_empty() { "./".to_string() } else { format!("./{}/", parent_str) };
-                    *symlink_counts.entry(formatted).or_insert(0usize) += 1;
-                }
-                continue;
-            }
-
-            let Ok(rel_path) = e.path().strip_prefix(&p.workspace_dir.buf) else {
-                continue;
-            };
-            let mut path = rel_path.to_string_lossy().replace('\\', "/");
-
-            if e.file_type().is_dir() {
-                path.push('/');
-                count_dirs += 1;
-
-                let is_empty = e.metadata().map(|m| m.is_dir()).unwrap_or(false)
-                    && e.path().read_dir().map(|mut r| r.next().is_none()).unwrap_or(false);
-
-                if is_empty {
-                    count_dirs_empty += 1;
-                }
-                dirs_raw.push((PathNode::new(format!("./{}", path).into()), tier));
-            } else {
-                count_files += 1;
-                let abs_path = e.path();
-                let is_empty = abs_path.metadata().map(|m| m.len() == 0).unwrap_or(false);
-                let mut is_binary = false;
-
-                if is_empty {
-                    count_files_empty += 1;
-                } else {
-                    is_binary = is_binary_file(abs_path.to_str().unwrap_or("")).unwrap_or(false);
-                    if is_binary {
-                        count_files_binary += 1;
-                    } else {
-                        count_files_text += 1;
-                    }
-                }
-
-                files.push(ScannedFileNode {
-                    name: abs_path.file_name().unwrap_or_default().to_string_lossy().to_string(),
-                    path: PathNode::new(format!("./{}", path).into()),
-                    tier,
-                    is_binary,
-                    is_empty,
-                });
-            }
-        }
-
-        files.sort_unstable_by(|a, b| a.path.str.cmp(&b.path.str));
-        dirs_raw.sort_unstable_by(|a, b| a.0.str.cmp(&b.0.str));
-
-        let mut dirs = Vec::with_capacity(dirs_raw.len());
-        for i in 0..dirs_raw.len() {
-            let (path, tier) = dirs_raw[i].clone();
-            let mut count_subdirs = 0;
-            let mut count_files_binary = 0;
-            let mut count_files_text = 0;
-            let count_symlinks = *symlink_counts.get(&path.str).unwrap_or(&0);
-
-            // Zliczanie plików bezpośrednich
-            for f in &files {
-                if f.path.str.starts_with(&path.str) {
-                    let remainder = &f.path.str[path.str.len()..];
-                    if !remainder.contains('/') {
-                        // Tylko bezpośrednie dzieci
-                        if f.is_binary {
-                            count_files_binary += 1;
-                        } else if !f.is_empty {
-                            count_files_text += 1;
-                        }
-                    }
-                }
-            }
-
-            // Zliczanie subkatalogów bezpośrednich
-            for j in (i + 1)..dirs_raw.len() {
-                if dirs_raw[j].0.str.starts_with(&path.str) {
-                    let remainder = &dirs_raw[j].0.str[path.str.len()..];
-                    if !remainder.is_empty() && !remainder.trim_end_matches('/').contains('/') {
-                        count_subdirs += 1;
-                    }
-                } else {
-                    break;
-                }
-            }
-
-            dirs.push(ScannedDirNode {
-                name: path.str.trim_end_matches('/').split('/').next_back().unwrap_or("").to_string(),
-                path,
-                tier,
-                has_subdirs: count_subdirs,
-                has_files_binary: count_files_binary,
-                has_files_text: count_files_text,
-                has_symlinks: count_symlinks,
-            });
-        }
-
-        let stat_scan = StatsScannedTreeFs {
-            count_dirs,
-            count_dirs_empty,
-            count_files,
-            count_files_empty,
-            count_files_text,
-            count_files_binary,
-            count_symlinks_skipped,
-        };
-
-        // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-        // FAZA FILTROWANIA (Rozwiązanie problemu 'Borrow Checkera')
-        // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
-        // 1. Zbudowanie EnvIndex na referencjach (pożyczamy ścieżki)
+        // Zbudowanie EnvIndex na referencjach (pożyczamy ścieżki)
         let env_index = EnvIndex {
             dirs: dirs.iter().map(|d| d.path.str.as_str()).collect(),
             files: files.iter().map(|f| f.path.str.as_str()).collect(),
         };
 
-        // 2. Pierwszy przebieg: zbieramy TYLKO wyniki true/false do masek
+        // ░░░░░░░░░░░░░░░ 🅱️ PIERWSZY PRZEBIEG ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+        // zbieramy TYLKO wyniki true/false do masek
         let files_matches: Vec<bool> = files.iter().map(|f| q.is_match(&f.path.str, &env_index)).collect();
         let dirs_matches: Vec<bool> = dirs.iter().map(|d| q.is_match(&d.path.str, &env_index)).collect();
 
-        /* 3. Uwalniamy referencje - od tego momentu env_index przestaje istnieć,
-         * więc wektory files i dirs znów są 'wolne' i można je przenosić.
-         * */
+        // Uwalniamy referencje
         drop(env_index);
 
         let mut vec_m_f = Vec::new();
@@ -3527,7 +3729,8 @@ impl PartitionScanned {
         let mut vec_m_d = Vec::new();
         let mut vec_x_d = Vec::new();
 
-        // 4. Drugi przebieg: złączenie (zip) plików z zapisanymi wynikami (bez żadnego klonowania!)
+        // ░░░░░░░░░░░░░░░ 🆎 DRUGI PRZEBIEG ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+        // złączenie plików z zapisanymi wynikami
         for (f, is_matched) in files.into_iter().zip(files_matches) {
             if is_matched {
                 vec_m_f.push(f);
@@ -3544,6 +3747,7 @@ impl PartitionScanned {
             }
         }
 
+        // ░░░░░░░░░░░░░░░ 🅾️ MONTOWANIE WYNIKU ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
         let stat_part = StatsPartitioning {
             count_m: vec_m_f.len() + vec_m_d.len(),
             count_x: vec_x_f.len() + vec_x_d.len(),
@@ -3552,10 +3756,11 @@ impl PartitionScanned {
             count_m_d: vec_m_d.len(),
             count_x_d: vec_x_d.len(),
         };
-        let (mf_t, mf_n) = Partition::<MatchedFile>::calculate_metadata(&vec_m_f);
-        let (xf_t, xf_n) = Partition::<MismatchedFile>::calculate_metadata(&vec_x_f);
-        let (md_t, md_n) = Partition::<MatchedDir>::calculate_metadata(&vec_m_d);
-        let (xd_t, xd_n) = Partition::<MismatchedDir>::calculate_metadata(&vec_x_d);
+
+        let (mf_t, mf_n, mf_p) = Partition::<MatchedFile>::calculate_metadata(&vec_m_f);
+        let (xf_t, xf_n, xf_p) = Partition::<MismatchedFile>::calculate_metadata(&vec_x_f);
+        let (md_t, md_n, md_p) = Partition::<MatchedDir>::calculate_metadata(&vec_m_d);
+        let (xd_t, xd_n, xd_p) = Partition::<MismatchedDir>::calculate_metadata(&vec_x_d);
 
         Self {
             m_f: Partition {
@@ -3563,7 +3768,8 @@ impl PartitionScanned {
                 label: MatchedFile::label(),
                 tier_max: mf_t,
                 name_len_max: mf_n,
-                count: stat_part.count_m_f, // ⚡ Używamy policzonej wartości
+                path_len_max: mf_p,
+                count: stat_part.count_m_f,
                 _marker: PhantomData,
             },
             x_f: Partition {
@@ -3571,7 +3777,8 @@ impl PartitionScanned {
                 label: MismatchedFile::label(),
                 tier_max: xf_t,
                 name_len_max: xf_n,
-                count: stat_part.count_x_f, // ⚡ Używamy policzonej wartości
+                path_len_max: xf_p,
+                count: stat_part.count_x_f,
                 _marker: PhantomData,
             },
             m_d: Partition {
@@ -3579,7 +3786,8 @@ impl PartitionScanned {
                 label: MatchedDir::label(),
                 tier_max: md_t,
                 name_len_max: md_n,
-                count: stat_part.count_m_d, // ⚡ Używamy policzonej wartości
+                path_len_max: md_p,
+                count: stat_part.count_m_d,
                 _marker: PhantomData,
             },
             x_d: Partition {
@@ -3587,7 +3795,8 @@ impl PartitionScanned {
                 label: MismatchedDir::label(),
                 tier_max: xd_t,
                 name_len_max: xd_n,
-                count: stat_part.count_x_d, // ⚡ Używamy policzonej wartości
+                path_len_max: xd_p,
+                count: stat_part.count_x_d,
                 _marker: PhantomData,
             },
             stat_scan,
@@ -3611,6 +3820,8 @@ impl PartitionScanned {
             path: d.path.clone(),
             node: NodeIs::Dir,
             tier: d.tier,
+            id_self: d.id_self,         // ⚡
+            id_path: d.id_path.clone(), // ⚡
             dir_has_subdirs: Some(d.has_subdirs),
             dir_has_files_binary: Some(d.has_files_binary),
             dir_has_files_text: Some(d.has_files_text),
@@ -3624,6 +3835,8 @@ impl PartitionScanned {
             path: f.path.clone(),
             node: NodeIs::File,
             tier: f.tier,
+            id_self: f.id_self,         // ⚡
+            id_path: f.id_path.clone(), // ⚡
             dir_has_subdirs: None,
             dir_has_files_binary: None,
             dir_has_files_text: None,
@@ -3656,9 +3869,206 @@ impl PartitionScanned {
     pub fn iter_paths(&self) -> impl Iterator<Item = &str> + '_ { self.iter_file_paths().chain(self.iter_dir_paths()) }
 }
 
+// ============================================================================
+// HELPERY SKANERA (Przygotowanie danych)
+// ============================================================================
+
+struct RawDirNode {
+    path: PathNode,
+    tier: usize,
+    id_self: usize,
+    id_path: Vec<usize>,
+}
+struct RawGatherData {
+    files: Vec<ScannedFileNode>,
+    dirs_raw: Vec<RawDirNode>,
+    symlink_counts: HashMap<String, usize>,
+    stat_scan: StatsScannedTreeFs,
+}
+
+/// Helper 1: Przechodzi po dysku, kategoryzuje i zbiera surowe węzły
+fn gather_raw_nodes(p: &AnchoredPathsDatum) -> RawGatherData {
+    let mut files = Vec::new();
+    let mut dirs_raw = Vec::new();
+    let mut symlink_counts = HashMap::new();
+
+    let mut count_dirs = 0;
+    let mut count_dirs_empty = 0;
+    let mut count_files = 0;
+    let mut count_files_empty = 0;
+    let mut count_files_text = 0;
+    let mut count_files_binary = 0;
+    let mut count_symlinks_skipped = 0;
+
+    // ⚡ REJESTR ID I ŚCIEŻEK (Materialized Path)
+    let mut current_id = 1; // Zaczynamy od 1, bo 0 to workspace_dir
+    let mut path_registry: HashMap<std::path::PathBuf, (usize, Vec<usize>)> = HashMap::new();
+
+    // Inicjalizujemy korzeń (workspace_dir) z ID 0 i pustą ścieżką przodków
+    path_registry.insert(p.workspace_dir.buf.clone(), (0, vec![]));
+
+    for e in WalkDir::new(&p.workspace_dir.buf).into_iter().filter_map(|e| e.ok()) {
+        if e.depth() == 0 {
+            continue;
+        }
+
+        let tier = e.depth();
+
+        if e.path_is_symlink() {
+            count_symlinks_skipped += 1;
+            if let Some(parent) = e.path().strip_prefix(&p.workspace_dir.buf).ok().and_then(|p| p.parent()) {
+                let parent_str = parent.to_string_lossy().replace('\\', "/");
+                let formatted = if parent_str.is_empty() { "./".to_string() } else { format!("./{}/", parent_str) };
+                *symlink_counts.entry(formatted).or_insert(0usize) += 1;
+            }
+            continue;
+        }
+
+        // ⚡ NADAWANIE TOŻSAMOŚCI I BUDOWANIE ID_PATH
+        let id_self = current_id;
+        current_id += 1;
+
+        // Szukamy rodzica w rejestrze
+        let parent_path = e.path().parent().expect("Błąd systemu plików: Węzeł nie ma rodzica");
+        let (parent_id, parent_id_path) = path_registry.get(parent_path).unwrap_or(&(0, vec![])).clone();
+
+        // Budujemy ścieżkę z ID: bierzemy ścieżkę rodzica i doklejamy do niej ID rodzica
+        // Np. Rodzic to folder `src` (ID: 1, ścieżka: [0]). Nasza nowa ścieżka to [0, 1].
+        let mut id_path = parent_id_path;
+        id_path.push(parent_id);
+
+        // Jeśli to folder, wpisujemy go do rejestru dla jego przyszłych dzieci
+        if e.file_type().is_dir() {
+            path_registry.insert(e.path().to_path_buf(), (id_self, id_path.clone()));
+        }
+
+        let Ok(rel_path) = e.path().strip_prefix(&p.workspace_dir.buf) else {
+            continue;
+        };
+        let mut path = rel_path.to_string_lossy().replace('\\', "/");
+
+        if e.file_type().is_dir() {
+            path.push('/');
+            count_dirs += 1;
+
+            let is_empty = e.metadata().map(|m| m.is_dir()).unwrap_or(false)
+                && e.path().read_dir().map(|mut r| r.next().is_none()).unwrap_or(false);
+
+            if is_empty {
+                count_dirs_empty += 1;
+            }
+            dirs_raw.push(RawDirNode {
+                path: PathNode::new(format!("./{}", path).into()),
+                tier,
+                id_self,
+                id_path: id_path.clone(),
+            });
+        } else {
+            count_files += 1;
+            let abs_path = e.path();
+            let is_empty = abs_path.metadata().map(|m| m.len() == 0).unwrap_or(false);
+            let mut is_binary = false;
+
+            if is_empty {
+                count_files_empty += 1;
+            } else {
+                is_binary = is_binary_file(abs_path.to_str().unwrap_or("")).unwrap_or(false);
+                if is_binary {
+                    count_files_binary += 1;
+                } else {
+                    count_files_text += 1;
+                }
+            }
+
+            files.push(ScannedFileNode {
+                name: abs_path.file_name().unwrap_or_default().to_string_lossy().to_string(),
+                path: PathNode::new(format!("./{}", path).into()),
+                id_self,
+                id_path,
+                tier,
+                is_binary,
+                is_empty,
+            });
+        }
+    }
+
+    // Sortowanie gwarantujące stabilność dla logiki analizy dzieci
+    files.sort_unstable_by(|a, b| a.path.str.cmp(&b.path.str));
+    dirs_raw.sort_unstable_by(|a, b| a.path.str.cmp(&b.path.str));
+
+    let stat_scan = StatsScannedTreeFs {
+        count_dirs,
+        count_dirs_empty,
+        count_files,
+        count_files_empty,
+        count_files_text,
+        count_files_binary,
+        count_symlinks_skipped,
+    };
+
+    RawGatherData { files, dirs_raw, symlink_counts, stat_scan }
+}
+
+/// Helper 2: Analizuje relacje rodzic-dziecko i buduje pełne ScannedDirNode
+fn build_directory_nodes(
+    dirs_raw: &[RawDirNode],
+    files: &[ScannedFileNode],
+    symlink_counts: &HashMap<String, usize>,
+) -> Vec<ScannedDirNode> {
+    let mut dirs = Vec::with_capacity(dirs_raw.len());
+
+    for i in 0..dirs_raw.len() {
+        let raw = &dirs_raw[i];
+        let mut count_subdirs = 0;
+        let mut count_files_binary = 0;
+        let mut count_files_text = 0;
+        let count_symlinks = *symlink_counts.get(&raw.path.str).unwrap_or(&0);
+
+        // Zliczanie plików bezpośrednich
+        for f in files {
+            if f.path.str.starts_with(&raw.path.str) {
+                let remainder = &f.path.str[raw.path.str.len()..];
+                if !remainder.contains('/') {
+                    if f.is_binary {
+                        count_files_binary += 1;
+                    } else if !f.is_empty {
+                        count_files_text += 1;
+                    }
+                }
+            }
+        }
+
+        // Zliczanie subkatalogów bezpośrednich
+        for j in (i + 1)..dirs_raw.len() {
+            if dirs_raw[j].path.str.starts_with(&raw.path.str) {
+                let remainder = &dirs_raw[j].path.str[raw.path.str.len()..];
+                if !remainder.is_empty() && !remainder.trim_end_matches('/').contains('/') {
+                    count_subdirs += 1;
+                }
+            } else {
+                break;
+            }
+        }
+
+        dirs.push(ScannedDirNode {
+            name: raw.path.str.trim_end_matches('/').split('/').next_back().unwrap_or("").to_string(),
+            path: raw.path.clone(),
+            id_self: raw.id_self,         // ⚡ PRZEPISANIE ID
+            id_path: raw.id_path.clone(), // ⚡ PRZEPISANIE ŚCIEŻKI
+            tier: raw.tier,
+            has_subdirs: count_subdirs,
+            has_files_binary: count_files_binary,
+            has_files_text: count_files_text,
+            has_symlinks: count_symlinks,
+        });
+    }
+
+    dirs
+}
+
 ```
 
-## 043: `./src/lib/logic/mapper_lang_type.rs`
+### 044: `./src/lib/logic/mapper_lang_type.rs`
 
 ```rust
 pub struct LangMapper;
@@ -3706,7 +4116,7 @@ impl LangMapper {
 
 ```
 
-## 044: `./src/lib/logic/path_context.rs`
+### 045: `./src/lib/logic/path_context.rs`
 
 ```rust
 /// ============================================================================
@@ -3757,7 +4167,7 @@ impl<'a> PathContext<'a> {
 
 ```
 
-## 045: `./src/lib/logic/path_patterns.rs`
+### 046: `./src/lib/logic/path_patterns.rs`
 
 ```rust
 use regex::Regex;
@@ -3907,6 +4317,14 @@ impl PatternCompiled {
         if include_parents {
             clean = clean.strip_suffix("&/").or_else(|| clean.strip_suffix("&\\")).unwrap_or(&clean).to_string();
         }
+
+        // 🧠 ŹLE DZIAŁA FLAGA `+` np w "./dist/+"
+        // ⚡ KRYTYCZNA ZMIANA: Obliczamy targets_file ZANIM utniemy ukośnik!
+        // let targets_file = !clean.ends_with('/') && !clean.ends_with("**");
+        // // ⚡ Usuwamy wiszący ukośnik, aby uniknąć podwójnego slasha `//` w regexie
+        // if is_deep && clean.ends_with('/') {
+        //     clean.pop();
+        // }
 
         let base_name = clean
             .trim_end_matches('/')
@@ -4097,7 +4515,108 @@ impl PatternCompiled {
 
 ```
 
-## 046: `./src/lib/logic/paths_result.rs`
+### 047: `./src/lib/logic/path_sort.rs`
+
+```rust
+use std::cmp::Ordering;
+
+use crate::lib::{
+    job::{ModeFileGroupForValidSortBy, StrategyForValidSortBy, ValidResultMainRow, ValidSortByConfig},
+    logic::NodeIs,
+};
+
+// ============================================================================
+// SORT QUERIES (Silnik Sortowania)
+// ============================================================================
+
+#[derive(Debug, Clone)]
+pub struct SortQueries {
+    pub raw_config: ValidSortByConfig,
+}
+
+impl SortQueries {
+    pub fn new(config: ValidSortByConfig) -> Self { Self { raw_config: config } }
+
+    /// Główny komparator. Zwraca Ordering (Mniej, Więcej, Równe).
+    pub fn compare(&self, a: &ValidResultMainRow, b: &ValidResultMainRow) -> Ordering {
+        let a_is_dir = a.node.node == NodeIs::Dir;
+        let b_is_dir = b.node.node == NodeIs::Dir;
+        let a_name = &a.node.name;
+        let b_name = &b.node.name;
+
+        // 1. Wykonanie priorytetu sortowania z konfiguracji
+        let mut cmp = match &self.raw_config.strategy {
+            StrategyForValidSortBy::Date { .. } => a.dt_modified.cmp(&b.dt_modified),
+            StrategyForValidSortBy::Size { .. } => a.size_real.cmp(&b.size_real),
+
+            StrategyForValidSortBy::Name { file_group, .. } | StrategyForValidSortBy::Path { file_group, .. } => {
+                match file_group {
+                    ModeFileGroupForValidSortBy::Name => {
+                        // Sortowanie "Merge": Folder "mod" i plik "mod.rs" lądują obok siebie
+                        let a_core = Self::get_core_name(a_name);
+                        let b_core = Self::get_core_name(b_name);
+                        let core_cmp = a_core.cmp(b_core);
+
+                        if core_cmp == Ordering::Equal {
+                            // Domyślnie foldery idą nad plikami o tej samej nazwie bazowej
+                            b_is_dir.cmp(&a_is_dir).then(a_name.cmp(b_name))
+                        } else {
+                            core_cmp
+                        }
+                    }
+                    ModeFileGroupForValidSortBy::Exte => {
+                        // Grupowanie po rozszerzeniu
+                        let a_ext = Self::get_extension(a_name);
+                        let b_ext = Self::get_extension(b_name);
+                        a_ext.cmp(b_ext).then(a_name.cmp(b_name))
+                    }
+                    ModeFileGroupForValidSortBy::None => {
+                        // Klasyczne sortowanie (Foldery nad plikami)
+                        b_is_dir.cmp(&a_is_dir).then(a_name.cmp(b_name))
+                    }
+                }
+            }
+        };
+
+        // 2. Obsługa flagi Reverse
+        let reverse = match &self.raw_config.strategy {
+            StrategyForValidSortBy::Date { reverse } => *reverse,
+            StrategyForValidSortBy::Size { reverse } => *reverse,
+            StrategyForValidSortBy::Name { reverse, .. } => *reverse,
+            StrategyForValidSortBy::Path { reverse, .. } => *reverse,
+        };
+
+        if reverse {
+            cmp = cmp.reverse();
+        }
+
+        cmp
+    }
+
+    // Helper: Wydobywa nazwę bez rozszerzenia (np. "main.rs" -> "main")
+    fn get_core_name(name: &str) -> &str {
+        if let Some(idx) = name.rfind('.') {
+            if idx > 0 {
+                return &name[..idx];
+            }
+        }
+        name
+    }
+
+    // Helper: Wydobywa samo rozszerzenie (np. "main.rs" -> "rs")
+    fn get_extension(name: &str) -> &str {
+        if let Some(idx) = name.rfind('.') {
+            if idx > 0 {
+                return &name[idx + 1..];
+            }
+        }
+        ""
+    }
+}
+
+```
+
+### 048: `./src/lib/logic/paths_result.rs`
 
 ```rust
 /*
@@ -4332,7 +4851,7 @@ impl PatternCompiled {
 
 ```
 
-## 047: `./src/lib/logic/paths_table.rs`
+### 049: `./src/lib/logic/paths_table.rs`
 
 ```rust
 /*
@@ -4539,7 +5058,7 @@ impl PatternCompiled {
 
 ```
 
-## 048: `./src/lib/logic/specification.rs`
+### 050: `./src/lib/logic/specification.rs`
 
 ```rust
 // use super::{ConfigJob, ScanRawJobNew, ConfigLayout, ConfigTrimming,
@@ -4779,7 +5298,7 @@ impl Default for ScanSpec {
                 "./.github/workflows/*.yml&/".to_string(),
                 "./.vscode/settings.json&/".to_string(),
                 "./{API,ARCHITECTURE,AUTHORS,CHANGELOG,README,ROADMAP,TODO}.md".to_string(),
-                "./dist/**".to_string(),
+                "./dist/{**/*,*}.{bat,exe}&/".to_string(),
             ],
             ignore_case: false,
         }
@@ -4934,7 +5453,7 @@ impl JobSpec {
 
 ```
 
-## 049: `./src/lib/logic/tag_time.rs`
+### 051: `./src/lib/logic/tag_time.rs`
 
 ```rust
 use chrono::{Datelike, Local, Timelike};
@@ -4974,7 +5493,7 @@ pub fn tag_time() -> TagTime {
 
 ```
 
-## 050: `./src/api.rs`
+### 052: `./src/api.rs`
 
 ```rust
 pub mod lib {
@@ -4983,20 +5502,24 @@ pub mod lib {
         pub use config::*;
         pub mod step1;
         pub use step1::*;
-        pub mod step2;
-        pub use step2::*;
         pub mod gens {
             pub mod item_icon;
             pub mod item_list;
             pub use item_icon::*;
             pub use item_list::*;
         }
+        pub mod step2;
+        pub use step2::*;
+        pub mod step3;
+        pub use step3::*;
     }
     pub mod logic {
         pub mod anchored_paths_datum;
         pub use anchored_paths_datum::{AnchoredPathsDatum, PathNode};
         pub mod path_patterns;
         pub use path_patterns::{PattEnvIndex, PattExp, PattRaw, PatternsQueries};
+        pub mod path_context;
+        pub use path_context::PathContext;
         pub mod fs_scanner;
         pub use fs_scanner::{
             MatchLabel,
@@ -5014,8 +5537,8 @@ pub mod lib {
             StatsScannedTreeFs,
             is_binary_file,
         };
-        pub mod path_context;
-        pub use path_context::PathContext;
+        pub mod path_sort;
+        pub use path_sort::SortQueries;
         // pub mod paths_table;
         // pub use paths_table::{FileKind, TableData, TableRow, TableSotcTreeOutput};
         // pub mod paths_result;
@@ -5189,7 +5712,7 @@ pub mod lib {
 
 ```
 
-## 051: `./src/main.rs`
+### 053: `./src/main.rs`
 
 ```rust
 fn main() {
@@ -5198,14 +5721,14 @@ fn main() {
 
 ```
 
-## 054: `./.gitattributes`
+### 056: `./.gitattributes`
 
 ```text
 * text=auto eol=lf
 
 ```
 
-## 055: `./.gitignore`
+### 057: `./.gitignore`
 
 ```text
 /target/
@@ -5215,7 +5738,7 @@ fn main() {
 /temp/
 ```
 
-## 056: `./.rustfmt.toml`
+### 058: `./.rustfmt.toml`
 
 ```toml
 # =========================
@@ -5354,7 +5877,7 @@ hex_literal_case = "Upper"
 use_try_shorthand = true
 ```
 
-## 057: `./CHANGELOG.md`
+### 059: `./CHANGELOG.md`
 
 ```markdown
 Oto profesjonalny, szczegółowy i dwujęzyczny plik `CHANGELOG.md`, dokumentujący ewolucję projektu **cargo-plot** z wersji **0.1.5** do przełomowej wersji **0.2.0**.
@@ -5368,88 +5891,88 @@ Wszystkie istotne zmiany w tym projekcie będą dokumentowane w tym pliku.
 
 ---
 
-## [0.2.0] — 2026-03-21
+### [0.2.0] — 2026-03-21
 
-### "The Architecture Leap" / "Skok Architektoniczny"
+#### "The Architecture Leap" / "Skok Architektoniczny"
 
-#### 1. Total Architectural Refactoring / Całkowity Refaktoring Architektury
+###### 1. Total Architectural Refactoring / Całkowity Refaktoring Architektury
 
 * **[ENG]** Transitioned from a flat library structure to a robust "Core + Interfaces" model. Business logic has been moved to `src/core/`, separating data processing from presentation.
 * **[POL]** Przejście z płaskiej struktury biblioteki na solidny model „Core + Interfejsy”. Logika biznesowa została przeniesiona do `src/core/`, oddzielając przetwarzanie danych od prezentacji.
 * **[ENG]** Introduced internal modularization: `path_matcher` for logic, `path_store` for data, and `path_view` for rendering.
 * **[POL]** Wprowadzono wewnętrzną modularyzację: `path_matcher` dla logiki, `path_store` dla danych oraz `path_view` dla renderowania.
 
-#### 2. Introduction of Graphical User Interface (GUI) / Wprowadzenie Interfejsu Graficznego (GUI)
+###### 2. Introduction of Graphical User Interface (GUI) / Wprowadzenie Interfejsu Graficznego (GUI)
 
 * **[ENG]** Added a fully functional GUI powered by `eframe` and `egui`. Users can now manage patterns, preview trees, and generate reports in a dedicated window.
 * **[POL]** Dodano w pełni funkcjonalny interfejs graficzny (GUI) oparty na `eframe` i `egui`. Użytkownicy mogą teraz zarządzać wzorcami, podglądać drzewa i generować raporty w dedykowanym oknie.
 * **[ENG]** Features include a live "Zoom" scale, interactive file browsing using `rfd`, and real-time statistics.
 * **[POL]** Funkcje obejmują skalowanie „Zoom” na żywo, interaktywne przeglądanie folderów za pomocą `rfd` oraz statystyki w czasie rzeczywistym.
 
-#### 3. Full Internationalization (i18n) / Pełna Internacjonalizacja (i18n)
+###### 3. Full Internationalization (i18n) / Pełna Internacjonalizacja (i18n)
 
 * **[ENG]** Implemented a comprehensive i18n system supporting English and Polish across all interfaces (CLI, TUI, GUI).
 * **[POL]** Zaimplementowano kompleksowy system i18n wspierający język angielski i polski we wszystkich interfejsach (CLI, TUI, GUI).
 * **[ENG]** Automatic language detection based on environment variables with an option for manual override via `--lang`.
 * **[POL]** Automatyczna detekcja języka na podstawie zmiennych środowiskowych z opcją ręcznego wymuszenia przez `--lang`.
 
-#### 4. Advanced Sorting: "Merge" Strategies / Zaawansowane Sortowanie: Strategie „Merge”
+###### 4. Advanced Sorting: "Merge" Strategies / Zaawansowane Sortowanie: Strategie „Merge”
 
 * **[ENG]** Introduced new sorting algorithms: `AzFileFirstMerge` and `ZaFileFirstMerge`. These group logical file-directory pairs (e.g., `mod.rs` and a directory of the same name) together.
 * **[POL]** Wprowadzono nowe algorytmy sortowania: `AzFileFirstMerge` oraz `ZaFileFirstMerge`. Grupują one logiczne pary plik-katalog (np. `mod.rs` i katalog o tej samej nazwie) obok siebie.
 * **[ENG]** Improved directory/file priority logic to ensure cleaner visual output in large Rust projects.
 * **[POL]** Ulepszono logikę priorytetów katalogów/plików, aby zapewnić czystszy wynik wizualny w dużych projektach Rust.
 
-#### 5. Brace Expansion in Patterns / Rozwijanie Klamer we Wzorcach
+###### 5. Brace Expansion in Patterns / Rozwijanie Klamer we Wzorcach
 
 * **[ENG]** The pattern engine now supports brace expansion, e.g., `src/{lib,bin}/*.rs` expands automatically to multiple search patterns.
 * **[POL]** Silnik wzorców obsługuje teraz rozwijanie klamer, np. `src/{lib,bin}/*.rs` automatycznie rozwija się do wielu wzorców wyszukiwania.
 * **[ENG]** Added support for recursive expansion, allowing complex path filtering with single-line inputs.
 * **[POL]** Dodano wsparcie dla rekurencyjnego rozwijania, co pozwala na złożone filtrowanie ścieżek za pomocą pojedynczej linii tekstu.
 
-#### 6. Enhanced Weight and Size Calculation / Ulepszone Obliczanie Wagi i Rozmiaru
+###### 6. Enhanced Weight and Size Calculation / Ulepszone Obliczanie Wagi i Rozmiaru
 
 * **[ENG]** Added a toggle between Binary (IEC: KiB, MiB) and Decimal (SI: kB, MB) unit systems via the `-u` flag.
 * **[POL]** Dodano przełącznik między binarnym (IEC: KiB, MiB) a dziesiętnym (SI: kB, MB) systemem jednostek za pomocą flagi `-u`.
 * **[ENG]** Introduced the `-a` / `--all` flag to calculate the "Physical" size of directories (including hidden/ignored files) versus the "Filtered" sum.
 * **[POL]** Wprowadzono flagę `-a` / `--all`, aby obliczać „Fizyczny” rozmiar katalogów (wliczając ukryte/ignorowane pliki) w przeciwieństwie do sumy „Przefiltrowanej”.
 
-#### 7. Grid View Mode / Nowy Tryb Widoku: Siatka (Grid)
+###### 7. Grid View Mode / Nowy Tryb Widoku: Siatka (Grid)
 
 * **[ENG]** Added `ViewMode::Grid`, a new visualization style that aligns file names and their relative paths into a clean, readable table-like structure in the terminal.
 * **[POL]** Dodano `ViewMode::Grid` – nowy styl wizualizacji, który wyrównuje nazwy plików i ich ścieżki relatywne w czystą, czytelną strukturę przypominającą tabelę w terminalu.
 * **[ENG]** Dynamic width calculation ensures the grid adapts to the longest path in the result set.
 * **[POL]** Dynamiczne obliczanie szerokości zapewnia dopasowanie siatki do najdłuższej ścieżki w zestawie wyników.
 
-#### 8. Professional Markdown Footers / Profesjonalne Stopki Markdown
+###### 8. Professional Markdown Footers / Profesjonalne Stopki Markdown
 
 * **[ENG]** Reports now include a detailed metadata table at the end (when using the `-b` flag), containing the tool version, input path, TimeTag, and the exact CLI command used.
 * **[POL]** Raporty zawierają teraz szczegółową tabelę metadanych na końcu (przy użyciu flagi `-b`), zawierającą wersję narzędzia, ścieżkę wejściową, TimeTag oraz dokładną użytą komendę CLI.
 * **[ENG]** Improved report aesthetics with better use of blockquotes and horizontal rules.
 * **[POL]** Ulepszono estetykę raportów dzięki lepszemu wykorzystaniu cytatów (blockquotes) i linii poziomych.
 
-#### 9. TUI "Cockpit" Evolution / Ewolucja „Kokpitu” TUI
+###### 9. TUI "Cockpit" Evolution / Ewolucja „Kokpitu” TUI
 
 * **[ENG]** The Terminal User Interface has been rewritten to act as an interactive builder. It now features dynamic labels showing current configuration status before execution.
 * **[POL]** Interfejs TUI został przepisany, aby działać jako interaktywny kreator. Posiada teraz dynamiczne etykiety pokazujące aktualny stan konfiguracji przed uruchomieniem.
 * **[ENG]** Added a "CLI Mode" in TUI, allowing users to paste raw CLI arguments to instantly configure the interactive session.
 * **[POL]** Dodano „Tryb CLI” w TUI, pozwalający użytkownikom na wklejanie surowych argumentów CLI w celu natychmiastowej konfiguracji sesji interaktywnej.
 
-#### 10. Security and Performance / Bezpieczeństwo i Wydajność
+###### 10. Security and Performance / Bezpieczeństwo i Wydajność
 
 * **[ENG]** Global implementation of `#![forbid(unsafe_code)]` to guarantee memory safety.
 * **[POL]** Globalna implementacja `#![forbid(unsafe_code)]`, aby zagwarantować bezpieczeństwo pamięci.
 * **[ENG]** Replaced standard manual path parsing with `walkdir` and `shlex` for better reliability across different operating systems.
 * **[POL]** Zastąpiono standardowe ręczne parsowanie ścieżek bibliotekami `walkdir` i `shlex` dla lepszej niezawodności w różnych systemach operacyjnych.
 
-#### 11. Context-Aware Path Resolution / Inteligentne Rozwiązywanie Ścieżek
+###### 11. Context-Aware Path Resolution / Inteligentne Rozwiązywanie Ścieżek
 
 * **[ENG]** New `PathContext` logic correctly identifies the relationship between the terminal's working directory and the scan target, ensuring correct `./relative/` path rendering.
 * **[POL]** Nowa logika `PathContext` poprawnie identyfikuje relację między katalogiem roboczym terminala a celem skanowania, zapewniając poprawne renderowanie ścieżek `./relatywnych/`.
 * **[ENG]** Improved handling of Windows extended-length paths (`\\?\`).
 * **[POL]** Ulepszona obsługa długich ścieżek systemu Windows (`\\?\`).
 
-#### 12. Refined Pattern Logic Flags / Doprecyzowane Flagi Logiki Wzorców
+###### 12. Refined Pattern Logic Flags / Doprecyzowane Flagi Logiki Wzorców
 
 * **[ENG]** Clearly separated `@` (sibling), `$` (orphan), and `+` (deep/recursive) flags to give users surgical control over what is included in the documentation.
 * **[POL]** Wyraźnie rozdzielono flagi `@` (rodzeństwo), `$` (sierota) oraz `+` (głęboki/rekurencyjny), aby dać użytkownikom chirurgiczną kontrolę nad tym, co znajdzie się w dokumentacji.
@@ -5458,9 +5981,9 @@ Wszystkie istotne zmiany w tym projekcie będą dokumentowane w tym pliku.
 
 ---
 
-### [0.1.5] — 2026-03-11
+#### [0.1.5] — 2026-03-11
 
-#### "The Foundation" / "Fundament"
+###### "The Foundation" / "Fundament"
 
 * **[ENG]** Initial stable release of the new generation documentation tool.
 * **[POL]** Pierwsze stabilne wydanie nowej generacji narzędzia dokumentacyjnego.
@@ -5475,7 +5998,7 @@ Wszystkie istotne zmiany w tym projekcie będą dokumentowane w tym pliku.
 
 ---
 
-### Statistics / Statystyki (v0.2.0)
+#### Statistics / Statystyki (v0.2.0)
 
 * **Lines of Code / Linii kodu:** ~4500+
 * **New Modules / Nowych modułów:** 22
@@ -5489,12 +6012,12 @@ Wszystkie istotne zmiany w tym projekcie będą dokumentowane w tym pliku.
 
 ```
 
-## 058: `./Cargo.toml`
+### 060: `./Cargo.toml`
 
 ```toml
 [package]
 name = "cargo-plot"
-version = "0.3.0-beta.2"
+version = "0.3.0-beta.3"
 authors = ["Jan Roman Cisowski „j-Cis”"]
 edition = "2024"
 rust-version = "1.94.0"
@@ -5563,7 +6086,7 @@ too_many_arguments = "allow"
 
 ```
 
-## 059: `./README.md`
+### 061: `./README.md`
 
 ```markdown
 # cargo-plot
@@ -5596,7 +6119,7 @@ too_many_arguments = "allow"
 
 ---
 
-## 🚀 Główne Funkcje / Key Features
+### 🚀 Główne Funkcje / Key Features
 
 * **Silnik Wzorców 2.0 / Pattern Engine 2.0**: Zaawansowane filtrowanie strukturalne z użyciem flag relacyjnych: `@` (rodzeństwo), `$` (sierota) oraz `+` (głęboki skan). Wspiera również rozwijanie klamer `{a,b}`.
   * **Structural Flags**: Advanced filtering using relational flags: `@` (sibling), `$` (orphan), and `+` (deep scan). Also supports brace expansion `{a,b}`.
@@ -5609,7 +6132,7 @@ too_many_arguments = "allow"
 
 ---
 
-## 🔍 Składnia Wzorców / Pattern Syntax
+### 🔍 Składnia Wzorców / Pattern Syntax
 
 | Symbol | Opis (PL) | Description (ENG) |
 | :--- | :--- | :--- |
@@ -5621,7 +6144,7 @@ too_many_arguments = "allow"
 
 ---
 
-## 🛠 Instalacja / Installation
+### 🛠 Instalacja / Installation
 
 **Jako rozszerzenie Cargo (Zalecane) / As Cargo extension (Recommended):**
 
@@ -5639,7 +6162,7 @@ cargo build --release
 
 ---
 
-## Zestawienie Różnic / Comparison Table
+### Zestawienie Różnic / Comparison Table
 
 | Cecha / Feature | Wersja / Version 0.1.5 | Wersja / Version 0.2.0 |
 | :--- | :--- | :--- |
@@ -5655,7 +6178,7 @@ cargo build --release
 
 ---
 
-## Kluczowe usprawnienia techniczne / Key Technical Enhancements
+### Kluczowe usprawnienia techniczne / Key Technical Enhancements
 
 * **[PL] Precyzja wagi korzenia:** W wersji 0.2.0 wyeliminowano błąd wyświetlania wagi `0` dla głównego folderu; teraz korzeń dumnie reprezentuje sumę całego skanowania.
 * **[ENG] Root weight precision:** Version 0.2.0 eliminates the bug displaying `0` weight for the main folder; now the root proudly represents the sum of the entire scan.
@@ -5666,7 +6189,7 @@ cargo build --release
 
 ---
 
-## 🌍 Wspierane Systemy / Supported Systems
+### 🌍 Wspierane Systemy / Supported Systems
 
 | System | Target Triple |
 | :--- | :--- |

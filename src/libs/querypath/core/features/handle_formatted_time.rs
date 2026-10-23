@@ -1,6 +1,6 @@
 //! Path: `src/libs/querypath/features/handle_formatted_time.rs`
 
-use crate::libs::querypath::features::VerboseDisplay;
+use crate::libs::querypath::core::features::VerboseDisplay;
 use crate::libs::temporal::Temporal;
 use anyhow::{Result, bail};
 use std::fmt;

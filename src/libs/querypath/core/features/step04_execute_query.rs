@@ -10,7 +10,7 @@ use std::{
 	fmt, fs,
 };
 
-use crate::querypath::{
+use crate::querypath::core::{
 	features::{HandleWalkScan, VerboseDisplay},
 	structs::{DirItem, FileItem, PathsPatterns, WalkEnvIndex},
 	traits::PattEnvIndex,

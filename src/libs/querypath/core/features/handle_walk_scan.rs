@@ -11,7 +11,7 @@ use std::{
 };
 use walkdir::WalkDir;
 
-use crate::querypath::{
+use crate::querypath::core::{
 	features::{HandleVerifiedDirs, VerboseDisplay},
 	structs::{PathAnchored, PathNode},
 	utils::{check_is_binary, normalize_path},

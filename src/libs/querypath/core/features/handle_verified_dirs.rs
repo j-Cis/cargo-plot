@@ -4,7 +4,7 @@
 //! Repository: https://github.com/j-Cis/cargo-plot.git
 //! ORCID: https://orcid.org/0009-0009-2907-3792
 
-use crate::querypath::{features::VerboseDisplay, structs::PathAnchored, utils::normalize_path};
+use crate::querypath::core::{features::VerboseDisplay, structs::PathAnchored, utils::normalize_path};
 use anyhow::{Context, Result, bail};
 use std::{env, fmt, fs, path::PathBuf};
 

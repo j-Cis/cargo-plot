@@ -1,8 +1,7 @@
 use anyhow::Result;
 
-use cargo_plot::timer::{Timer, WeekFirstDay};
+use cargo_plot::timer::Timer;
 fn main() -> Result<()> {
-	let start = Timer::now();
 	let a = Timer::now();
 	// println!("now {a:?}");
 	// println!("now {:?}", a.fmt(WeekFirstDay::Mon));

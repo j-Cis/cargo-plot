@@ -1,25 +1,24 @@
 [snapshot]
-title = "HELP ME"
-title_sufix_date = false
+title = "PROJECT (CODE SNAPSHOT) v:"
+title_sufix_date = true
 title_sufix_date_fmt = "WYYY-WW-D::hh:mm:ss:tt:qq"
-name = "HELP_ME"
-name_sufix_date = false
+name = "project_"
+name_sufix_date = true
 name_sufix_date_fmt = "WYYYWW-Dhhmm-ssttqq"
 output_dir = "./dump"
 max_single_file_size = 524288
 add_footer_summary_setups = true
-add_header_customize_text = "---"
-add_fotter_customize_text = "---"
+add_header_customize_text = "\nGenerated via cargo-x-do\n"
+add_fotter_customize_text = "\n---\n*Generated automatically via querypath & querypath-snapshot*\n"
 
 [snapshot.scan]
 match_patterns = [
-	"./src/lib.rs",
-	"./src/libs/timer.rs",
-	"./src/libs/timer/**",
-	"./examples/example2.rs",
-	"./Cargo.toml",
+	"./{src|examples|tests|sandobx|.cargo|.zed}/**",
+	"./{Cargo|.rustfmt}.toml",
+	"!./Cargo.lock",
+	"!./{target|.git|dist|dump}/**"
 ]
-keep_parent = false
+keep_parent = true
 
 [snapshot.sort]
 same_name_priority = "FileFirst"
@@ -41,7 +40,7 @@ numerate_start_from = 1
 
 [snapshot.tree]
 name_width = 25
-path_width = 55
+path_width = 25
 column_order_left = []
 column_order_right = ["Weight", "Temporal", "Path"]
 
@@ -53,4 +52,4 @@ precision = "0.1"
 
 [snapshot.tree.temporal]
 stats_temporal = true
-pattern = "WYYY-WWW-D:hh:mm:ss"
+pattern = "WYYY-WW-D:hh:mm:ss"

@@ -121,7 +121,7 @@ impl QueryExecute {
 			scanned_dirs: walk_ref.count_all_dirs(),
 		};
 
-		// 004📕 Self-Logowanie procesu egzekucji
+		// 1e📕 Self-Logowanie procesu egzekucji
 		if debug {
 			println!("{}", instance.display_debug());
 		}
@@ -132,31 +132,33 @@ impl QueryExecute {
 
 impl VerboseDisplay for QueryExecute {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-		writeln!(f, "004📕 [ structs: QueryExecute, FileItem, DirItem ] 🔰")?;
+		//writeln!(f, "1e📕 [ structs: QueryExecute, FileItem, DirItem ] 🔰")?;
 
-		writeln!(f, "📄📄📄📄📄📄📄")?;
+		//writeln!(f, "📄📄📄📄📄📄📄")?;
 		for file in &self.matched_files {
-			writeln!(
-				f,
-				"📄  {:?} (size: {} B, bin: {}, mod: {:?})",
-				file.path, file.size, file.is_binary, file.modified_at
-			)?;
+			//writeln!(
+			//	f,
+			//	"📄  {:?} (size: {} B, bin: {}, mod: {:?})",
+			//	file.path, file.size, file.is_binary, file.modified_at
+			//)?;
+			writeln!(f, "📄  {:?} ", file)?;
 		}
 
-		writeln!(f, "📁📁📁📁📁📁📁")?;
+		//writeln!(f, "📁📁📁📁📁📁📁")?;
 		for dir in &self.matched_dirs {
-			writeln!(
-				f,
-				"📁  {:?} (matched: {} B, real: {} B, mod: {:?})",
-				dir.path, dir.matched_size, dir.real_size, dir.modified_at
-			)?;
+			//writeln!(
+			//	f,
+			//	"📁  {:?} (matched: {} B, real: {} B, mod: {:?})",
+			//	dir.path, dir.matched_size, dir.real_size, dir.modified_at
+			//)?;
+			writeln!(f, "📁  {:?} ", dir)?;
 		}
 
-		writeln!(f, "📊📊📊📊📊📊📊")?;
-		writeln!(f, "📊 count matched: 📄 = {};  📁 = {};", self.matched_files.len(), self.matched_dirs.len())?;
-		writeln!(f, "📊 count scanned: 📄 = {};  📁 = {};", self.scanned_files, self.scanned_dirs)?;
+		//writeln!(f, "📊📊📊📊📊📊📊")?;
+		//writeln!(f, "📊 count matched: 📄 = {};  📁 = {};", self.matched_files.len(), self.matched_dirs.len())?;
+		//writeln!(f, "📊 count scanned: 📄 = {};  📁 = {};", self.scanned_files, self.scanned_dirs)?;
 
-		writeln!(f, "004📕 [ structs: QueryExecute, FileItem, DirItem ] 🏁")?;
+		//writeln!(f, "1e📕 [ structs: QueryExecute, FileItem, DirItem ] 🏁")?;
 
 		Ok(())
 	}

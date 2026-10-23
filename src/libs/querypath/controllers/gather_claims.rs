@@ -7,4 +7,4 @@
 pub mod traits;
 pub mod types;
 pub mod engine;
-pub use types::{DebugVerboses,ClaimCreating,ClaimDefaults,ClaimOrdering,ClaimPatterns,GatherClaims};
+pub use types::{DebugVerboses,ClaimCreating,ClaimDefaults,ClaimOrdering,ClaimPatterns,GatherClaims, ClaimRefining};

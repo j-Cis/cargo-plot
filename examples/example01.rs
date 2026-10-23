@@ -5,7 +5,7 @@
 //! ORCID: https://orcid.org/0009-0009-2907-3792
 
 use anyhow::Result;
-use cargo_plot::querypath::{ClaimPatterns, DebugVerboses, GatherClaims};
+use cargo_plot::querypath::{ClaimPatterns, DebugVerboses, GatherClaims, ClaimRefining};
 
 fn main() -> Result<()> {
 	println!("🚀 Start ETAPU-1: Konfiguracja i Walidacja\n");
@@ -15,14 +15,15 @@ fn main() -> Result<()> {
 	// Reszta ustawień (Ordering, Creating) załaduje się domyślnie.
 	let claims = GatherClaims::new((
 		ClaimPatterns::new()
-			.patterns_all_matched(["**/timer/**"])
+			.patterns_all_matched(["**/querypath/**"])
 			//.patterns_no_copypast(["*.svg"])
 			.entry_dirs(["./{src|examples}/"])
 			.case_sensitive(false),
+		ClaimRefining::new().skip_nodoted_withext_files_text(true),
 		DebugVerboses::new()
 			.step1a_patterns(false)
 			.step1b_entrydir(false)
-			.step1c_walk(false)
+			.step1c_walk(true)
 			.step1d_execute(true),
 	));
 

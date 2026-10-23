@@ -65,7 +65,7 @@ impl HandleFormattedTime {
 	}
 
 	#[inline]
-	pub fn format_system_time_tree(&self, st: SystemTime) -> String {		
+	pub fn format_system_time_tree(&self, st: SystemTime) -> String {
 		Timer::from_system_time(st).format(self.pattern_tree)
 	}
 
@@ -77,11 +77,11 @@ impl HandleFormattedTime {
 
 impl VerboseDisplay for HandleFormattedTime {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-		writeln!(f, "00X📕 [ structs: HandleFormattedTime ] 🔰")?;
+		writeln!(f, "99z📕 [ structs: HandleFormattedTime ] 🔰")?;
 		writeln!(f, "  🌲 pattern_tree 🕒: {:?}", self.pattern_tree)?;
 		writeln!(f, "  📄 pattern_text 🕒: {:?}", self.pattern_text)?;
 		writeln!(f, "  🏷️  pattern_name 🕒: {:?}", self.pattern_name)?;
-		writeln!(f, "00X📕 [ structs: HandleFormattedTime ] 🏁")?;
+		writeln!(f, "99z📕 [ structs: HandleFormattedTime ] 🏁")?;
 		Ok(())
 	}
 }

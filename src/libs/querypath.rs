@@ -8,4 +8,4 @@ pub mod controllers;
 pub mod core;
 
 
-pub use controllers::{DebugVerboses,ClaimCreating,ClaimDefaults,ClaimOrdering,ClaimPatterns,GatherClaims};
+pub use controllers::{DebugVerboses,ClaimCreating,ClaimDefaults,ClaimOrdering,ClaimPatterns,GatherClaims, ClaimRefining};

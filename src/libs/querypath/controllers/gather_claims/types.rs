@@ -15,10 +15,10 @@ use crate::libs::querypath::core::{
 
 #[derive(Debug, Clone, Default)]
 pub struct DebugVerboses {
-	pub step1b_entrydir: bool,
 	pub step1a_patterns: bool,
+	pub step1b_entrydir: bool,
 	pub step1c_walk: bool,
-	pub step1d_execute: bool, // Dopisano krok 03 (filtrowanie)
+	pub step1d_execute: bool,
 }
 
 /// Znacznik dla całkowicie domyślnych ustawień (szybki start).
@@ -32,9 +32,26 @@ pub struct ClaimPatterns {
 	pub patterns_no_numerate: Vec<String>,
 	pub patterns_no_copypast: Vec<String>,
 	pub case_sensitive: bool,
-	//pub pattern_temporal_in_tree: &'static str,
-	//pub pattern_temporal_in_text: &'static str,
-	//pub pattern_temporal_in_name: &'static str,
+}
+
+#[derive(Debug, Clone)]
+pub struct ClaimRefining {
+	pub skip_doted_dirs_empty: bool,
+	pub skip_nodot_dirs_empty: bool,
+	pub skip_doted_dirs_laden: bool,
+	pub skip_nodot_dirs_laden: bool,
+	pub skip_doted_noext_files_empty: bool,
+	pub skip_doted_withext_files_empty: bool,
+	pub skip_nodoted_noext_files_empty: bool,
+	pub skip_nodoted_withext_files_empty: bool,
+	pub skip_doted_noext_files_binary: bool,
+	pub skip_doted_withext_files_binary: bool,
+	pub skip_nodoted_noext_files_binary: bool,
+	pub skip_nodoted_withext_files_binary: bool,
+	pub skip_doted_noext_files_text: bool,
+	pub skip_doted_withext_files_text: bool,
+	pub skip_nodoted_noext_files_text: bool,
+	pub skip_nodoted_withext_files_text: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -90,15 +107,16 @@ pub enum Gather {
 
 pub struct GatherClaims {
 	pub patterns: ClaimPatterns,
+	pub refining: ClaimRefining,
 	pub ordering: ClaimOrdering,
 	pub creating: ClaimCreating,
 	pub verboses: DebugVerboses,
 
 	// Używamy zaktualizowanych ścieżek z katalogu features
-	pub step00_val_entry: Option<HandleVerifiedDirs>,
-	pub step01_val_patts: Option<HandlePreparedPatterns>,
-	pub step02_val_walk: Option<HandleWalkScan>,
-	pub step03_val_execute: Option<crate::libs::querypath::core::features::step04_execute_query::QueryExecute>,
+	pub step1b_val_entry: Option<HandleVerifiedDirs>,
+	pub step1a_val_patts: Option<HandlePreparedPatterns>,
+	pub step1c_val_walk: Option<HandleWalkScan>,
+	pub step1d_val_execute: Option<crate::libs::querypath::core::features::step04_execute_query::QueryExecute>,
 	// step03_val_sorts
 	// step04_val_filtr
 	// step05_val_add_index

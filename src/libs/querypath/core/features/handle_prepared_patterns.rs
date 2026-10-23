@@ -57,16 +57,20 @@ impl HandlePreparedPatterns {
 			for (e_idx, exp) in PathsPatterns::expand_braces(raw).iter().enumerate() {
 				let e_num = format!("{:02}", e_idx + 1);
 				if let Some(rule) = group.compiled.get(cursor) {
-					writeln!(f, "{r_num}:{e_num}  🪄 : 【{} 】    🔎: {:?}    {}", 
-					rule.regex, exp, format!(
-						"⚗️ : base name: {:?}, is negated: {} , dir only: {} , requires sibling: {} , requires orphan: {} ,",
-						rule.base_name,
-						if rule.is_negated { "✔️" } else { "❌" },
-						if rule.targets_dir_only { "✔️" } else { "❌" },
-						if rule.requires_sibling { "✔️" } else { "❌" },
-						if rule.requires_orphan { "✔️" } else { "❌" }
-					))?;
-					
+					writeln!(
+						f,
+						"{r_num}:{e_num}  🪄 : 【{} 】    🔎: {:?}    {}",
+						rule.regex,
+						exp,
+						format!(
+							"⚗️ : base name: {:?}, is negated: {} , dir only: {} , requires sibling: {} , requires orphan: {} ,",
+							rule.base_name,
+							if rule.is_negated { "✔️" } else { "❌" },
+							if rule.targets_dir_only { "✔️" } else { "❌" },
+							if rule.requires_sibling { "✔️" } else { "❌" },
+							if rule.requires_orphan { "✔️" } else { "❌" }
+						)
+					)?;
 				}
 				cursor += 1;
 			}
@@ -79,7 +83,7 @@ impl VerboseDisplay for HandlePreparedPatterns {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
 		writeln!(
 			f,
-			"002📕 [ structs: HandlePreparedPatterns, PathsPatterns, PattRaw, PattExp, PatternCompiled, Regex ] 🔰"
+			"1a📕 [ structs: HandlePreparedPatterns, PathsPatterns, PattRaw, PattExp, PatternCompiled, Regex ] 🔰"
 		)?;
 
 		let mut has_printed = false;
@@ -99,7 +103,7 @@ impl VerboseDisplay for HandlePreparedPatterns {
 
 		writeln!(
 			f,
-			"002📕 [ structs: HandlePreparedPatterns, PathsPatterns, PattRaw, PattExp, PatternCompiled, Regex ] 🏁"
+			"1a📕 [ structs: HandlePreparedPatterns, PathsPatterns, PattRaw, PattExp, PatternCompiled, Regex ] 🏁"
 		)?;
 		Ok(())
 	}

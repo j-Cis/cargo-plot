@@ -11,10 +11,13 @@ use std::{
 };
 use walkdir::WalkDir;
 
-use crate::querypath::core::{
-	features::{HandleVerifiedDirs, VerboseDisplay},
-	structs::{PathAnchored, PathNode},
-	utils::{check_is_binary, normalize_path},
+use crate::querypath::{
+	controllers::types::ClaimRefining,
+	core::{
+		features::{HandleVerifiedDirs, VerboseDisplay},
+		structs::{PathAnchored, PathNode},
+		utils::{check_is_binary, normalize_path},
+	},
 };
 
 /// Surowy rezultat przejścia po drzewie katalogów.
@@ -109,8 +112,90 @@ impl HandleWalkScan {
 			.chain(self.dotfiles_text_no_empty_has_ext.iter())
 	}
 
+	/// Czyści konkretne szufladki na podstawie flag ClaimRefining
+	pub fn refine(&mut self, config: &ClaimRefining, debug: bool) {
+		let mut active = 0;
+		let mut log_out = String::new();
+
+		macro_rules! cut {
+			($flag:expr, $list:expr, $msg:expr) => {
+				if $flag {
+					$list.clear();
+					if debug {
+						log_out.push_str(&format!("  ✂️ CUT: {}\n", $msg));
+						active += 1;
+					}
+				}
+			};
+		}
+
+		// Katalogi
+		cut!(config.skip_doted_dirs_empty, self.dotdirs_empty, "skip_doted_dirs_empty");
+		cut!(config.skip_nodot_dirs_empty, self.dirs_empty, "skip_nodot_dirs_empty");
+		cut!(config.skip_doted_dirs_laden, self.dotdirs_no_empty, "skip_doted_dirs_laden");
+		cut!(config.skip_nodot_dirs_laden, self.dirs_no_empty, "skip_nodot_dirs_laden");
+
+		// Pliki puste
+		cut!(config.skip_doted_noext_files_empty, self.dotfiles_empty_no_ext, "skip_doted_noext_files_empty");
+		cut!(config.skip_doted_withext_files_empty, self.dotfiles_empty_has_ext, "skip_doted_withext_files_empty");
+		cut!(config.skip_nodoted_noext_files_empty, self.files_empty_no_ext, "skip_nodoted_noext_files_empty");
+		cut!(
+			config.skip_nodoted_withext_files_empty,
+			self.files_empty_has_ext,
+			"skip_nodoted_withext_files_empty"
+		);
+
+		// Pliki binarne
+		cut!(config.skip_doted_noext_files_binary, self.dotfiles_binary_no_ext, "skip_doted_noext_files_binary");
+		cut!(
+			config.skip_doted_withext_files_binary,
+			self.dotfiles_binary_has_ext,
+			"skip_doted_withext_files_binary"
+		);
+		cut!(config.skip_nodoted_noext_files_binary, self.files_binary_no_ext, "skip_nodoted_noext_files_binary");
+		cut!(
+			config.skip_nodoted_withext_files_binary,
+			self.files_binary_has_ext,
+			"skip_nodoted_withext_files_binary"
+		);
+
+		// Pliki tekstowe
+		cut!(
+			config.skip_doted_noext_files_text,
+			self.dotfiles_text_no_empty_no_ext,
+			"skip_doted_noext_files_text"
+		);
+		cut!(
+			config.skip_doted_withext_files_text,
+			self.dotfiles_text_no_empty_has_ext,
+			"skip_doted_withext_files_text"
+		);
+		cut!(
+			config.skip_nodoted_noext_files_text,
+			self.files_text_no_empty_no_ext,
+			"skip_nodoted_noext_files_text"
+		);
+		cut!(
+			config.skip_nodoted_withext_files_text,
+			self.files_text_no_empty_has_ext,
+			"skip_nodoted_withext_files_text"
+		);
+
+		self.update_counts();
+
+		if debug {
+			println!("1c📕 [ structs: ClaimRefining applied to HandleWalkScan ] 🔰");
+			if active == 0 {
+				println!("  (Brak aktywnych filtrów ClaimRefining - nic nie odcięto)");
+			} else {
+				print!("{}", log_out);
+			}
+			println!("1c📕 [ structs: ClaimRefining applied to HandleWalkScan ] 🏁\n");
+		}
+	}
+
 	/// Wykonuje surowe skanowanie dla wszystkich celów w `HandleVerifiedDirs`.
-	pub fn scan(entry: &HandleVerifiedDirs, debug: bool) -> Result<Self> {
+	pub fn scan(entry: &HandleVerifiedDirs, refining: &ClaimRefining, debug: bool) -> Result<Self> {
 		let mut instance = Self::default();
 
 		for handle in &entry.handles {
@@ -118,6 +203,10 @@ impl HandleWalkScan {
 		}
 
 		instance.sort_and_dedup_all();
+		
+		// Bezpośrednie wyłączenie szufladek wewnątrz skanera
+		instance.refine(refining, debug);
+
 		instance.update_counts();
 
 		if debug {
@@ -247,7 +336,7 @@ impl HandleWalkScan {
 
 impl VerboseDisplay for HandleWalkScan {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-		writeln!(f, "003📕 [ structs: HandleWalkScan ] 🔰\n")?;
+		writeln!(f, "1c📕 [ structs: HandleWalkScan ] 🔰\n")?;
 
 		let total_dirs =
 			self.count_dirs_empty + self.count_dotdirs_empty + self.count_dirs_no_empty + self.count_dotdirs_no_empty;
@@ -325,7 +414,7 @@ impl VerboseDisplay for HandleWalkScan {
 		print_list!("📄 TEXT FILES, WITH EXTENSION", self.files_text_no_empty_has_ext);
 		print_list!("📄 TEXT FILES, HIDDEN (DOT), WITH EXTENSION", self.dotfiles_text_no_empty_has_ext);
 
-		writeln!(f, "003📕 [ structs: HandleWalkScan ] 🏁")?;
+		writeln!(f, "1c📕 [ structs: HandleWalkScan ] 🏁")?;
 		Ok(())
 	}
 }

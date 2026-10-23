@@ -117,7 +117,7 @@ impl HandleVerifiedDirs {
 
 impl VerboseDisplay for HandleVerifiedDirs {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-		writeln!(f, "001📕 [ structs: HandleVerifiedDirs, PathAnchored ] 🔰")?;
+		writeln!(f, "1b📕 [ structs: HandleVerifiedDirs, PathAnchored ] 🔰")?;
 
 		writeln!(f, "cwd str 👀: {:?}", self.cwd_str)?;
 		writeln!(f, "cwd buf 👀: {:?}", self.cwd_buf.to_string_lossy())?;
@@ -130,7 +130,7 @@ impl VerboseDisplay for HandleVerifiedDirs {
 			writeln!(f, "path {num} str 🎯: {:?}", handle.str)?;
 			writeln!(f, "path {num} buf 🎯: {:?}", handle.buf.to_string_lossy())?;
 		}
-		writeln!(f, "001📕 [ structs: HandleVerifiedDirs, PathAnchored ] 🏁")?;
+		writeln!(f, "1b📕 [ structs: HandleVerifiedDirs, PathAnchored ] 🏁")?;
 
 		Ok(())
 	}

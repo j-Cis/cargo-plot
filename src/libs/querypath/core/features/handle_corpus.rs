@@ -103,8 +103,8 @@ impl HandleCorpus {
 			.handles
 			.iter()
 			.map(|h| {
-				if h.str.ends_with('/') {
-					h.str.clone()
+				if h.rel.ends_with('/') {
+					h.rel.clone()
 				} else {
 					format!("{}/", h.str)
 				}

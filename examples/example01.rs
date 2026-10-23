@@ -8,7 +8,7 @@ fn main() -> Result<()> {
 			.patterns_all_matched(["*"])
 			//.patterns_no_copypast(["*.svg"])
 			.entry_dirs(["./{src/libs/timer|examples}/"])
-			.entry_dirs_ancestors(true)
+			.entry_dirs_ancestors(false)
 			.case_sensitive(false),
 		ClaimRefining::new().skip_nodoted_withext_files_text(false),
 		DebugVerboses::new()

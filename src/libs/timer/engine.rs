@@ -1,23 +1,20 @@
-
-
-use super::functions::{
-	civil_from_days, days_from_civil, days_in_month, is_leap, iso_weekday, month_day, months_of, nz,
-	quater_of, season, week_of,
+use super::{
+	consts::WEEK_FIRST_DAY_IS_MON_HARDCODED,
+	enums::{MonthDay, Months, Season, Week, WeekDay, WeekFirstDay, YearDay},
+	functions::{
+		civil_from_days, days_from_civil, days_in_month, is_leap, iso_weekday, month_day, months_of, nz, quater_of,
+		season, week_of,
+	},
+	structs::{
+		Cycle, Day, Month, MonthWith28Day, MonthWith29Day, MonthWith30Day, MonthWith31Day, Range0To23, Range0To59,
+		Range0To999, Range1To12, T, Time, Timer, Year, YearWith365Day, YearWith366Day,
+	},
 };
-
-use super::structs::{
-	Cycle, Day, Month, MonthWith28Day, MonthWith29Day, MonthWith30Day, MonthWith31Day, 
-	Range0To23, Range0To59, Range0To999, Range1To12,  T, Time, Timer,  Year,
-	YearWith365Day, YearWith366Day,
+use std::{
+	num::NonZeroU16,
+	// ops::{Add, Sub},
+	time::{/*Duration,*/ SystemTime, UNIX_EPOCH},
 };
-
-use super::enums::{
-	 Week, WeekDay, WeekFirstDay, 
-	YearDay,
-};
-use std::num::NonZeroU16;
-
-
 
 impl Timer {
 	pub fn now() -> Self {
@@ -36,8 +33,72 @@ impl Timer {
 
 		Self(days, rem_secs, subsec_nanos, offset_secs)
 	}
-	pub fn fmt(self, week_start: WeekFirstDay) -> T {
-		T::new(self, week_start)
+	pub fn format_without_format(self /*week_start: WeekFirstDay*/) -> T {
+		T::new(self /*week_start*/)
+	}
+	pub fn format(&self, /*week_start: WeekFirstDay,*/ pattern: &str) -> String {
+		// Przekazujemy self (kopia Timera) i start tygodnia do budowy danych kalendarzowych
+		let t = T::new(*self /*week_start*/);
+		// Zgodnie ze strukturą Timer(pub i64, pub u32, pub u32, pub i32), offset jest pod indeksem 3
+		t.format_string(pattern, self.3 /*week_start*/)
+	}
+	/// Tworzy strukturę `Timer` z systemowego czasu modyfikacji pliku (`std::time::SystemTime`).
+	pub fn from_system_time(st: SystemTime) -> Self {
+		let duration = st.duration_since(UNIX_EPOCH).unwrap_or_default();
+		Self::from_secs_and_nanos(duration.as_secs(), duration.subsec_nanos())
+	}
+
+	/// Tworzy strukturę `Timer` ze znacznika czasu w sekundach UNIX (np. pobranego z metadanych).
+	pub fn from_secs(timestamp_secs: u64) -> Self {
+		Self::from_secs_and_nanos(timestamp_secs, 0)
+	}
+
+	/// Tworzy strukturę `Timer` ze znacznika czasu w milisekundach UNIX.
+	pub fn from_millis(timestamp_millis: u64) -> Self {
+		let secs = timestamp_millis / 1_000;
+		let nanos = (timestamp_millis % 1_000) as u32 * 1_000_000;
+		Self::from_secs_and_nanos(secs, nanos)
+	}
+
+	/// Prywatna funkcja pomocnicza przeliczająca całkowity czas UTC i aplikująca lokalny offset.
+	fn from_secs_and_nanos(total_secs_utc: u64, subsec_nanos: u32) -> Self {
+		let offset_secs = jiff::Zoned::now().offset().seconds() as i32;
+		let base_secs = (total_secs_utc as i64) + i64::from(offset_secs);
+
+		let days = base_secs.div_euclid(86_400);
+		let rem_secs = base_secs.rem_euclid(86_400) as u32;
+
+		Self(days, rem_secs, subsec_nanos, offset_secs)
+	}
+	/// Tworzy `Timer` ze znacznika czasu w mikrosekundach UNIX.
+	pub fn from_micros(timestamp_micros: u64) -> Self {
+		let secs = timestamp_micros / 1_000_000;
+		let nanos = (timestamp_micros % 1_000_000) as u32 * 1_000;
+		Self::from_secs_and_nanos(secs, nanos)
+	}
+
+	/// Tworzy `Timer` ze znacznika czasu w nanosekundach UNIX.
+	pub fn from_nanos(timestamp_nanos: u128) -> Self {
+		let secs = (timestamp_nanos / 1_000_000_000) as u64;
+		let nanos = (timestamp_nanos % 1_000_000_000) as u32;
+		Self::from_secs_and_nanos(secs, nanos)
+	}
+	pub fn to_unix_secs(&self) -> i64 {
+		self.0 * 86_400 + i64::from(self.1) - i64::from(self.3)
+	}
+
+	pub fn to_unix_nanos(&self) -> i128 {
+		(self.to_unix_secs() as i128) * 1_000_000_000 + i128::from(self.2)
+	}
+}
+
+// Implementacja Traitu TryFrom dla SystemTime -> Timer
+impl TryFrom<SystemTime> for Timer {
+	type Error = std::time::SystemTimeError;
+
+	fn try_from(st: SystemTime) -> Result<Self, Self::Error> {
+		let duration = st.duration_since(UNIX_EPOCH)?;
+		Ok(Self::from_secs_and_nanos(duration.as_secs(), duration.subsec_nanos()))
 	}
 }
 
@@ -45,12 +106,13 @@ impl Timer {
 impl T {
 	/// Buduje komplet danych kalendarzowych i czasu z `Timer`
 	/// (dni od 1970-01-01 w czasie lokalnym, sekundy doby, nanosekundy).
-	pub fn new(timer: Timer, week_start: WeekFirstDay) -> Self {
+	pub fn new(timer: Timer /* week_start: WeekFirstDay*/) -> Self {
 		let Timer(days, rem_secs, subsec_nanos, offset_secs) = timer;
 		// Chwila w UTC (sekundy uniksowe), potrzebna do porównania z równonocami i przesileniami.
 
 		// Zmienna pomocnicza do funkcji week_of()
-		let sun0 = week_start == WeekFirstDay::Sun;
+		/* let sun0 = week_start == WeekFirstDay::Sun;*/
+		let sun0 = WEEK_FIRST_DAY_IS_MON_HARDCODED == WeekFirstDay::Sun;
 
 		let now_unix =
 			(days * 86_400 + i64::from(rem_secs) - i64::from(offset_secs)) as f64 + f64::from(subsec_nanos) / 1e9;
@@ -128,6 +190,173 @@ impl T {
 		};
 
 		Self { day, year, week, month, time }
+	}
+
+	/// Formatuje strukturę `T` na podstawie podanego wzorca (jednoprzebiegowy parser).
+	pub fn format_string(&self, pattern: &str, offset_seconds: i32 /*week_start: WeekFirstDay*/) -> String {
+		let mut out = String::with_capacity(pattern.len() + 16);
+		let mut remaining = pattern;
+
+		let day_num = match self.day.in_month {
+			MonthDay::M31D(d) => d.0.get(),
+			MonthDay::M30D(d) => d.0.get(),
+			MonthDay::M29D(d) => d.0.get(),
+			MonthDay::M28D(d) => d.0.get(),
+		};
+
+		let month_num = self.month.month as u32;
+
+		// Baza to ISO (Poniedziałek = 1 ... Niedziela = 7)
+		let iso_weekday_num = match self.day.in_week {
+			WeekDay::Mon => 1,
+			WeekDay::Tue => 2,
+			WeekDay::Wed => 3,
+			WeekDay::Thu => 4,
+			WeekDay::Fri => 5,
+			WeekDay::Sat => 6,
+			WeekDay::Sun => 7,
+		};
+
+		// Dopasowanie do ogólnoświatowych standardów:
+		// Jeśli startujemy w poniedziałek (ISO): 1-7
+		// Jeśli startujemy w niedzielę (Cron/POSIX): Niedziela to 0, Poniedziałek to 1...
+		let weekday_num = match /*week_start*/ WEEK_FIRST_DAY_IS_MON_HARDCODED {
+			WeekFirstDay::Mon => iso_weekday_num,
+			WeekFirstDay::Sun => {
+				if iso_weekday_num == 7 {
+					0
+				} else {
+					iso_weekday_num
+				}
+			}
+		};
+		let day_in_year_num = match self.day.in_year {
+			YearDay::Y365D(d) => d.0.get(),
+			YearDay::Y366D(d) => d.0.get(),
+		};
+
+		while !remaining.is_empty() {
+			// 1. Podwojone nawiasy traktujemy jako ucieczkę do znaku dosłownego
+			if let Some(rest) = remaining.strip_prefix("[[") {
+				out.push('[');
+				remaining = rest;
+				continue;
+			}
+			if let Some(rest) = remaining.strip_prefix("]]") {
+				out.push(']');
+				remaining = rest;
+				continue;
+			}
+
+			// 2. Blok tokenu [TOKEN]
+			if let Some(rest) = remaining.strip_prefix('[') {
+				if let Some(end_idx) = rest.find(']') {
+					let token = &rest[..end_idx];
+					remaining = &rest[end_idx + 1..];
+
+					match token {
+						// Strefa
+						"ZONE" => {
+							let sign = if offset_seconds >= 0 { '+' } else { '-' };
+							let abs_offset = offset_seconds.abs();
+							out.push_str(&format!(
+								"{}{:02}{:02}UTC",
+								sign,
+								abs_offset / 3600,
+								(abs_offset % 3600) / 60
+							));
+						}
+
+						// Rok
+						"YYYW" => out.push_str(&format!("{:04}", self.year.week_year)),
+						"YYYY" => out.push_str(&format!("{:04}", self.year.year)),
+						"YW" => out.push_str(&format!("{:02}", (self.year.week_year % 100).abs())),
+						"YY" => out.push_str(&format!("{:02}", (self.year.year % 100).abs())),
+						// "OOO" => out.push_str(&format!("{:03}", self.year.cycle.cycl400)),
+
+						// Miesiąc
+						"MM" => out.push_str(&format!("{:02}", month_num)),
+						"MMM" => out.push_str(match self.month.month {
+							Months::Jan => "JAN",
+							Months::Feb => "FEB",
+							Months::Mar => "MAR",
+							Months::Apr => "APR",
+							Months::May => "MAY",
+							Months::Jun => "JUN",
+							Months::Jul => "JUL",
+							Months::Aug => "AUG",
+							Months::Sep => "SEP",
+							Months::Oct => "OCT",
+							Months::Nov => "NOV",
+							Months::Dec => "DEC",
+						}),
+
+						// Dzień
+						"D" => out.push_str(&weekday_num.to_string()),
+						"DM" => out.push_str(&format!("{:02}", day_num)),
+						"DDY" => out.push_str(&format!("{:03}", day_in_year_num)),
+						"DDD" => out.push_str(match self.day.in_week {
+							WeekDay::Mon => "MON",
+							WeekDay::Tue => "TUE",
+							WeekDay::Wed => "WED",
+							WeekDay::Thu => "THU",
+							WeekDay::Fri => "FRI",
+							WeekDay::Sat => "SAT",
+							WeekDay::Sun => "SUN",
+						}),
+
+						// Tydzień
+						"WW" => out.push_str(&format!("{:02}", self.week as u32)),
+
+						// Pora roko oraz kwartał
+						"SSS" => out.push_str(match self.year.season {
+							Season::Aut => "AUT",
+							Season::Win => "WIN",
+							Season::Spr => "SPR",
+							Season::Sum => "SUM",
+						}),
+						"S" => out.push_str(&(self.year.season as u32).to_string()),
+						"Q" => out.push_str(&(self.year.quater as u32).to_string()),
+
+						// Czas
+						"hh" => out.push_str(&format!("{:02}", self.time.hour24.0)),
+						"hhhh" => {
+							let h12 = self.time.hour12.0.get();
+							let ampm = if self.time.hour_is_pm { "pm" } else { "am" };
+							out.push_str(&format!("{}{:02}", ampm, h12));
+						}
+						// 1/60
+						"mm" => out.push_str(&format!("{:02}", self.time.minute_in_hou.0)),
+						"ss" => out.push_str(&format!("{:02}", self.time.second_in_min.0)),
+						"tt" => out.push_str(&format!("{:02}", self.time.tierce_in_sec.0)),
+						"qa" => out.push_str(&format!("{:02}", self.time.quadra_in_tie.0)),
+						"qi" => out.push_str(&format!("{:02}", self.time.quinta_in_qua.0)),
+						"sx" => out.push_str(&format!("{:02}", self.time.sextus_in_qui.0)),
+						"sp" => out.push_str(&format!("{:02}", self.time.septim_in_sex.0)),
+						// 1/1000
+						"ssmil" => out.push_str(&format!("{:03}ms", self.time.ms_in_second.0)),
+						"ssmic" => out.push_str(&format!("{:03}µs", self.time.us_in_millis.0)),
+						"ssnan" => out.push_str(&format!("{:03}ns", self.time.ns_in_micros.0)),
+
+						// Nieznany token wewnątrz [...] – przepisujemy go dosłownie wraz z nawiasami
+						unknown => {
+							out.push('[');
+							out.push_str(unknown);
+							out.push(']');
+						}
+					}
+					continue;
+				}
+			}
+
+			// Przepisz zwykły znak
+			if let Some(c) = remaining.chars().next() {
+				out.push(c);
+				remaining = &remaining[c.len_utf8()..];
+			}
+		}
+
+		out
 	}
 }
 

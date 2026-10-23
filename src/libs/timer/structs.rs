@@ -1,9 +1,5 @@
+use super::enums::{MonthDay, Months, Quater, Season, Week, WeekDay, YearDay};
 use std::num::NonZeroU16;
-use super::enums::{
-	MonthDay, Months, Quater,Season, Week, WeekDay, 
-	YearDay, 
-};
-
 
 #[derive(Debug, Clone, Copy)]
 pub struct Timer(pub i64, pub u32, pub u32, pub i32);
@@ -50,13 +46,11 @@ pub struct Cycle {
 	pub cycl400: u16,
 }
 
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct YearWith365Day(pub NonZeroU16);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct YearWith366Day(pub NonZeroU16);
-
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct MonthWith31Day(pub NonZeroU16);
@@ -69,7 +63,6 @@ pub struct MonthWith29Day(pub NonZeroU16);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct MonthWith28Day(pub NonZeroU16);
-
 
 //-------------------------------------------------------- CZAS
 
@@ -94,6 +87,7 @@ pub struct Time {
 	pub second_in_min: Range0To59,
 	pub tierce_in_sec: Range0To59,
 	pub quadra_in_tie: Range0To59,
+
 	pub quinta_in_qua: Range0To59,
 	pub sextus_in_qui: Range0To59,
 	pub septim_in_sex: Range0To59,

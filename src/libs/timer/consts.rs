@@ -1,3 +1,6 @@
+use super::enums::WeekFirstDay;
+/// Globalne, tymczasowo zahardkodowane ustawienie: tydzień zaczyna się w poniedziałek.
+pub const WEEK_FIRST_DAY_IS_MON_HARDCODED: WeekFirstDay = WeekFirstDay::Mon;
 // Współczynniki JDE0 (Meeus, tabele 27.a i 27.b): [stała, Y, Y^2, Y^3, Y^4],
 // kolejno: równonoc marcowa, przesilenie czerwcowe, równonoc wrześniowa, przesilenie grudniowe.
 // Tabela 27.a: lata -1000..1000, Y = rok / 1000.

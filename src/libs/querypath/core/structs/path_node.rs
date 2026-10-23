@@ -21,7 +21,7 @@ pub struct PathNode {
 	pub has_extension: bool,
 	pub no_numerate: bool,
 	pub no_copypast: bool,
-	pub meta_modifed_at: Option<u64>,
+	pub meta_modifed_at: Option<String>,
 	pub meta_size_total: Option<u64>,
 	pub meta_size_scope: Option<u64>,
 }
@@ -55,7 +55,7 @@ impl PathNode {
 	/// Zbiorcza aktualizacja metadanych węzła na późniejszych etapach potoku.
 	pub fn meta(
 		&mut self,
-		modifed_at: Option<u64>,
+		modifed_at: Option<String>,
 		size_total: Option<u64>,
 		size_scope: Option<u64>,
 	) -> &mut Self {

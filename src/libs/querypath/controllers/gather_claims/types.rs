@@ -28,6 +28,7 @@ pub struct ClaimDefaults;
 #[derive(Debug, Clone, Default)]
 pub struct ClaimPatterns {
 	pub entry_dirs: Vec<String>,
+	pub entry_dirs_ancestors: bool,
 	pub patterns_all_matched: Vec<String>,
 	pub patterns_no_numerate: Vec<String>,
 	pub patterns_no_copypast: Vec<String>,
@@ -79,7 +80,6 @@ pub struct ClaimCreating {
 	pub weight_binary_base: EnumUnitSystem,
 	pub weight_dir_display: EnumDirWeightDisplay,
 	pub weight_precision: EnumWeightPrecision,
-	pub keep_parent: bool,
 	pub include_files: bool,
 	pub include_binaries_in_matched: bool,
 	pub title: &'static str,

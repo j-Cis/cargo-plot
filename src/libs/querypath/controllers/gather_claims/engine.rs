@@ -11,7 +11,7 @@ use crate::libs::querypath::{
 		},
 	},
 	core::{
-		features::{HandlePreparedPatterns, HandleVerifiedDirs, HandleWalkScan},
+		features::{HandlePreparedPatterns, HandleVerifiedDirs, HandleWalkScan,HandleCorpus},
 		types::enums::{
 			EnumCasePrecedence, EnumCharClass, EnumColumn, EnumDirWeightDisplay, EnumGroupStrategy, EnumNoExtPriority,
 			EnumSameNamePriority, EnumUnitSystem, EnumWeightPrecision,
@@ -125,6 +125,11 @@ impl GatherClaims {
 	}
 
 	pub fn step1d_valid_execute_query(mut self) -> Result<Self> {
+		let entry = self
+			.step1b_val_entry
+			.as_ref()
+			.context("ETAP-1 [Błąd sekwencji]: Brak katalogów wejściowych (entry_dirs) przed filtrowaniem!")?;
+
 		let patts =
 			self.step1a_val_patts.as_ref().context("ETAP-1 [Błąd sekwencji]: Brak wzorców przed filtrowaniem!")?;
 
@@ -133,10 +138,11 @@ impl GatherClaims {
 			.as_ref()
 			.context("ETAP-1 [Błąd sekwencji]: Brak drzewa katalogów przed filtrowaniem!")?;
 
-		let execute = crate::querypath::core::features::HandleCorpus::apply(
+		let execute = HandleCorpus::apply(
+			entry,
 			&patts.all_matched,
 			walk,
-			self.creating.keep_parent,
+			self.patterns.entry_dirs_ancestors,
 			self.verboses.step1d_execute,
 		)
 		.context("ETAP-1 [Błąd kroku 03]: Filtracja wyników nie powiodła się!")?;
@@ -220,6 +226,12 @@ impl ClaimPatterns {
 	#[must_use]
 	pub fn case_sensitive(mut self, sensitive: bool) -> Self {
 		self.case_sensitive = sensitive;
+		self
+	}
+
+	#[must_use]
+	pub fn entry_dirs_ancestors(mut self, ancestors: bool) -> Self {
+		self.entry_dirs_ancestors = ancestors;
 		self
 	}
 }
@@ -425,8 +437,7 @@ impl Default for ClaimCreating {
 			column_order_right: vec![EnumColumn::Path],
 			weight_binary_base: EnumUnitSystem::Binary,
 			weight_dir_display: EnumDirWeightDisplay::MatchedOnly,
-			weight_precision: EnumWeightPrecision::Tenths,
-			keep_parent: true,
+			weight_precision: EnumWeightPrecision::Tenths,			
 			include_files: true,
 			include_binaries_in_matched: true,
 			title: "CODE SNAPSHOT",

@@ -5,9 +5,10 @@ use cargo_plot::querypath::{ClaimPatterns, DebugVerboses, GatherClaims, ClaimRef
 fn main() -> Result<()> {
 	let claims = GatherClaims::new((
 		ClaimPatterns::new()
-			.patterns_all_matched(["**/querypath/**"])
+			.patterns_all_matched(["*"])
 			//.patterns_no_copypast(["*.svg"])
-			.entry_dirs(["./{src|examples}/"])
+			.entry_dirs(["./{src/libs/timer|examples}/"])
+			.entry_dirs_ancestors(true)
 			.case_sensitive(false),
 		ClaimRefining::new().skip_nodoted_withext_files_text(false),
 		DebugVerboses::new()
@@ -25,3 +26,5 @@ fn main() -> Result<()> {
 		.step99_if_all_valid_corect_then_gather_out_to_prepared_setup()?;
 	Ok(())
 }
+
+

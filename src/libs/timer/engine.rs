@@ -42,6 +42,13 @@ impl Timer {
 		// Zgodnie ze strukturą Timer(pub i64, pub u32, pub u32, pub i32), offset jest pod indeksem 3
 		t.format_string(pattern, self.3 /*week_start*/)
 	}
+	/// Tworzy `Timer` z czasu ostatniej modyfikacji pliku.
+	pub fn from_path_modified(path: impl AsRef<std::path::Path>) -> Self {
+	let st = std::fs::metadata(path)
+		.and_then(|m| m.modified())
+		.unwrap_or(UNIX_EPOCH);
+	Self::from_system_time(st)
+}
 	/// Tworzy strukturę `Timer` z systemowego czasu modyfikacji pliku (`std::time::SystemTime`).
 	pub fn from_system_time(st: SystemTime) -> Self {
 		let duration = st.duration_since(UNIX_EPOCH).unwrap_or_default();

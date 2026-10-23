@@ -16,10 +16,10 @@ fn main() -> Result<()> {
 	let claims = GatherClaims::new((
 		ClaimPatterns::new()
 			.entry_dirs(["./{src|examples}/"])
-			.patterns_all_matched(["**/temporal/**"])
+			.patterns_all_matched(["**/timer/**"])
 			//.patterns_no_copypast(["*.svg"])
 			.case_sensitive(false),
-		DebugVerboses::new().step0_entrydir(false).step1_patterns(true).step2_walk(true).step3_execute(true),
+		DebugVerboses::new().step1b_entrydir(false).step1a_patterns(false).step1c_walk(false).step1d_execute(true),
 	));
 
 	// 2. Twarda walidacja (Pipeline)

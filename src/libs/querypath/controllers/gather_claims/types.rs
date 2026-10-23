@@ -15,10 +15,10 @@ use crate::libs::querypath::core::{
 
 #[derive(Debug, Clone, Default)]
 pub struct DebugVerboses {
-	pub step0_entrydir: bool,
-	pub step1_patterns: bool,
-	pub step2_walk: bool,
-	pub step3_execute: bool, // Dopisano krok 03 (filtrowanie)
+	pub step1b_entrydir: bool,
+	pub step1a_patterns: bool,
+	pub step1c_walk: bool,
+	pub step1d_execute: bool, // Dopisano krok 03 (filtrowanie)
 }
 
 /// Znacznik dla całkowicie domyślnych ustawień (szybki start).

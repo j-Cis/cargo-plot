@@ -27,26 +27,26 @@ impl DebugVerboses {
 	}
 
 	#[must_use]
-	pub fn step0_entrydir(mut self, enable: bool) -> Self {
-		self.step0_entrydir = enable;
+	pub fn step1b_entrydir(mut self, enable: bool) -> Self {
+		self.step1b_entrydir = enable;
 		self
 	}
 
 	#[must_use]
-	pub fn step1_patterns(mut self, enable: bool) -> Self {
-		self.step1_patterns = enable;
+	pub fn step1a_patterns(mut self, enable: bool) -> Self {
+		self.step1a_patterns = enable;
 		self
 	}
 
 	#[must_use]
-	pub fn step2_walk(mut self, enable: bool) -> Self {
-		self.step2_walk = enable;
+	pub fn step1c_walk(mut self, enable: bool) -> Self {
+		self.step1c_walk = enable;
 		self
 	}
 
 	#[must_use]
-	pub fn step3_execute(mut self, enable: bool) -> Self {
-		self.step3_execute = enable;
+	pub fn step1d_execute(mut self, enable: bool) -> Self {
+		self.step1d_execute = enable;
 		self
 	}
 }
@@ -244,7 +244,7 @@ impl GatherClaims {
 	}
 
 	pub fn step00_valid_entry_paths(mut self) -> Result<Self> {
-		let entry = HandleVerifiedDirs::build(&self.patterns.entry_dirs, self.verboses.step0_entrydir)
+		let entry = HandleVerifiedDirs::build(&self.patterns.entry_dirs, self.verboses.step1b_entrydir)
 			.context("ETAP-1 [Błąd kroku 00]: Niepoprawne ścieżki wejściowe (entry_dirs)")?;
 
 		self.step00_val_entry = Some(entry);
@@ -257,7 +257,7 @@ impl GatherClaims {
 			&self.patterns.patterns_no_numerate,
 			&self.patterns.patterns_no_copypast,
 			self.patterns.case_sensitive,
-			self.verboses.step1_patterns,
+			self.verboses.step1a_patterns,
 		)
 		.context("ETAP-1 [Błąd kroku 01]: Nieudana kompilacja wzorców")?;
 
@@ -271,7 +271,7 @@ impl GatherClaims {
 			.as_ref()
 			.context("ETAP-1 [Błąd sekwencji]: Próba uruchomienia skanu przed walidacją wejścia!")?;
 
-		let walk = HandleWalkScan::scan(entry, self.verboses.step2_walk)
+		let walk = HandleWalkScan::scan(entry, self.verboses.step1c_walk)
 			.context("ETAP-1 [Błąd kroku 02]: Skanowanie dysku (HandleWalkScan) zakończone niepowodzeniem")?;
 
 		self.step02_val_walk = Some(walk);
@@ -292,7 +292,7 @@ impl GatherClaims {
 			&patts.all_matched, // <-- ZMIANA TUTAJ: Wskazujemy konkretną grupę filtrów (PathsPatterns)
 			walk,
 			self.creating.keep_parent,
-			self.verboses.step3_execute,
+			self.verboses.step1d_execute,
 		)
 		.context("ETAP-1 [Błąd kroku 03]: Filtracja wyników nie powiodła się!")?;
 

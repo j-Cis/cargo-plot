@@ -15,24 +15,28 @@ fn main() -> Result<()> {
 	// Reszta ustawień (Ordering, Creating) załaduje się domyślnie.
 	let claims = GatherClaims::new((
 		ClaimPatterns::new()
-			.entry_dirs(["./{src|examples}/"])
 			.patterns_all_matched(["**/timer/**"])
 			//.patterns_no_copypast(["*.svg"])
+			.entry_dirs(["./{src|examples}/"])
 			.case_sensitive(false),
-		DebugVerboses::new().step1b_entrydir(false).step1a_patterns(false).step1c_walk(false).step1d_execute(true),
+		DebugVerboses::new()
+			.step1a_patterns(false)
+			.step1b_entrydir(false)
+			.step1c_walk(false)
+			.step1d_execute(true),
 	));
 
 	// 2. Twarda walidacja (Pipeline)
 	// Każdy etap weryfikuje dane i natychmiast wyrzuca błąd (?) w razie
 	// pomyłki.
 	let _prepared_setup = claims
-		.step00_valid_entry_paths()?
-		.step01_valid_patterns()?
-		.step02_valid_scan_walk()?
-		.step03_valid_execute_query()?
+		.step1a_valid_patterns()?
+		.step1b_valid_entry_paths()?
+		.step1c_valid_scan_walk()?
+		.step1d_valid_execute_query()?
 		.step99_if_all_valid_corect_then_gather_out_to_prepared_setup()?;
 
-	println!("\n✅ ETAP-1 Zakończony. Otrzymano twardy `PreparedSetup`!");
+	//println!("\n✅ ETAP-1 Zakończony. Otrzymano twardy `PreparedSetup`!");
 
 	// ========================================================================
 	// ETAP-2: Z tego miejsca zwalidowany setup zasili logikę rysowania drzewa

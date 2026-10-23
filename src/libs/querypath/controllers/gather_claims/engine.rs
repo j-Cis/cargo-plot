@@ -243,7 +243,7 @@ impl GatherClaims {
 		instance
 	}
 
-	pub fn step00_valid_entry_paths(mut self) -> Result<Self> {
+	pub fn step1b_valid_entry_paths(mut self) -> Result<Self> {
 		let entry = HandleVerifiedDirs::build(&self.patterns.entry_dirs, self.verboses.step1b_entrydir)
 			.context("ETAP-1 [Błąd kroku 00]: Niepoprawne ścieżki wejściowe (entry_dirs)")?;
 
@@ -251,7 +251,7 @@ impl GatherClaims {
 		Ok(self)
 	}
 
-	pub fn step01_valid_patterns(mut self) -> Result<Self> {
+	pub fn step1a_valid_patterns(mut self) -> Result<Self> {
 		let patts = HandlePreparedPatterns::build(
 			&self.patterns.patterns_all_matched,
 			&self.patterns.patterns_no_numerate,
@@ -265,7 +265,7 @@ impl GatherClaims {
 		Ok(self)
 	}
 
-	pub fn step02_valid_scan_walk(mut self) -> Result<Self> {
+	pub fn step1c_valid_scan_walk(mut self) -> Result<Self> {
 		let entry = self
 			.step00_val_entry
 			.as_ref()
@@ -279,7 +279,7 @@ impl GatherClaims {
 	}
 
 	/// Filtrowanie zeskanowanych ścieżek z użyciem wzorców regex / globu.
-	pub fn step03_valid_execute_query(mut self) -> Result<Self> {
+	pub fn step1d_valid_execute_query(mut self) -> Result<Self> {
 		let patts =
 			self.step01_val_patts.as_ref().context("ETAP-1 [Błąd sekwencji]: Brak wzorców przed filtrowaniem!")?;
 
@@ -305,11 +305,11 @@ impl GatherClaims {
 	pub fn step99_if_all_valid_corect_then_gather_out_to_prepared_setup(
 		mut self,
 	) -> Result<crate::libs::querypath::controllers::prepar_setups::PreparedSetup> {
-		let entry = self.step00_val_entry.take().context("Pominięto step00_valid_entry_paths w łańcuchu walidacji!")?;
-		let patts = self.step01_val_patts.take().context("Pominięto step01_valid_patterns w łańcuchu walidacji!")?;
-		let walk = self.step02_val_walk.take().context("Pominięto step02_valid_scan_walk w łańcuchu walidacji!")?;
+		let entry = self.step00_val_entry.take().context("Pominięto step1b_valid_entry_paths w łańcuchu walidacji!")?;
+		let patts = self.step01_val_patts.take().context("Pominięto step1a_valid_patterns w łańcuchu walidacji!")?;
+		let walk = self.step02_val_walk.take().context("Pominięto step1c_valid_scan_walk w łańcuchu walidacji!")?;
 		let execute =
-			self.step03_val_execute.take().context("Pominięto step03_valid_execute_query w łańcuchu walidacji!")?;
+			self.step03_val_execute.take().context("Pominięto step1d_valid_execute_query w łańcuchu walidacji!")?;
 
 		Ok(crate::libs::querypath::controllers::prepar_setups::PreparedSetup {
 			entry,

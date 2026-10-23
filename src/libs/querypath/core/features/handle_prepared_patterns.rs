@@ -57,16 +57,16 @@ impl HandlePreparedPatterns {
 			for (e_idx, exp) in PathsPatterns::expand_braces(raw).iter().enumerate() {
 				let e_num = format!("{:02}", e_idx + 1);
 				if let Some(rule) = group.compiled.get(cursor) {
-					writeln!(f, "{r_num}:{e_num}  🪄: 【{} 】 🧿: {exp:?}", rule.regex)?;
-					writeln!(
-						f,
-						"{r_num}:{e_num}  ⚗️ : base name: {:?}, is negated: {} , dir only: {} , requires sibling: {} , requires orphan: {} ,",
+					writeln!(f, "{r_num}:{e_num}  🪄 : 【{} 】    🔎: {:?}    {}", 
+					rule.regex, exp, format!(
+						"⚗️ : base name: {:?}, is negated: {} , dir only: {} , requires sibling: {} , requires orphan: {} ,",
 						rule.base_name,
 						if rule.is_negated { "✔️" } else { "❌" },
 						if rule.targets_dir_only { "✔️" } else { "❌" },
 						if rule.requires_sibling { "✔️" } else { "❌" },
 						if rule.requires_orphan { "✔️" } else { "❌" }
-					)?;
+					))?;
+					
 				}
 				cursor += 1;
 			}

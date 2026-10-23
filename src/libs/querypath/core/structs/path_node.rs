@@ -4,7 +4,7 @@
 //! Repository: https://github.com/j-Cis/cargo-plot.git
 //! ORCID: https://orcid.org/0009-0009-2907-3792
 
-use crate::querypath::utils::normalize_path;
+use crate::querypath::core::utils::normalize_path;
 use std::path::PathBuf;
 
 /// Reprezentacja pojedynczego węzła ścieżki przechowująca zarówno

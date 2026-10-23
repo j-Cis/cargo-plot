@@ -267,36 +267,36 @@ impl VerboseDisplay for HandleWalkScan {
 
 		// --- PODSUMOWANIE KATALOGÓW ---
 		writeln!(f, "📁 TOTAL {} DIRECTORIES SCANNED", total_dirs)?;
-		writeln!(f, "  👉🏼 INCLUDING {} EMPTY, NOT HIDDEN", self.count_dirs_empty)?;
-		writeln!(f, "  👉🏼 INCLUDING {} EMPTY, HIDDEN (DOT)", self.count_dotdirs_empty)?;
-		writeln!(f, "  👉🏼 INCLUDING {} NOT EMPTY, NOT HIDDEN", self.count_dirs_no_empty)?;
-		writeln!(f, "  👉🏼 INCLUDING {} NOT EMPTY, HIDDEN (DOT)", self.count_dotdirs_no_empty)?;
+		writeln!(f, "  ▪️ INCLUDING {} EMPTY, NOT HIDDEN", self.count_dirs_empty)?;
+		writeln!(f, "  ▪️ INCLUDING {} EMPTY, HIDDEN (DOT)", self.count_dotdirs_empty)?;
+		writeln!(f, "  ▪️ INCLUDING {} NOT EMPTY, NOT HIDDEN", self.count_dirs_no_empty)?;
+		writeln!(f, "  ▪️ INCLUDING {} NOT EMPTY, HIDDEN (DOT)", self.count_dotdirs_no_empty)?;
 		writeln!(f)?;
 
 		// --- PODSUMOWANIE PLIKÓW ---
 		writeln!(f, "📄 TOTAL {} FILES SCANNED", total_files)?;
 		writeln!(f)?;
-		writeln!(f, "  👉🏼 INCLUDING {} EMPTY, NO EXTENSION", self.count_files_empty_no_ext)?;
-		writeln!(f, "  👉🏼 INCLUDING {} EMPTY, HIDDEN (DOT), NO EXTENSION", self.count_dotfiles_empty_no_ext)?;
-		writeln!(f, "  👉🏼 INCLUDING {} EMPTY, WITH EXTENSION", self.count_files_empty_has_ext)?;
-		writeln!(f, "  👉🏼 INCLUDING {} EMPTY, HIDDEN (DOT), WITH EXTENSION", self.count_dotfiles_empty_has_ext)?;
+		writeln!(f, "  ▪️ INCLUDING {} EMPTY, NO EXTENSION", self.count_files_empty_no_ext)?;
+		writeln!(f, "  ▪️ INCLUDING {} EMPTY, HIDDEN (DOT), NO EXTENSION", self.count_dotfiles_empty_no_ext)?;
+		writeln!(f, "  ▪️ INCLUDING {} EMPTY, WITH EXTENSION", self.count_files_empty_has_ext)?;
+		writeln!(f, "  ▪️ INCLUDING {} EMPTY, HIDDEN (DOT), WITH EXTENSION", self.count_dotfiles_empty_has_ext)?;
 		writeln!(f)?;
-		writeln!(f, "  👉🏼 INCLUDING {} BINARY, NO EXTENSION", self.count_files_binary_no_ext)?;
-		writeln!(f, "  👉🏼 INCLUDING {} BINARY, HIDDEN (DOT), NO EXTENSION", self.count_dotfiles_binary_no_ext)?;
-		writeln!(f, "  👉🏼 INCLUDING {} BINARY, WITH EXTENSION", self.count_files_binary_has_ext)?;
-		writeln!(f, "  👉🏼 INCLUDING {} BINARY, HIDDEN (DOT), WITH EXTENSION", self.count_dotfiles_binary_has_ext)?;
+		writeln!(f, "  ▪️ INCLUDING {} BINARY, NO EXTENSION", self.count_files_binary_no_ext)?;
+		writeln!(f, "  ▪️ INCLUDING {} BINARY, HIDDEN (DOT), NO EXTENSION", self.count_dotfiles_binary_no_ext)?;
+		writeln!(f, "  ▪️ INCLUDING {} BINARY, WITH EXTENSION", self.count_files_binary_has_ext)?;
+		writeln!(f, "  ▪️ INCLUDING {} BINARY, HIDDEN (DOT), WITH EXTENSION", self.count_dotfiles_binary_has_ext)?;
 		writeln!(f)?;
-		writeln!(f, "  👉🏼 INCLUDING {} TEXT, NO EXTENSION", self.count_files_text_no_empty_no_ext)?;
-		writeln!(f, "  👉🏼 INCLUDING {} TEXT, HIDDEN (DOT), NO EXTENSION", self.count_dotfiles_text_no_empty_no_ext)?;
-		writeln!(f, "  👉🏼 INCLUDING {} TEXT, WITH EXTENSION", self.count_files_text_no_empty_has_ext)?;
-		writeln!(f, "  👉🏼 INCLUDING {} TEXT, HIDDEN (DOT), WITH EXTENSION", self.count_dotfiles_text_no_empty_has_ext)?;
+		writeln!(f, "  ▪️ INCLUDING {} TEXT, NO EXTENSION", self.count_files_text_no_empty_no_ext)?;
+		writeln!(f, "  ▪️ INCLUDING {} TEXT, HIDDEN (DOT), NO EXTENSION", self.count_dotfiles_text_no_empty_no_ext)?;
+		writeln!(f, "  ▪️ INCLUDING {} TEXT, WITH EXTENSION", self.count_files_text_no_empty_has_ext)?;
+		writeln!(f, "  ▪️ INCLUDING {} TEXT, HIDDEN (DOT), WITH EXTENSION", self.count_dotfiles_text_no_empty_has_ext)?;
 		writeln!(f)?;
 
 		// --- SZCZEGÓŁOWE WYKAZY ---
 		macro_rules! print_list {
 			($title:expr, $list:expr) => {
 				if !$list.is_empty() {
-					writeln!(f, "🗃️ LIST OF {}", $title)?;
+					writeln!(f, "🗃️  LIST OF {}", $title)?;
 					for item in &$list {
 						writeln!(f, "  {}", item.str)?;
 					}

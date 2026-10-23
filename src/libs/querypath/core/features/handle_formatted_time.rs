@@ -1,7 +1,7 @@
 //! Path: `src/libs/querypath/features/handle_formatted_time.rs`
 
 use crate::libs::querypath::core::features::VerboseDisplay;
-use crate::libs::temporal::Temporal;
+use crate::libs::timer::Timer;
 use anyhow::{Result, bail};
 use std::fmt;
 use std::time::SystemTime;
@@ -16,9 +16,9 @@ pub struct HandleFormattedTime {
 impl Default for HandleFormattedTime {
 	fn default() -> Self {
 		Self {
-			pattern_tree: "WYYY-WW-D:hh:mm:ss",
-			pattern_text: "WYYY-WW-D hh:mm:ss",
-			pattern_name: "WYYYWW-Dhhmm-ssttqq",
+			pattern_tree: "[YW]-W[WW]-[D][DDD] [hh]:[mm]:[ss]",
+			pattern_text: "[YW]-W[WW]-[D][DDD] [hh]:[mm]:[ss]",
+			pattern_name: "[YW]W[WW]-[D][DDD][hh][mm]-[ss][tt]",
 		}
 	}
 }
@@ -51,27 +51,27 @@ impl HandleFormattedTime {
 
 	#[inline]
 	pub fn format_tree(&self, timestamp_secs: u64) -> String {
-		Temporal::format(timestamp_secs, self.pattern_tree)
+		Timer::from_secs(timestamp_secs).format(self.pattern_tree)
 	}
 
 	#[inline]
 	pub fn format_text(&self, timestamp_secs: u64) -> String {
-		Temporal::format(timestamp_secs, self.pattern_text)
+		Timer::from_secs(timestamp_secs).format(self.pattern_text)
 	}
 
 	#[inline]
 	pub fn format_name(&self, timestamp_secs: u64) -> String {
-		Temporal::format(timestamp_secs, self.pattern_name)
+		Timer::from_secs(timestamp_secs).format(self.pattern_name)
 	}
 
 	#[inline]
-	pub fn format_system_time_tree(&self, st: SystemTime) -> String {
-		Temporal::format_system_time(st, self.pattern_tree)
+	pub fn format_system_time_tree(&self, st: SystemTime) -> String {		
+		Timer::from_system_time(st).format(self.pattern_tree)
 	}
 
 	#[inline]
 	pub fn format_system_time_name(&self, st: SystemTime) -> String {
-		Temporal::format_system_time(st, self.pattern_name)
+		Timer::from_system_time(st).format(self.pattern_name)
 	}
 }
 

@@ -89,16 +89,16 @@ pub enum Gather {
 }
 
 pub struct GatherClaims {
-	patterns: ClaimPatterns,
-	ordering: ClaimOrdering,
-	creating: ClaimCreating,
-	verboses: DebugVerboses,
+	pub patterns: ClaimPatterns,
+	pub ordering: ClaimOrdering,
+	pub creating: ClaimCreating,
+	pub verboses: DebugVerboses,
 
 	// Używamy zaktualizowanych ścieżek z katalogu features
-	step00_val_entry: Option<HandleVerifiedDirs>,
-	step01_val_patts: Option<HandlePreparedPatterns>,
-	step02_val_walk: Option<HandleWalkScan>,
-	step03_val_execute: Option<crate::libs::querypath::core::features::step04_execute_query::QueryExecute>,
+	pub step00_val_entry: Option<HandleVerifiedDirs>,
+	pub step01_val_patts: Option<HandlePreparedPatterns>,
+	pub step02_val_walk: Option<HandleWalkScan>,
+	pub step03_val_execute: Option<crate::libs::querypath::core::features::step04_execute_query::QueryExecute>,
 	// step03_val_sorts
 	// step04_val_filtr
 	// step05_val_add_index

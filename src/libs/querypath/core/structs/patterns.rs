@@ -4,7 +4,7 @@
 //! Repository: https://github.com/j-Cis/cargo-plot.git
 //! ORCID: https://orcid.org/0009-0009-2907-3792
 
-use crate::querypath::{
+use crate::querypath::core::{
 	structs::{PattExp, PattRaw, PatternCompiled},
 	traits::PattEnvIndex,
 };

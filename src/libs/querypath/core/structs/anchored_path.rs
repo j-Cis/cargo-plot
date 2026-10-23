@@ -10,7 +10,7 @@ use std::{
 	path::{Path, PathBuf},
 };
 
-use crate::querypath::utils::{diff_paths, normalize_path};
+use crate::querypath::core::utils::{diff_paths, normalize_path};
 // ============================================================================
 // RELACJE I ZAKOTWICZENIE (ANCHORING)
 // ============================================================================

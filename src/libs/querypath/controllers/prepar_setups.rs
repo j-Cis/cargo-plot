@@ -4,7 +4,7 @@
 //! Repository: https://github.com/j-Cis/cargo-plot.git
 //! ORCID: https://orcid.org/0009-0009-2907-3792
 
-use super::gather_claims::{ClaimCreating, ClaimOrdering, DebugVerboses};
+use super::gather_claims::types::{ClaimCreating, ClaimOrdering, DebugVerboses};
 use crate::libs::querypath::core::features::{
 	HandlePreparedPatterns, HandleVerifiedDirs, HandleWalkScan, step04_execute_query::QueryExecute,
 };

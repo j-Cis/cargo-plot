@@ -58,14 +58,18 @@ pub struct ClaimRefining {
 
 #[derive(Debug, Clone)]
 pub struct ClaimOrdering {
+	// === GŁÓWNE STRATEGIE GRUPOWANIA ===
 	pub order_group_strategy: EnumGroupStrategy,
 	pub order_same_name_priority: EnumSameNamePriority,
+	// === ZASADY DLA KROPEK I ROZSZERZEŃ ==
 	pub order_ignore_leading_dot: bool,
 	pub order_split_extension: bool,
 	pub order_no_ext_priority: EnumNoExtPriority,
+	// === RYGORYSTYCZNE ZASADY ALFANUMERYCZNE ===
 	pub order_char_class_order: [EnumCharClass; 3],
 	pub order_case_precedence: EnumCasePrecedence,
 	pub order_reverse: bool,
+	// === NUMERACJA (DLA DRUKOWANIA DRZEWA) ===
 	pub numerate_dirs: bool,
 	pub numerate_binaries: bool,
 	pub numerate_start_from: usize,

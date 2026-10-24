@@ -30,16 +30,24 @@ use crate::{
 // ============================================================================
 // GŁÓWNY EGZEKUTOR
 // ============================================================================
-pub struct HandleCorpus2 (pub Vec<PathNode>);
+pub struct HandleCorpus(pub Vec<PathNode>);
 
-pub struct HandleCorpus {
-	pub matched_files: Vec<PathNode>,
-	pub matched_dirs: Vec<PathNode>,
-	pub scanned_files: usize,
-	pub scanned_dirs: usize,
-}
+// pub struct HandleCorpusOld {
+// 	pub matched_files: Vec<PathNode>,
+// 	pub matched_dirs: Vec<PathNode>,
+// 	pub scanned_files: usize,
+// 	pub scanned_dirs: usize,
+// }
 
 impl HandleCorpus {
+	pub fn items(&self) -> &[PathNode] { &self.0 }
+
+	pub fn items_mut(&mut self) -> &mut [PathNode] { &mut self.0 }
+
+	pub fn len(&self) -> usize { self.0.len() }
+
+	pub fn is_empty(&self) -> bool { self.0.is_empty() }
+
 	pub fn apply<E, P, W>(
 		entry: E,
 		patterns: P,
@@ -225,21 +233,24 @@ impl HandleCorpus {
 		// old // matched_dir_items.sort_by(|a, b| a.str.cmp(&b.str));
 
 		// ⚡ APLIKACJA NOWEGO SORTOWANIA OPISANEGO PRZEZ CLAIM ORDERING
-		matched_files.sort_by(|a, b| ordering.compare_nodes(a, b));
-		matched_dir_items.sort_by(|a, b| ordering.compare_nodes(a, b));
+		// 1. Scalenie katalogów i plików w jeden spójny korpus
+		let mut all_nodes: Vec<PathNode> = matched_dir_items;
+		all_nodes.extend(matched_files);
 
-		// REZULTAT
+		// 2. Sortowanie całości silnikiem ClaimOrdering
+		all_nodes.sort_by(|a, b| ordering.compare_nodes(a, b));
 
-		let instance = Self {
-			matched_files,
-			matched_dirs: matched_dir_items,
-			scanned_files: walk_ref.count_all_files(),
-			scanned_dirs: walk_ref.count_all_dirs(),
-		};
+		// 3. Nadanie sekwencyjnego indeksu order_id
+		for (idx, node) in all_nodes.iter_mut().enumerate() {
+			node.order_id = Some((idx + 1) as u64);
+		}
+
+		// 4. Instancja Tuple Struct
+		let instance = Self(all_nodes);
 
 		if debug {
-					println!("{}", instance.display_debug());
-				}
+			println!("{}", instance.display_debug());
+		}
 
 		Ok(instance)
 	}
@@ -247,14 +258,17 @@ impl HandleCorpus {
 
 impl VerboseDisplay for HandleCorpus {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-		writeln!(f, "1e📕 [ structs: HandleCorpus, PathNode ] 🔰")?;	
+		writeln!(f, "1e📕 [ structs: HandleCorpus, PathNode ] 🔰")?;
 
-		let mut all_items: Vec<&PathNode> = self.matched_dirs.iter().chain(self.matched_files.iter()).collect();
-		all_items.sort_unstable_by(|a, b| a.str.cmp(&b.str));
-		for item in all_items {
+		for item in &self.0 {
+		let id_str = match item.order_id {
+			Some(id) => format!("#{:03}", id),
+			None => "----".to_string(),
+		};
 			writeln!(
 				f,
-				"{}{}{}{} ⏳{}  🛤️ {}",
+				"{} {}{}{}{} ⏳{}  🛤️ {}",
+				id_str,
 				if item.is_doted { "🕳️" } else { "👁️" },
 				if item.is_empty { "🕸️" } else { "📦" }, //🫙
 				if item.is_dir {

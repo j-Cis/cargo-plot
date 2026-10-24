@@ -11,16 +11,15 @@ use crate::libs::querypath::{
 	},
 	core::{
 		structs::PathNode,
-		types::
-			enums::{
-				EnumCasePrecedence,
-				EnumCharClass,
-				EnumGroupStrategy,
-				EnumNoExtPriority,
-				EnumSameNamePriority,
-				EnumNodeGroup,
-			},
+		types::enums::{
+			EnumCasePrecedence,
+			EnumCharClass,
+			EnumGroupStrategy,
+			EnumNoExtPriority,
+			EnumNodeGroup,
+			EnumSameNamePriority,
 		},
+	},
 };
 
 // Ręczna implementacja Default rozwiązuje błąd E0277 dla enumów
@@ -43,9 +42,7 @@ impl Default for ClaimOrdering {
 }
 impl ClaimOrdering {
 	#[must_use]
-	pub fn new() -> Self {
-		Self::default()
-	}
+	pub fn new() -> Self { Self::default() }
 
 	#[must_use]
 	pub fn order_group_strategy(mut self, strategy: EnumGroupStrategy) -> Self {
@@ -119,29 +116,15 @@ impl ClaimOrdering {
 
 	pub fn compare_nodes(&self, a: &PathNode, b: &PathNode) -> Ordering {
 		let res = self.compare_paths_hierarchical(a, b);
-		if self.order_reverse {
-			res.reverse()
-		} else {
-			res
-		}
+		if self.order_reverse { res.reverse() } else { res }
 	}
 
 	fn compare_paths_hierarchical(&self, a: &PathNode, b: &PathNode) -> Ordering {
-		let parts_a: Vec<&str> = a
-			.str
-			.trim_start_matches("./")
-			.trim_end_matches('/')
-			.split('/')
-			.filter(|s| !s.is_empty())
-			.collect();
+		let parts_a: Vec<&str> =
+			a.str.trim_start_matches("./").trim_end_matches('/').split('/').filter(|s| !s.is_empty()).collect();
 
-		let parts_b: Vec<&str> = b
-			.str
-			.trim_start_matches("./")
-			.trim_end_matches('/')
-			.split('/')
-			.filter(|s| !s.is_empty())
-			.collect();
+		let parts_b: Vec<&str> =
+			b.str.trim_start_matches("./").trim_end_matches('/').split('/').filter(|s| !s.is_empty()).collect();
 
 		let min_len = parts_a.len().min(parts_b.len());
 
@@ -153,10 +136,7 @@ impl ClaimOrdering {
 				let is_dir_b = if i < parts_b.len() - 1 { true } else { b.is_dir };
 				let is_bin_b = if i < parts_b.len() - 1 { false } else { b.is_binary };
 
-				return self.compare_segment(
-					parts_a[i], is_dir_a, is_bin_a,
-					parts_b[i], is_dir_b, is_bin_b,
-				);
+				return self.compare_segment(parts_a[i], is_dir_a, is_bin_a, parts_b[i], is_dir_b, is_bin_b);
 			}
 		}
 
@@ -195,17 +175,9 @@ impl ClaimOrdering {
 		}
 
 		// 2. Ignorowanie wiodącej kropki
-		let clean_a = if self.order_ignore_leading_dot {
-			seg_a.strip_prefix('.').unwrap_or(seg_a)
-		} else {
-			seg_a
-		};
+		let clean_a = if self.order_ignore_leading_dot { seg_a.strip_prefix('.').unwrap_or(seg_a) } else { seg_a };
 
-		let clean_b = if self.order_ignore_leading_dot {
-			seg_b.strip_prefix('.').unwrap_or(seg_b)
-		} else {
-			seg_b
-		};
+		let clean_b = if self.order_ignore_leading_dot { seg_b.strip_prefix('.').unwrap_or(seg_b) } else { seg_b };
 
 		// 3. Rozdzielenie na nazwę bazową i rozszerzenie
 		if self.order_split_extension {
@@ -221,10 +193,18 @@ impl ClaimOrdering {
 			if is_dir_a != is_dir_b {
 				return match self.order_same_name_priority {
 					EnumSameNamePriority::DirectoryFirst => {
-						if is_dir_a { Ordering::Less } else { Ordering::Greater }
+						if is_dir_a {
+							Ordering::Less
+						} else {
+							Ordering::Greater
+						}
 					}
 					EnumSameNamePriority::FileFirst => {
-						if is_dir_a { Ordering::Greater } else { Ordering::Less }
+						if is_dir_a {
+							Ordering::Greater
+						} else {
+							Ordering::Less
+						}
 					}
 				};
 			}

@@ -15,121 +15,10 @@ use crate::{timer::Timer, querypath::{HARDCODED_TIME_TREE,controllers::ClaimOrde
 	structs::{PathNode, PathsPatterns, WalkEnvIndex},
 	traits::PattEnvIndex,
 	types::enums::{ EnumCasePrecedence, EnumGroupStrategy, EnumSameNamePriority},
+	utils::find_lowest_common_ancestor
 }}};
 
-// ============================================================================
-// ALGORYTM NAJNIŻSZEGO WSPÓLNEGO PRZODKA (LCA)
-// ============================================================================
 
-fn find_lowest_common_ancestor(paths: &[String]) -> Option<String> {
-	if paths.is_empty() {
-		return None;
-	}
-	if paths.len() == 1 {
-		let trimmed = paths[0].trim_end_matches('/');
-		return trimmed.rsplit_once('/').map(|(parent, _)| {
-			if parent.is_empty() {
-				"./".to_string()
-			} else {
-				format!("{parent}/")
-			}
-		});
-	}
-
-	let components: Vec<Vec<&str>> = paths
-		.iter()
-		.map(|p| p.trim_end_matches('/').split('/').collect())
-		.collect();
-
-	let min_len = components.iter().map(|c| c.len()).min().unwrap_or(0);
-	let mut common: Vec<&str> = Vec::new();
-
-	for i in 0..min_len {
-		let first = components[0][i];
-		if components.iter().all(|c| c[i] == first) {
-			common.push(first);
-		} else {
-			break;
-		}
-	}
-
-	if common.is_empty() {
-		None
-	} else {
-		let mut res = common.join("/");
-		if !res.ends_with('/') {
-			res.push('/');
-		}
-		Some(res)
-	}
-}
-
-// ============================================================================
-// SILNIK SORTUJĄCY DLA KORPUSU
-// ============================================================================
-
-/// Wewnętrzny komparator dla `PathNode` oparty o `ClaimOrdering`
-fn compare_nodes(a: &PathNode, b: &PathNode, ordering: &ClaimOrdering) -> Ordering {
-	// 1. Obsługa ignorowania ukrytych plików (kropek) z przodu
-	let mut a_name = a.str.as_str();
-	let mut b_name = b.str.as_str();
-	
-	if ordering.order_ignore_leading_dot {
-		a_name = a_name.trim_start_matches('.');
-		b_name = b_name.trim_start_matches('.');
-	}
-
-	// 2. Obsługa `EnumCasePrecedence`
-	let (a_cmp, b_cmp) = match ordering.order_case_precedence {
-		EnumCasePrecedence::Insensitive => (a_name.to_lowercase(), b_name.to_lowercase()),
-		EnumCasePrecedence::UpperFirst | EnumCasePrecedence::LowerFirst => (a_name.to_string(), b_name.to_string()), 
-		// (Tutaj rozwijamy szczegóły wielkości liter w razie potrzeby głębokiej integracji ASCII)
-	};
-
-	// 3. Strategia Merge i priorytety tego samego rdzenia nazwy
-	let get_core_name = |name: &str| -> &str {
-		let trimmed = name.trim_end_matches('/');
-		if let Some(idx) = trimmed.rfind('.') {
-			if idx > 0 && trimmed.as_bytes()[idx - 1] != b'/' {
-				return &trimmed[..idx];
-			}
-		}
-		trimmed
-	};
-
-	let a_core = get_core_name(&a_cmp);
-	let b_core = get_core_name(&b_cmp);
-
-	let mut cmp_result = Ordering::Equal;
-
-	match ordering.order_group_strategy {
-		EnumGroupStrategy::Mixed => {
-			let core_cmp = a_core.cmp(b_core);
-			if core_cmp == Ordering::Equal {
-				// Konflikt nazwy bazowej (np. "mod" i "mod.rs") -> rozwiązujemy priorytetem
-				cmp_result = match ordering.order_same_name_priority {
-					EnumSameNamePriority::DirectoryFirst => b.is_dir.cmp(&a.is_dir).then(a_cmp.cmp(&b_cmp)),
-					EnumSameNamePriority::FileFirst => a.is_dir.cmp(&b.is_dir).then(a_cmp.cmp(&b_cmp)),
-				};
-			} else {
-				// Różne nazwy bazowe -> najpierw sprawdzamy priorytet globalny (Foldery vs Pliki)
-				// Założenie domyślne: bez grupy wymuszonej pliki/foldery używają Mixed.
-				cmp_result = core_cmp;
-			}
-		},
-		EnumGroupStrategy::Custom(ref _groups) => {
-			// Przy Custom (np. foldery nad plikami) sprawdzamy hierarchię węzła
-			// Dla uproszczenia (zanim wdrożymy pełne grupowanie): foldery przed plikami
-			cmp_result = b.is_dir.cmp(&a.is_dir).then(a_cmp.cmp(&b_cmp));
-		}
-	}
-
-	if ordering.order_reverse {
-		cmp_result.reverse()
-	} else {
-		cmp_result
-	}
-}
 
 // ============================================================================
 // GŁÓWNY EGZEKUTOR
@@ -330,11 +219,11 @@ impl HandleCorpus {
 			matched_dir_items.push(dir_node);
 		}
 
-		// matched_dir_items.sort_by(|a, b| a.str.cmp(&b.str));
+		matched_dir_items.sort_by(|a, b| a.str.cmp(&b.str));
 
 		// ⚡ APLIKACJA NOWEGO SORTOWANIA OPISANEGO PRZEZ CLAIM ORDERING
-		matched_files.sort_by(|a, b| compare_nodes(a, b, ordering));
-		matched_dir_items.sort_by(|a, b| compare_nodes(a, b, ordering));
+		//matched_files.sort_by(|a, b| compare_nodes(a, b, ordering));
+		//matched_dir_items.sort_by(|a, b| compare_nodes(a, b, ordering));
 
 		// REZULTAT
 
@@ -378,22 +267,3 @@ impl VerboseDisplay for HandleCorpus {
 		Ok(())
 	}
 }
-
-/*
-
-#[derive(Debug, Clone)]
-pub struct ClaimOrdering {
-	pub order_group_strategy: EnumGroupStrategy,
-	pub order_same_name_priority: EnumSameNamePriority,
-	pub order_ignore_leading_dot: bool,
-	pub order_split_extension: bool,
-	pub order_no_ext_priority: EnumNoExtPriority,
-	pub order_char_class_order: [EnumCharClass; 3],
-	pub order_case_precedence: EnumCasePrecedence,
-	pub order_reverse: bool,
-	pub numerate_dirs: bool,
-	pub numerate_binaries: bool,
-	pub numerate_start_from: usize,
-}
-
-*/

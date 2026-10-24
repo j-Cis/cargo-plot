@@ -15,3 +15,6 @@ pub use get_modified_time::get_modified_time;
 
 mod diff_paths;
 pub use diff_paths::diff_paths;
+
+mod find_lowest_common_ancestor;
+pub use find_lowest_common_ancestor::find_lowest_common_ancestor;

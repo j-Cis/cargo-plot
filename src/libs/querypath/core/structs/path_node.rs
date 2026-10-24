@@ -1,11 +1,10 @@
 //! Path: `src/libs/querypath/structs/path_node.rs`
-//! Last significant modified: 2026-W43-3 01:13:56 CEST (UTC+02:00)
-//! Author: Jan Roman Cisowski (j-Cis, code@cisowscy.com)
 //! Repository: https://github.com/j-Cis/cargo-plot.git
 //! ORCID: https://orcid.org/0009-0009-2907-3792
 
-use crate::querypath::core::utils::normalize_path;
 use std::path::PathBuf;
+
+use crate::querypath::core::utils::normalize_path;
 
 /// Reprezentacja pojedynczego węzła ścieżki przechowująca zarówno
 /// oryginalny obiekt systemowy (`PathBuf`), jak i szybką, znormalizowaną
@@ -53,12 +52,7 @@ impl PathNode {
 	}
 
 	/// Zbiorcza aktualizacja metadanych węzła na późniejszych etapach potoku.
-	pub fn meta(
-		&mut self,
-		modifed_at: Option<String>,
-		size_total: Option<u64>,
-		size_scope: Option<u64>,
-	) -> &mut Self {
+	pub fn meta(&mut self, modifed_at: Option<String>, size_total: Option<u64>, size_scope: Option<u64>) -> &mut Self {
 		self.meta_modifed_at = modifed_at;
 		self.meta_size_total = size_total;
 		self.meta_size_scope = size_scope;
@@ -66,20 +60,20 @@ impl PathNode {
 	}
 
 	/// Selektywna aktualizacja wyłącznie rozmiaru dopasowanego (po filtracji).
-    pub fn set_meta_scope(&mut self, size_scope: Option<u64>) -> &mut Self {
-        self.meta_size_scope = size_scope;
-        self
-    }
+	pub fn set_meta_scope(&mut self, size_scope: Option<u64>) -> &mut Self {
+		self.meta_size_scope = size_scope;
+		self
+	}
 
-    /// Aktywuje flagę zakazującą numeracji dla tego węzła. Zwraca siebie do łańcuchowania.
-    pub fn set_no_numerate(&mut self) -> &mut Self {
-        self.no_numerate = true;
-        self
-    }
+	/// Aktywuje flagę zakazującą numeracji dla tego węzła. Zwraca siebie do łańcuchowania.
+	pub fn set_no_numerate(&mut self) -> &mut Self {
+		self.no_numerate = true;
+		self
+	}
 
-    /// Aktywuje flagę zakazującą kopiowania kodu dla tego węzła. Zwraca siebie do łańcuchowania.
-    pub fn set_no_copypast(&mut self) -> &mut Self {
-        self.no_copypast = true;
-        self
-    }
+	/// Aktywuje flagę zakazującą kopiowania kodu dla tego węzła. Zwraca siebie do łańcuchowania.
+	pub fn set_no_copypast(&mut self) -> &mut Self {
+		self.no_copypast = true;
+		self
+	}
 }

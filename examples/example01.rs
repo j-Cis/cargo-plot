@@ -1,6 +1,6 @@
 //! Path: `examples/example01.rs`
 use anyhow::Result;
-use cargo_plot::querypath::{ClaimPatterns, DebugVerboses, GatherClaims, ClaimRefining};
+use cargo_plot::querypath::{ClaimPatterns, ClaimRefining, DebugVerboses, GatherClaims};
 
 fn main() -> Result<()> {
 	let claims = GatherClaims::new((
@@ -11,11 +11,7 @@ fn main() -> Result<()> {
 			.entry_dirs_ancestors(false)
 			.case_sensitive(false),
 		ClaimRefining::new().skip_nodoted_withext_files_text(false),
-		DebugVerboses::new()
-			.step1a_patterns(false)
-			.step1b_entrydir(false)
-			.step1c_walk(false)
-			.step1d_execute(true),
+		DebugVerboses::new().step1a_patterns(false).step1b_entrydir(false).step1c_walk(false).step1d_execute(true),
 	));
 
 	let _prepared_setup = claims
@@ -26,5 +22,3 @@ fn main() -> Result<()> {
 		.step99_if_all_valid_corect_then_gather_out_to_prepared_setup()?;
 	Ok(())
 }
-
-

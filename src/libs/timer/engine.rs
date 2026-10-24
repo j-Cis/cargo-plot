@@ -1,19 +1,44 @@
-use super::{
-	consts::WEEK_FIRST_DAY_IS_MON_HARDCODED,
-	enums::{MonthDay, Months, Season, Week, WeekDay, WeekFirstDay, YearDay},
-	functions::{
-		civil_from_days, days_from_civil, days_in_month, is_leap, iso_weekday, month_day, months_of, nz, quater_of,
-		season, week_of,
-	},
-	structs::{
-		Cycle, Day, Month, MonthWith28Day, MonthWith29Day, MonthWith30Day, MonthWith31Day, Range0To23, Range0To59,
-		Range0To999, Range1To12, T, Time, Timer, Year, YearWith365Day, YearWith366Day,
-	},
-};
 use std::{
 	num::NonZeroU16,
 	// ops::{Add, Sub},
 	time::{/*Duration,*/ SystemTime, UNIX_EPOCH},
+};
+
+use super::{
+	consts::WEEK_FIRST_DAY_IS_MON_HARDCODED,
+	enums::{MonthDay, Months, Season, Week, WeekDay, WeekFirstDay, YearDay},
+	functions::{
+		civil_from_days,
+		days_from_civil,
+		days_in_month,
+		is_leap,
+		iso_weekday,
+		month_day,
+		months_of,
+		nz,
+		quater_of,
+		season,
+		week_of,
+	},
+	structs::{
+		Cycle,
+		Day,
+		Month,
+		MonthWith28Day,
+		MonthWith29Day,
+		MonthWith30Day,
+		MonthWith31Day,
+		Range0To23,
+		Range0To59,
+		Range0To999,
+		Range1To12,
+		T,
+		Time,
+		Timer,
+		Year,
+		YearWith365Day,
+		YearWith366Day,
+	},
 };
 
 impl Timer {
@@ -44,11 +69,9 @@ impl Timer {
 	}
 	/// Tworzy `Timer` z czasu ostatniej modyfikacji pliku.
 	pub fn from_path_modified(path: impl AsRef<std::path::Path>) -> Self {
-	let st = std::fs::metadata(path)
-		.and_then(|m| m.modified())
-		.unwrap_or(UNIX_EPOCH);
-	Self::from_system_time(st)
-}
+		let st = std::fs::metadata(path).and_then(|m| m.modified()).unwrap_or(UNIX_EPOCH);
+		Self::from_system_time(st)
+	}
 	/// Tworzy strukturę `Timer` z systemowego czasu modyfikacji pliku (`std::time::SystemTime`).
 	pub fn from_system_time(st: SystemTime) -> Self {
 		let duration = st.duration_since(UNIX_EPOCH).unwrap_or_default();
@@ -56,9 +79,7 @@ impl Timer {
 	}
 
 	/// Tworzy strukturę `Timer` ze znacznika czasu w sekundach UNIX (np. pobranego z metadanych).
-	pub fn from_secs(timestamp_secs: u64) -> Self {
-		Self::from_secs_and_nanos(timestamp_secs, 0)
-	}
+	pub fn from_secs(timestamp_secs: u64) -> Self { Self::from_secs_and_nanos(timestamp_secs, 0) }
 
 	/// Tworzy strukturę `Timer` ze znacznika czasu w milisekundach UNIX.
 	pub fn from_millis(timestamp_millis: u64) -> Self {
@@ -90,13 +111,9 @@ impl Timer {
 		let nanos = (timestamp_nanos % 1_000_000_000) as u32;
 		Self::from_secs_and_nanos(secs, nanos)
 	}
-	pub fn to_unix_secs(&self) -> i64 {
-		self.0 * 86_400 + i64::from(self.1) - i64::from(self.3)
-	}
+	pub fn to_unix_secs(&self) -> i64 { self.0 * 86_400 + i64::from(self.1) - i64::from(self.3) }
 
-	pub fn to_unix_nanos(&self) -> i128 {
-		(self.to_unix_secs() as i128) * 1_000_000_000 + i128::from(self.2)
-	}
+	pub fn to_unix_nanos(&self) -> i128 { (self.to_unix_secs() as i128) * 1_000_000_000 + i128::from(self.2) }
 }
 
 // Implementacja Traitu TryFrom dla SystemTime -> Timer

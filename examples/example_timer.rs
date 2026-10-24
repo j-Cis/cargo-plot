@@ -1,5 +1,4 @@
 use anyhow::Result;
-
 use cargo_plot::timer::Timer;
 fn main() -> Result<()> {
 	let a = Timer::now();

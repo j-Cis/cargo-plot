@@ -1,11 +1,10 @@
 //! Path: `src/libs/querypath/structs/walk_env_index.rs`
-//! Last significant modified: 2026-W43-3 19:11:46 CEST (UTC+02:00)
-//! Author: Jan Roman Cisowski (j-Cis, code@cisowscy.com)
 //! Repository: https://github.com/j-Cis/cargo-plot.git
 //! ORCID: https://orcid.org/0009-0009-2907-3792
 
-use crate::querypath::core::{features::HandleWalkScan, traits::PattEnvIndex};
 use std::collections::HashSet;
+
+use crate::querypath::core::{features::HandleWalkScan, traits::PattEnvIndex};
 
 // ============================================================================
 // INDEX I POMOCNICZE
@@ -27,9 +26,7 @@ impl<'a> WalkEnvIndex<'a> {
 }
 
 impl<'a> PattEnvIndex for WalkEnvIndex<'a> {
-	fn has_dir(&self, dir: &str) -> bool {
-		self.dirs.contains(dir)
-	}
+	fn has_dir(&self, dir: &str) -> bool { self.dirs.contains(dir) }
 
 	fn has_file_with_prefix(&self, prefix: &str) -> bool {
 		let start = self.files.partition_point(|&f| f < prefix);

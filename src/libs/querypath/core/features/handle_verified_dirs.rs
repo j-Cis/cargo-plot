@@ -2,9 +2,11 @@
 //! Repository: https://github.com/j-Cis/cargo-plot.git
 //! ORCID: https://orcid.org/0009-0009-2907-3792
 
-use crate::querypath::core::{features::VerboseDisplay, structs::PathAnchored, utils::normalize_path};
-use anyhow::{Context, Result, bail};
 use std::{env, fmt, fs, path::PathBuf};
+
+use anyhow::{Context, Result, bail};
+
+use crate::querypath::core::{features::VerboseDisplay, structs::PathAnchored, utils::normalize_path};
 
 /// Menadżer zarządzający wszystkimi lokalizacjami startowymi skanowania.
 /// Rozwija alternatywy `{a|b}` oraz weryfikuje ich istnienie.
@@ -24,8 +26,7 @@ impl HandleVerifiedDirs {
 	pub fn build<I, S>(inputs: I, debug: bool) -> Result<Self>
 	where
 		I: IntoIterator<Item = S>,
-		S: AsRef<str>,
-	{
+		S: AsRef<str>, {
 		// 1. Ustalenie kanonicznego CWD (również przepuszczonego przez
 		//    fs::canonicalize)
 		let raw_cwd = env::current_dir().context("Nie można odczytać katalogu roboczego (CWD)")?;

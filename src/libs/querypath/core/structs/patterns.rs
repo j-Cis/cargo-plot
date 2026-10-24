@@ -1,14 +1,13 @@
 //! Path: `src/libs/querypath/structs/patterns.rs`
-//! Last significant modified: 2026-W43-3 21:30:59 CEST (UTC+02:00)
-//! Author: Jan Roman Cisowski (j-Cis, code@cisowscy.com)
 //! Repository: https://github.com/j-Cis/cargo-plot.git
 //! ORCID: https://orcid.org/0009-0009-2907-3792
+
+use anyhow::{Context, Result};
 
 use crate::querypath::core::{
 	structs::{PattExp, PattRaw, PatternCompiled},
 	traits::PattEnvIndex,
 };
-use anyhow::{Context, Result};
 
 /// Główna struktura zarządzająca dopasowywaniem wzorców do ścieżek.
 #[derive(Debug, Clone)]
@@ -29,8 +28,7 @@ impl PathsPatterns {
 	pub fn build<I, S>(patterns: I, case_sensitive: bool) -> Result<Self>
 	where
 		I: IntoIterator<Item = S>,
-		S: AsRef<str>,
-	{
+		S: AsRef<str>, {
 		let mut raw_vec = Vec::new();
 		let mut expanded_vec = Vec::new();
 
@@ -82,9 +80,7 @@ impl PathsPatterns {
 	}
 
 	#[must_use]
-	pub fn rules_count(&self) -> usize {
-		self.compiled.len()
-	}
+	pub fn rules_count(&self) -> usize { self.compiled.len() }
 
 	/// Rekurencyjnie rozwija alternatywy zaimplementowane w klamrach `{a|b}`.
 	pub fn expand_braces(input: &str) -> Vec<String> {

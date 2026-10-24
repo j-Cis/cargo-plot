@@ -1,14 +1,13 @@
 //! Path: `src/libs/querypath/features/handle_walk_scan.rs`
-//! Last significant modified: 2026-W43-3 19:12:17 CEST (UTC+02:00)
-//! Author: Jan Roman Cisowski (j-Cis, code@cisowscy.com)
 //! Repository: https://github.com/j-Cis/cargo-plot.git
 //! ORCID: https://orcid.org/0009-0009-2907-3792
 
-use anyhow::Result;
 use std::{
 	fmt,
 	path::{Path, PathBuf},
 };
+
+use anyhow::Result;
 use walkdir::WalkDir;
 
 use crate::querypath::{
@@ -398,8 +397,14 @@ impl VerboseDisplay for HandleWalkScan {
 				f,
 				"{}{}{}{}  🛤️ {}",
 				if item.is_doted { "🕳️" } else { "👁️" },
-				if item.is_empty { "🕸️" } else { "📦" },//🫙
-				if item.is_dir { "📁" } else if item.is_binary { "🧊" } else { "📄" },
+				if item.is_empty { "🕸️" } else { "📦" }, //🫙
+				if item.is_dir {
+					"📁"
+				} else if item.is_binary {
+					"🧊"
+				} else {
+					"📄"
+				},
 				if item.has_extension { "🏷️ " } else { "❔" },
 				item.str,
 			)?;

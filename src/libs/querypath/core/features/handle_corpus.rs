@@ -3,22 +3,31 @@
 //! ORCID: https://orcid.org/0009-0009-2907-3792
 
 use std::{
-	borrow::Borrow,cmp::Ordering,
+	borrow::Borrow,
+	//cmp::Ordering,
 	collections::{HashMap, HashSet},
-	fmt, fs,
+	fmt,
+	fs,
 	path::PathBuf,
 };
-use walkdir::WalkDir;
+
 use anyhow::Result;
-use crate::{timer::Timer, querypath::{HARDCODED_TIME_TREE,controllers::ClaimOrdering,core::{
-	features::{HandleVerifiedDirs, HandleWalkScan, VerboseDisplay},
-	structs::{PathNode, PathsPatterns, WalkEnvIndex},
-	traits::PattEnvIndex,
-	types::enums::{ EnumCasePrecedence, EnumGroupStrategy, EnumSameNamePriority},
-	utils::find_lowest_common_ancestor
-}}};
+use walkdir::WalkDir;
 
-
+use crate::{
+	querypath::{
+		HARDCODED_TIME_TREE,
+		controllers::ClaimOrdering,
+		core::{
+			features::{HandleVerifiedDirs, HandleWalkScan, VerboseDisplay},
+			structs::{PathNode, PathsPatterns, WalkEnvIndex},
+			traits::PattEnvIndex,
+			//types::enums::{ EnumCasePrecedence, EnumGroupStrategy, EnumSameNamePriority},
+			utils::find_lowest_common_ancestor,
+		},
+	},
+	timer::Timer,
+};
 
 // ============================================================================
 // GŁÓWNY EGZEKUTOR
@@ -32,7 +41,14 @@ pub struct HandleCorpus {
 }
 
 impl HandleCorpus {
-	pub fn apply<E, P, W>(entry: E, patterns: P, walk: W, entry_dirs_ancestors: bool, ordering: &ClaimOrdering, debug: bool) -> Result<Self>
+	pub fn apply<E, P, W>(
+		entry: E,
+		patterns: P,
+		walk: W,
+		entry_dirs_ancestors: bool,
+		_ordering: &ClaimOrdering,
+		debug: bool,
+	) -> Result<Self>
 	where
 		E: Borrow<HandleVerifiedDirs>,
 		P: Borrow<PathsPatterns>,
@@ -58,13 +74,7 @@ impl HandleCorpus {
 		let mut entry_dirs: Vec<String> = entry_ref
 			.handles
 			.iter()
-			.map(|h| {
-				if h.rel.ends_with('/') {
-					h.rel.clone()
-				} else {
-					format!("{}/", h.str)
-				}
-			})
+			.map(|h| if h.rel.ends_with('/') { h.rel.clone() } else { format!("{}/", h.str) })
 			.collect();
 		entry_dirs.sort_unstable_by(|a, b| b.len().cmp(&a.len()));
 
@@ -74,7 +84,7 @@ impl HandleCorpus {
 			if patterns_ref.is_match(&file.str, &env) {
 				let size = fs::metadata(&file.str).map(|m| m.len()).unwrap_or(0);
 				let modified_at = Timer::from_path_modified(&file.str).format(HARDCODED_TIME_TREE);
-				
+
 				let mut file_node = file.clone();
 				file_node.meta(Some(modified_at), Some(size), Some(size));
 				matched_files.push(file_node);
@@ -101,11 +111,8 @@ impl HandleCorpus {
 		}
 
 		// UNIFIKACJA: Wszystkie znalezione węzły (pliki i katalogi) traktowane są w 100% identycznie
-		let all_found_paths: Vec<String> = matched_files
-			.iter()
-			.map(|f| f.str.clone())
-			.chain(matched_dirs_set.iter().cloned())
-			.collect();
+		let all_found_paths: Vec<String> =
+			matched_files.iter().map(|f| f.str.clone()).chain(matched_dirs_set.iter().cloned()).collect();
 
 		let mut active_entry_dirs: HashSet<String> = HashSet::new();
 
@@ -135,7 +142,7 @@ impl HandleCorpus {
 					current = parent;
 				}
 			}
-			}
+		}
 
 		// Jeśli w wynikach były same zlecenia bez podelementów, aktywne są wszystkie zlecenia
 		if active_entry_dirs.is_empty() {
@@ -152,29 +159,26 @@ impl HandleCorpus {
 				matched_dirs_set.insert(lca.clone());
 				for ed in entries_vec {
 					let mut current = ed.trim_end_matches('/');
-				while let Some((parent, _)) = current.rsplit_once('/') {
-					if parent.is_empty() {
-						break;
-					}
-					let dir_candidate = format!("{parent}/");
+					while let Some((parent, _)) = current.rsplit_once('/') {
+						if parent.is_empty() {
+							break;
+						}
+						let dir_candidate = format!("{parent}/");
 						matched_dirs_set.insert(dir_candidate.clone());
 						if dir_candidate == lca || dir_candidate == "./" {
 							break;
-					}
-					current = parent;
+						}
+						current = parent;
 					}
 				}
 			}
 		}
 
 		// 4. Mapa pomocnicza dla kalkulacji matched_size
-		let matched_files_map: HashMap<&str, u64> = matched_files
-			.iter()
-			.map(|f| (f.str.as_str(), f.meta_size_scope.unwrap_or(0)))
-			.collect();
+		let matched_files_map: HashMap<&str, u64> =
+			matched_files.iter().map(|f| (f.str.as_str(), f.meta_size_scope.unwrap_or(0))).collect();
 
-		let all_dirs_map: HashMap<&str, &PathNode> =
-			walk_ref.iter_all_dirs().map(|d| (d.str.as_str(), d)).collect();
+		let all_dirs_map: HashMap<&str, &PathNode> = walk_ref.iter_all_dirs().map(|d| (d.str.as_str(), d)).collect();
 
 		let mut matched_dir_items: Vec<PathNode> = Vec::new();
 
@@ -184,12 +188,12 @@ impl HandleCorpus {
 				Some(existing) => (*existing).clone(),
 				None => {
 					let mut node = PathNode::new(
-					PathBuf::from(&dir_path),
-					true,
-					false,
-					dir_path.trim_start_matches("./").starts_with('.'),
-					false,
-					false,
+						PathBuf::from(&dir_path),
+						true,
+						false,
+						dir_path.trim_start_matches("./").starts_with('.'),
+						false,
+						false,
 					);
 					node.set_no_copypast();
 					node
@@ -234,7 +238,6 @@ impl HandleCorpus {
 			scanned_dirs: walk_ref.count_all_dirs(),
 		};
 
-		
 		if debug {
 			println!("{}", instance.display_debug());
 		}
@@ -245,7 +248,7 @@ impl HandleCorpus {
 
 impl VerboseDisplay for HandleCorpus {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-		writeln!(f, "1e📕 [ structs: HandleCorpus, PathNode ] 🔰")?;	
+		writeln!(f, "1e📕 [ structs: HandleCorpus, PathNode ] 🔰")?;
 
 		let mut all_items: Vec<&PathNode> = self.matched_dirs.iter().chain(self.matched_files.iter()).collect();
 		all_items.sort_unstable_by(|a, b| a.str.cmp(&b.str));
@@ -254,8 +257,14 @@ impl VerboseDisplay for HandleCorpus {
 				f,
 				"{}{}{}{} ⏳{}  🛤️ {}",
 				if item.is_doted { "🕳️" } else { "👁️" },
-				if item.is_empty { "🕸️" } else { "📦" },//🫙
-				if item.is_dir { "📁" } else if item.is_binary { "🧊" } else { "📄" },
+				if item.is_empty { "🕸️" } else { "📦" }, //🫙
+				if item.is_dir {
+					"📁"
+				} else if item.is_binary {
+					"🧊"
+				} else {
+					"📄"
+				},
 				if item.has_extension { "🏷️ " } else { "❔" },
 				item.meta_modifed_at.as_deref().unwrap_or("-------- - - - -"),
 				item.str,

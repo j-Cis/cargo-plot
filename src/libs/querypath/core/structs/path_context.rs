@@ -1,6 +1,4 @@
 //! Path: `src/libs/querypath/structs/path_context.rs`
-//! Last significant modified: 2026-W43-3 01:13:56 CEST (UTC+02:00)
-//! Author: Jan Roman Cisowski (j-Cis, code@cisowscy.com)
 //! Repository: https://github.com/j-Cis/cargo-plot.git
 //! ORCID: https://orcid.org/0009-0009-2907-3792
 
@@ -26,15 +24,9 @@ impl<'a> PathContext<'a> {
 		Self { parent, file }
 	}
 
-	pub fn name(&self) -> &'a str {
-		self.file
-	}
+	pub fn name(&self) -> &'a str { self.file }
 
-	pub fn parent(&self) -> &'a str {
-		self.parent
-	}
+	pub fn parent(&self) -> &'a str { self.parent }
 
-	pub fn is_root_level(&self) -> bool {
-		self.parent.is_empty()
-	}
+	pub fn is_root_level(&self) -> bool { self.parent.is_empty() }
 }

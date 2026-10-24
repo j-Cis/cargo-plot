@@ -1,12 +1,12 @@
 //! Path: `src/libs/querypath/features/handle_prepared_patterns.rs`
-//! Last significant modified: 2026-W43-3 22:13:17 CEST (UTC+02:00)
-//! Author: Jan Roman Cisowski (j-Cis, code@cisowscy.com)
 //! Repository: https://github.com/j-Cis/cargo-plot.git
 //! ORCID: https://orcid.org/0009-0009-2907-3792
 
-use crate::querypath::core::{features::VerboseDisplay, structs::PathsPatterns};
-use anyhow::{Context, Result};
 use std::fmt;
+
+use anyhow::{Context, Result};
+
+use crate::querypath::core::{features::VerboseDisplay, structs::PathsPatterns};
 
 /// Komplet wzorców jednego zapytania, podzielony na grupy.
 #[derive(Debug, Clone)]

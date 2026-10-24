@@ -1,16 +1,10 @@
-
-use super::structs::{
-	MonthWith28Day, MonthWith29Day, MonthWith30Day, MonthWith31Day, 
-	
-	YearWith365Day, YearWith366Day,
-};
+use super::structs::{MonthWith28Day, MonthWith29Day, MonthWith30Day, MonthWith31Day, YearWith365Day, YearWith366Day};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum WeekFirstDay {
 	Mon,
 	Sun,
 }
-
 
 // ------------------------------------------------------------ TYDZIEŃ
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -105,7 +99,6 @@ pub enum YearDay {
 	Y365D(YearWith365Day),
 	Y366D(YearWith366Day),
 }
-
 
 // ------------------------------------------------------------ DZIEŃ W MIESIĄCU
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

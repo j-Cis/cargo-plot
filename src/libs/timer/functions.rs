@@ -1,21 +1,13 @@
-use super::consts::{SOLAR_EVENTS_Y0, SOLAR_EVENTS_Y2000, SOLAR_PERIODIC};
-
-use super::enums::{
-	MonthDay, Months, Quater,
-	Season,
-};
-
-
-use super::structs::{
-	MonthWith28Day, MonthWith29Day, MonthWith30Day, MonthWith31Day, 
-	
-};
 use std::num::NonZeroU16;
+
+use super::{
+	consts::{SOLAR_EVENTS_Y0, SOLAR_EVENTS_Y2000, SOLAR_PERIODIC},
+	enums::{MonthDay, Months, Quater, Season},
+	structs::{MonthWith28Day, MonthWith29Day, MonthWith30Day, MonthWith31Day},
+};
 // ------------------------------------------------------------ FUNKCJE POMOCNICZE
 /// `NonZeroU16` z wartości, która z konstrukcji algorytmów jest zawsze >= 1.
-pub fn nz(v: u16) -> NonZeroU16 {
-	NonZeroU16::new(v).unwrap_or(NonZeroU16::MIN)
-}
+pub fn nz(v: u16) -> NonZeroU16 { NonZeroU16::new(v).unwrap_or(NonZeroU16::MIN) }
 
 /// Dni od 1970-01-01 -> (rok, miesiąc 1..=12, dzień 1..=31).
 pub fn civil_from_days(days: i64) -> (i64, i64, i64) {
@@ -42,9 +34,7 @@ pub fn days_from_civil(y: i64, m: i64, d: i64) -> i64 {
 	era * 146_097 + doe - 719_468
 }
 
-pub fn is_leap(y: i64) -> bool {
-	(y % 4 == 0 && y % 100 != 0) || y % 400 == 0
-}
+pub fn is_leap(y: i64) -> bool { (y % 4 == 0 && y % 100 != 0) || y % 400 == 0 }
 
 pub fn days_in_month(y: i64, m: i64) -> i64 {
 	match m {
@@ -56,9 +46,7 @@ pub fn days_in_month(y: i64, m: i64) -> i64 {
 }
 
 /// Dzień tygodnia ISO: poniedziałek = 1 ... niedziela = 7.
-pub fn iso_weekday(days: i64) -> i64 {
-	(days + 3).rem_euclid(7) + 1
-}
+pub fn iso_weekday(days: i64) -> i64 { (days + 3).rem_euclid(7) + 1 }
 
 /// (numer tygodnia, rok tygodnia). Tydzień 1 to pierwszy tydzień z co najmniej
 /// 4 dniami w nowym roku. `sun0 = false`: tydzień zaczyna się w poniedziałek

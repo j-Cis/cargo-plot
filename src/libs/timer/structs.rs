@@ -1,5 +1,6 @@
-use super::enums::{MonthDay, Months, Quater, Season, Week, WeekDay, YearDay};
 use std::num::NonZeroU16;
+
+use super::enums::{MonthDay, Months, Quater, Season, Week, WeekDay, YearDay};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Timer(pub i64, pub u32, pub u32, pub i32);

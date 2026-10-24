@@ -4,7 +4,6 @@
 
 mod anchored_path;
 mod fs_walk_stat;
-mod item_file_dir;
 mod path_context;
 mod path_node;
 mod pattern_compiled;
@@ -17,7 +16,6 @@ mod walk_env_index;
 
 pub use anchored_path::*;
 pub use fs_walk_stat::*;
-pub use item_file_dir::*;
 pub use path_context::*;
 pub use path_node::*;
 pub use pattern_compiled::*;

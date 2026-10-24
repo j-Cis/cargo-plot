@@ -4,7 +4,6 @@
 
 use std::{
 	borrow::Borrow,
-	//cmp::Ordering,
 	collections::{HashMap, HashSet},
 	fmt,
 	fs,
@@ -22,7 +21,6 @@ use crate::{
 			features::{HandleVerifiedDirs, HandleWalkScan, VerboseDisplay},
 			structs::{PathNode, PathsPatterns, WalkEnvIndex},
 			traits::PattEnvIndex,
-			//types::enums::{ EnumCasePrecedence, EnumGroupStrategy, EnumSameNamePriority},
 			utils::find_lowest_common_ancestor,
 		},
 	},
@@ -32,6 +30,7 @@ use crate::{
 // ============================================================================
 // GŁÓWNY EGZEKUTOR
 // ============================================================================
+pub struct HandleCorpus2 (pub Vec<PathNode>);
 
 pub struct HandleCorpus {
 	pub matched_files: Vec<PathNode>,
@@ -46,7 +45,7 @@ impl HandleCorpus {
 		patterns: P,
 		walk: W,
 		entry_dirs_ancestors: bool,
-		_ordering: &ClaimOrdering,
+		ordering: &ClaimOrdering,
 		debug: bool,
 	) -> Result<Self>
 	where
@@ -223,11 +222,11 @@ impl HandleCorpus {
 			matched_dir_items.push(dir_node);
 		}
 
-		matched_dir_items.sort_by(|a, b| a.str.cmp(&b.str));
+		// old // matched_dir_items.sort_by(|a, b| a.str.cmp(&b.str));
 
 		// ⚡ APLIKACJA NOWEGO SORTOWANIA OPISANEGO PRZEZ CLAIM ORDERING
-		//matched_files.sort_by(|a, b| compare_nodes(a, b, ordering));
-		//matched_dir_items.sort_by(|a, b| compare_nodes(a, b, ordering));
+		matched_files.sort_by(|a, b| ordering.compare_nodes(a, b));
+		matched_dir_items.sort_by(|a, b| ordering.compare_nodes(a, b));
 
 		// REZULTAT
 
@@ -239,8 +238,8 @@ impl HandleCorpus {
 		};
 
 		if debug {
-			println!("{}", instance.display_debug());
-		}
+					println!("{}", instance.display_debug());
+				}
 
 		Ok(instance)
 	}
@@ -248,7 +247,7 @@ impl HandleCorpus {
 
 impl VerboseDisplay for HandleCorpus {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-		writeln!(f, "1e📕 [ structs: HandleCorpus, PathNode ] 🔰")?;
+		writeln!(f, "1e📕 [ structs: HandleCorpus, PathNode ] 🔰")?;	
 
 		let mut all_items: Vec<&PathNode> = self.matched_dirs.iter().chain(self.matched_files.iter()).collect();
 		all_items.sort_unstable_by(|a, b| a.str.cmp(&b.str));

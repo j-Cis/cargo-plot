@@ -18,11 +18,13 @@ pub struct PathNode {
 	pub is_doted: bool,
 	pub is_binary: bool,
 	pub has_extension: bool,
-	pub no_numerate: bool,
-	pub no_copypast: bool,
 	pub meta_modifed_at: Option<String>,
 	pub meta_size_total: Option<u64>,
 	pub meta_size_scope: Option<u64>,
+	pub no_numerate: bool,
+	pub no_copypast: bool,
+	pub numerate: Option<u64>,
+	pub order_id: Option<u64>,
 }
 
 impl PathNode {
@@ -43,11 +45,13 @@ impl PathNode {
 			is_doted,
 			is_binary,
 			has_extension,
-			no_numerate: false,
-			no_copypast: false,
 			meta_modifed_at: None,
 			meta_size_total: None,
 			meta_size_scope: None,
+			no_numerate: false,
+			no_copypast: false,
+			numerate: None,
+			order_id: None,
 		}
 	}
 
@@ -74,6 +78,16 @@ impl PathNode {
 	/// Aktywuje flagę zakazującą kopiowania kodu dla tego węzła. Zwraca siebie do łańcuchowania.
 	pub fn set_no_copypast(&mut self) -> &mut Self {
 		self.no_copypast = true;
+		self
+	}
+
+	pub fn set_order_id(&mut self, id: u64) -> &mut Self {
+		self.order_id = Some(id);
+		self
+	}
+
+	pub fn set_numerate(&mut self, num: u64) -> &mut Self {
+		self.numerate = Some(num);
 		self
 	}
 }

@@ -1,3 +1,3 @@
-//pattern_tree: "[YW]-W[WW]-[D][DDD] [hh]:[mm]:[ss]",
-//			pattern_text: "[YW]-W[WW]-[D][DDD] [hh]:[mm]:[ss]",
-//			pattern_name: "[YW]W[WW]-[D][DDD][hh][mm]-[ss][tt]",
+pub const HARDCODED_TIME_TREE: /*&'static*/ &str = "[GG]W[WW].[D].[hh]:[mm]";
+pub const HARDCODED_TIME_HEAD: /*&'static*/ &str = "@[GGGG]W[WW]D[D]H[hh]M[mm]S[ss]T[tt]@";
+pub const HARDCODED_TIME_SAVE: /*&'static*/ &str = "@[GG]W[WW]D[D]H[hh]M[mm]S[ss]T[tt]@";

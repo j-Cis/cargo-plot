@@ -143,6 +143,7 @@ impl GatherClaims {
 			&patts.all_matched,
 			walk,
 			self.patterns.entry_dirs_ancestors,
+			&self.ordering,
 			self.verboses.step1d_execute,
 		)
 		.context("ETAP-1 [Błąd kroku 03]: Filtracja wyników nie powiodła się!")?;

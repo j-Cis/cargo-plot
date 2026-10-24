@@ -275,9 +275,9 @@ impl T {
 						}
 
 						// Rok
-						"YYYW" => out.push_str(&format!("{:04}", self.year.week_year)),
+						"GGGG" => out.push_str(&format!("{:04}", self.year.week_year)),
 						"YYYY" => out.push_str(&format!("{:04}", self.year.year)),
-						"YW" => out.push_str(&format!("{:02}", (self.year.week_year % 100).abs())),
+						"GG" => out.push_str(&format!("{:02}", (self.year.week_year % 100).abs())),
 						"YY" => out.push_str(&format!("{:02}", (self.year.year % 100).abs())),
 						// "OOO" => out.push_str(&format!("{:03}", self.year.cycle.cycl400)),
 

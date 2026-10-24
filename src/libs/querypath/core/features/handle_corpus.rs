@@ -3,18 +3,19 @@
 //! ORCID: https://orcid.org/0009-0009-2907-3792
 
 use std::{
-	borrow::Borrow,
+	borrow::Borrow,cmp::Ordering,
 	collections::{HashMap, HashSet},
 	fmt, fs,
 	path::PathBuf,
 };
 use walkdir::WalkDir;
 use anyhow::Result;
-use crate::{timer::Timer, querypath::core::{
+use crate::{timer::Timer, querypath::{HARDCODED_TIME_TREE,controllers::ClaimOrdering,core::{
 	features::{HandleVerifiedDirs, HandleWalkScan, VerboseDisplay},
 	structs::{PathNode, PathsPatterns, WalkEnvIndex},
-	traits::PattEnvIndex
-}};
+	traits::PattEnvIndex,
+	types::enums::{ EnumCasePrecedence, EnumGroupStrategy, EnumSameNamePriority},
+}}};
 
 // ============================================================================
 // ALGORYTM NAJNIŻSZEGO WSPÓLNEGO PRZODKA (LCA)
@@ -63,6 +64,72 @@ fn find_lowest_common_ancestor(paths: &[String]) -> Option<String> {
 	}
 }
 
+// ============================================================================
+// SILNIK SORTUJĄCY DLA KORPUSU
+// ============================================================================
+
+/// Wewnętrzny komparator dla `PathNode` oparty o `ClaimOrdering`
+fn compare_nodes(a: &PathNode, b: &PathNode, ordering: &ClaimOrdering) -> Ordering {
+	// 1. Obsługa ignorowania ukrytych plików (kropek) z przodu
+	let mut a_name = a.str.as_str();
+	let mut b_name = b.str.as_str();
+	
+	if ordering.order_ignore_leading_dot {
+		a_name = a_name.trim_start_matches('.');
+		b_name = b_name.trim_start_matches('.');
+	}
+
+	// 2. Obsługa `EnumCasePrecedence`
+	let (a_cmp, b_cmp) = match ordering.order_case_precedence {
+		EnumCasePrecedence::Insensitive => (a_name.to_lowercase(), b_name.to_lowercase()),
+		EnumCasePrecedence::UpperFirst | EnumCasePrecedence::LowerFirst => (a_name.to_string(), b_name.to_string()), 
+		// (Tutaj rozwijamy szczegóły wielkości liter w razie potrzeby głębokiej integracji ASCII)
+	};
+
+	// 3. Strategia Merge i priorytety tego samego rdzenia nazwy
+	let get_core_name = |name: &str| -> &str {
+		let trimmed = name.trim_end_matches('/');
+		if let Some(idx) = trimmed.rfind('.') {
+			if idx > 0 && trimmed.as_bytes()[idx - 1] != b'/' {
+				return &trimmed[..idx];
+			}
+		}
+		trimmed
+	};
+
+	let a_core = get_core_name(&a_cmp);
+	let b_core = get_core_name(&b_cmp);
+
+	let mut cmp_result = Ordering::Equal;
+
+	match ordering.order_group_strategy {
+		EnumGroupStrategy::Mixed => {
+			let core_cmp = a_core.cmp(b_core);
+			if core_cmp == Ordering::Equal {
+				// Konflikt nazwy bazowej (np. "mod" i "mod.rs") -> rozwiązujemy priorytetem
+				cmp_result = match ordering.order_same_name_priority {
+					EnumSameNamePriority::DirectoryFirst => b.is_dir.cmp(&a.is_dir).then(a_cmp.cmp(&b_cmp)),
+					EnumSameNamePriority::FileFirst => a.is_dir.cmp(&b.is_dir).then(a_cmp.cmp(&b_cmp)),
+				};
+			} else {
+				// Różne nazwy bazowe -> najpierw sprawdzamy priorytet globalny (Foldery vs Pliki)
+				// Założenie domyślne: bez grupy wymuszonej pliki/foldery używają Mixed.
+				cmp_result = core_cmp;
+			}
+		},
+		EnumGroupStrategy::Custom(ref _groups) => {
+			// Przy Custom (np. foldery nad plikami) sprawdzamy hierarchię węzła
+			// Dla uproszczenia (zanim wdrożymy pełne grupowanie): foldery przed plikami
+			cmp_result = b.is_dir.cmp(&a.is_dir).then(a_cmp.cmp(&b_cmp));
+		}
+	}
+
+	if ordering.order_reverse {
+		cmp_result.reverse()
+	} else {
+		cmp_result
+	}
+}
 
 // ============================================================================
 // GŁÓWNY EGZEKUTOR
@@ -76,7 +143,7 @@ pub struct HandleCorpus {
 }
 
 impl HandleCorpus {
-	pub fn apply<E, P, W>(entry: E, patterns: P, walk: W, entry_dirs_ancestors: bool, debug: bool) -> Result<Self>
+	pub fn apply<E, P, W>(entry: E, patterns: P, walk: W, entry_dirs_ancestors: bool, ordering: &ClaimOrdering, debug: bool) -> Result<Self>
 	where
 		E: Borrow<HandleVerifiedDirs>,
 		P: Borrow<PathsPatterns>,
@@ -117,7 +184,7 @@ impl HandleCorpus {
 		for file in walk_ref.iter_all_files() {
 			if patterns_ref.is_match(&file.str, &env) {
 				let size = fs::metadata(&file.str).map(|m| m.len()).unwrap_or(0);
-				let modified_at = Timer::from_path_modified(&file.str).format("[YW]W[WW][DDD] [hh]:[mm]:[ss]:[tt]");
+				let modified_at = Timer::from_path_modified(&file.str).format(HARDCODED_TIME_TREE);
 				
 				let mut file_node = file.clone();
 				file_node.meta(Some(modified_at), Some(size), Some(size));
@@ -257,13 +324,19 @@ impl HandleCorpus {
 				}
 			}
 
-			let modified_at = Timer::from_path_modified(&dir_path).format("[YW]W[WW][DDD] [hh]:[mm]:[ss]:[tt]");
+			let modified_at = Timer::from_path_modified(&dir_path).format(HARDCODED_TIME_TREE);
 			dir_node.meta(Some(modified_at), Some(real_size), Some(matched_size));
 
 			matched_dir_items.push(dir_node);
 		}
 
-		matched_dir_items.sort_by(|a, b| a.str.cmp(&b.str));
+		// matched_dir_items.sort_by(|a, b| a.str.cmp(&b.str));
+
+		// ⚡ APLIKACJA NOWEGO SORTOWANIA OPISANEGO PRZEZ CLAIM ORDERING
+		matched_files.sort_by(|a, b| compare_nodes(a, b, ordering));
+		matched_dir_items.sort_by(|a, b| compare_nodes(a, b, ordering));
+
+		// REZULTAT
 
 		let instance = Self {
 			matched_files,
@@ -272,6 +345,7 @@ impl HandleCorpus {
 			scanned_dirs: walk_ref.count_all_dirs(),
 		};
 
+		
 		if debug {
 			println!("{}", instance.display_debug());
 		}
@@ -304,3 +378,22 @@ impl VerboseDisplay for HandleCorpus {
 		Ok(())
 	}
 }
+
+/*
+
+#[derive(Debug, Clone)]
+pub struct ClaimOrdering {
+	pub order_group_strategy: EnumGroupStrategy,
+	pub order_same_name_priority: EnumSameNamePriority,
+	pub order_ignore_leading_dot: bool,
+	pub order_split_extension: bool,
+	pub order_no_ext_priority: EnumNoExtPriority,
+	pub order_char_class_order: [EnumCharClass; 3],
+	pub order_case_precedence: EnumCasePrecedence,
+	pub order_reverse: bool,
+	pub numerate_dirs: bool,
+	pub numerate_binaries: bool,
+	pub numerate_start_from: usize,
+}
+
+*/
